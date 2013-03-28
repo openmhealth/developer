@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Open mHealth Developer Site</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+<!--  favicon  
+        <link rel="shortcut icon" href="favicon.ico" > -->
+
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+<!-- styles -->
+<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+<link href="debug.css" rel="stylesheet">
+<style>
+html,body {
+	height: 100%;
+	/* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	/* Negative indent footer by it's height */
+	margin: 0 auto -20px;
+}
+
+/* Set the fixed height of the footer here */
+#push,#footer {
+	height: 20px;
+}
+
+#footer {
+	background-color: #E19832;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media ( max-width : 767px) {
+	#footer {
+		margin-left: -20px;
+		margin-right: -20px;
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+}
+
+.omh-light-blue {
+	background-color: #B7E3E4;
+}
+
+.omh-gold {
+	background-color: #E19832;
+}
+
+.omh-black {
+	color: #1E303A;
+}
+</style>
+
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+</head>
+<body>
+	<div id="wrap">
+		<div class="container">
+
+			<div class="container-fluid  omh-light-blue">
+
+				<div class="row-fluid">
+					<img style="padding: 5px;" src="images/openmhealth_logo64.png">
+					<p class="lead left omh-black">Open mHealth for Developers</p>
+				</div>
+
+			</div>
+
+			<!--  Menu -->
+			<div class="row-fluid">
+				<div class="navbar">
+					<div class="navbar-inner">
+						<div class="container-fluid">
+							<ul class="nav">
+								<li><a href="https://github.com/openmhealth/developer/wiki">Development
+										Wiki</a></li>
+								<li><a
+									href="https://groups.google.com/forum/#!forum/omh-developers">Development
+										Mailing List</a></li>
+								<li><a href="http://openmhealth.org/">Open mHealth Home</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<!--  Intro Text -->
+			<div class="row-fluid">
+				<div style="padding-left: 6%;">
+
+					<h4>Concept</h4>
+					<p>The fundamental technical concept behind Open mHealth is the
+						idea of an open software architecture and an ecosystem of software
+						which adheres to the architecture. The goals of the open
+						architecture and overall technical approach are:</p>
+
+					<ol>
+						<li>To foster software reusability in order to allow new
+							applications to be built faster and to share innovations
+							(software components, novel approaches) amongst software
+							developers and health innovators.</li>
+
+						<li>To standardize APIs to back-end data stores so client
+							software may access any Open mHealth data store in a uniform way.</li>
+
+						<li>To produce examples and documentation of these concepts
+							meaningfully and simply.</li>
+
+						<li>To be pragmatic, considerate and iterative in our
+							approach.</li>
+					</ol>
+
+
+					<h4>Collaboration</h4>
+
+					<p>
+						In addition to an open architecture, Open mHealth aims to foster
+						open collaboration between software developers, clinical experts
+						and researchers. The scope of problems to solve is vast and the
+						need for solutions is growing and multifaceted. One team cannot
+						solve these problems, but we hope to collaborate with those that
+						share our vision. Open collaboration means transparency first and
+						foremost and we are working towards a set of formal working groups
+						and a process for sharing the progress of working group meetings.
+						For now, there is a <a
+							href="https://groups.google.com/forum/#!forum/omh-developers">Google
+							Group</a> for any interested parties.
+					</p>
+
+					<p>
+						Finally, there is open source. The Internet runs on open source
+						software. The Internet and its underlying protocols, policies and
+						loose organizational style are a fundamental inspiration to the
+						Open mHealth team. All software produced by the Open mHealth team
+						will be open sourced under the <a
+							href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache
+							2.0 license</a>. We encourage, but do not require, our partners to
+						open source their software using the Apache 2.0 license. If open
+						source is not an option due to intellectual property or other
+						issues, we ask that you simply publish a well-documented API to
+						your components or adhere to the Open mHealth specification
+						relevant to your work.
+					</p>
+
+					<h4>The Key Architectural Abstractions</h4>
+
+					<p>The architectural abstractions for Open mHealth are defined
+						as modular software units:</p>
+					<ul>
+						<li>DSU: Data Storage Unit</li>
+						<li>DVU: Data Visualization Unit</li>
+						<li>DPU: Data Processing Unit</li>
+					</ul>
+					<p>
+						Interoperability between each independent unit happens through the
+						concept of a Schema ID (a URN-like colon-delimited string) which
+						references a schema defined using the <a
+							href="http://jojenki.github.com/Concordia/">Concordia schema
+							language</a>. A DSU has a small specification while DVUs and DPUs are
+						only required to publish their APIs and the Schema IDs that they
+						can visualize or process. Both DPUs and DVUs communicate with DSUs
+						using the DSU specification. All Open mHealth Software Units may
+						support one or many Schema IDs.
+					</p>
+
+					<h4>Data Storage Units</h4>
+					<p>
+						A DSU provides a uniform way to access data though a series of API
+						calls. The API calls that DSUs are required to implement are: (1)
+						Registry Read, which returns a list of Schema IDs supported by a
+						DSU, (2) Authenticate, which allows end-users to authenticate with
+						a DSU, and (3) Read, which allows applications to read data
+						associated with a particular Schema ID and end-user. We currently
+						have an alpha DSU specification in use and a beta 1.0
+						specification in the works. For more details, you can view
+						supplementary documentation <a
+							href="https://github.com/openmhealth/developer/wiki/DSU-Overview">here</a>
+						or jump right to the specifications <a
+							href="https://github.com/openmhealth/developer/wiki/DSU-Overview#specification-versions">here</a>.
+						The Open mHealth DSU specification is designed to be deliberately
+						simple and to take into account that many existing data stores
+						already exist. The goal is to make it pragmatic and simple for a
+						data store to become adherent to the Open mHealth DSU
+						specification.
+					</p>
+
+					<h5>Data Integration</h5>
+					<p>
+						Our approach to data integration is also deliberately simple. Data
+						is defined in terms of a Schema ID, Schema Version and a Concordia
+						schema bound to the ID and Version. The idea is to map arbitrarily
+						complex data structures onto a single identifier that may
+						reference other identifiers already in use. The data structures
+						themselves are represented using JSON. Schema IDs can reference
+						extant identifiers through the use of an External ID. <a
+							href="http://json.org">JSON</a> was chosen over XML because it is
+						concise, it maps directly onto any existing XML structure, and
+						because it is natively supported by JavaScript while robust
+						libraries exist for it in many other programming languages.
+					</p>
+
+					<h4>Data Processing Units</h4>
+					<p>
+						A DPU represents a unit of work to be performed on JSON data. DPUs
+						may be chained through multiple API calls. All that is required of
+						a DPU is that it must have a well-documented open API and that it
+						is stateless. A DPU may be available as a library to include in an
+						application or as a simple HTTP-based service. For information and
+						examples of DPUs, see this developer <a
+							href="https://github.com/openmhealth/developer/wiki/Open-mHealth-and-Data-Processing">article</a>.
+						It is expected that the specification on a DPU will evolve as more
+						use cases arise. If you have questions or comments, please feel
+						free to join our <a
+							href="https://groups.google.com/forum/#!forum/omh-developers">developer
+							group</a>. One requirement that is sure to be added to the DPU
+						specification is that a DPU will have to specify which schema
+						ID(s) it can operate on and which schema ID(s) the results it
+						produces adhere to.
+					</p>
+
+					<h4>Data Visualization Units</h4>
+					<p>
+						A DVU embodies a visual representation of data for a particular
+						Schema ID that may have been processed by a DPU or returned from
+						the DSU Read call. We expect that most DVUs will live in a web
+						browser. To that end DVUs should be written using JavaScript and
+						HTML5 techniques. A collection of DVUs can form the backbone of a
+						complete application for clinicians to use to assess patient or
+						participant data. A DVU must publish its API and the Schema ID it
+						supports. A DVU can be thought of as a library that any other Open
+						mHealth developer can pick up and use. A developer article about
+						DVUs can be found <a
+							href="https://github.com/openmhealth/developer/wiki/My-Comparisons">here.</a>
+					</p>
+
+				</div>
+
+			</div>
+		</div>
+
+		<div id="push"></div>
+	</div>
+
+	<div id="footer"></div>
+
+</body>
+</html>

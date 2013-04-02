@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<project
+    name="Open mHealth Reference Implementation"
+    basedir="."
+    default="dist">
+
+    <!-- Create the properties to be used throughout this build file. -->
+    <property name="dist" location="dist" />
+    <property name="build" location="build" />
+    <property name="lib" location="lib" />
+    <property name="src" location="src" />
+    <property name="web" location="web" />
+
+    <!-- Create the list of necessary libraries for compiling. -->
+    <fileset id="compile-dependencies" dir="${lib}">
+        <include name="bson4jackson-2.1.0.jar" />
+        <include name="commons-logging-1.1.1.jar" />
+        <include name="jackson-annotations-2.1.1.jar" />
+        <include name="jackson-core-2.1.1.jar" />
+        <include name="jackson-databind-2.1.1.jar" />
+        <include name="jbcrypt-0.3.jar" />
+        <include name="joda-time-2.1.jar" />
+        <include name="log4j-1.2.17.jar" />
+        <include name="mongo-2.10.1.jar" />
+        <include name="mongojack-2.0.0-RC2.jar" />
+        <include name="persistence-api-1.0.2.jar" />
+        <include name="servlet-api-3.0.jar" />
+        <include name="slf4j-api-1.7.4.jar" />
+        <include name="spring-api-3.2.1.RELEASE.jar" />
+        <include name="spring-aop-3.2.1.RELEASE.jar" />
+        <include name="spring-beans-3.2.1.RELEASE.jar" />
+        <include name="spring-context-3.2.1.RELEASE.jar" />
+        <include name="spring-core-3.2.1.RELEASE.jar" />
+        <include name="spring-expression-3.2.1.RELEASE.jar" />
+        <include name="spring-instrument-3.2.1.RELEASE.jar" />
+        <include name="spring-jdbc-3.2.1.RELEASE.jar" />
+        <include name="spring-orm-3.2.1.RELEASE.jar" />
+        <include name="spring-test-3.2.1.RELEASE.jar" />
+        <include name="spring-tx-3.2.1.RELEASE.jar" />
+        <include name="spring-web-3.2.1.RELEASE.jar" />
+        <include name="spring-webmvc-3.2.1.RELEASE.jar" />
+        <include name="spring-webmvc-portlet-3.2.1.RELEASE.jar" />
+    </fileset>
+    <path id="compile-classpath">
+        <fileset refid="compile-dependencies"/>
+    </path>
+    
+    <!-- Create the list of necessary libraries for running. -->
+    <fileset id="run-dependencies" dir="${lib}">
+        <include name="bson4jackson-2.1.0.jar" />
+        <include name="commons-logging-1.1.1.jar" />
+        <include name="jackson-annotations-2.1.1.jar" />
+        <include name="jackson-core-2.1.1.jar" />
+        <include name="jackson-databind-2.1.1.jar" />
+        <include name="jbcrypt-0.3.jar" />
+        <include name="joda-time-2.1.jar" />
+        <include name="log4j-1.2.17.jar" />
+        <include name="mongo-2.10.1.jar" />
+        <include name="mongojack-2.0.0-RC2.jar" />
+        <include name="persistence-api-1.0.2.jar" />
+        <include name="slf4j-api-1.7.4.jar" />
+        <include name="spring-api-3.2.1.RELEASE.jar" />
+        <include name="spring-aop-3.2.1.RELEASE.jar" />
+        <include name="spring-beans-3.2.1.RELEASE.jar" />
+        <include name="spring-context-3.2.1.RELEASE.jar" />
+        <include name="spring-core-3.2.1.RELEASE.jar" />
+        <include name="spring-expression-3.2.1.RELEASE.jar" />
+        <include name="spring-instrument-3.2.1.RELEASE.jar" />
+        <include name="spring-jdbc-3.2.1.RELEASE.jar" />
+        <include name="spring-orm-3.2.1.RELEASE.jar" />
+        <include name="spring-test-3.2.1.RELEASE.jar" />
+        <include name="spring-tx-3.2.1.RELEASE.jar" />
+        <include name="spring-web-3.2.1.RELEASE.jar" />
+        <include name="spring-webmvc-3.2.1.RELEASE.jar" />
+        <include name="spring-webmvc-portlet-3.2.1.RELEASE.jar" />
+    </fileset>
+    
+    <!-- Cleans up all of the temporary files generated during building. -->
+    <target name="clean" depends="" description="Cleans the project.">
+        <delete dir="${build}" />
+        <delete dir="${dist}" />
+    </target>
+
+    <!-- Compiles the Java files into their class objects. -->
+    <target name="javac" description="Compiles Java files.">
+        <mkdir dir="${build}/classes"/>
+        <javac 
+            destdir="${build}/classes"
+            source="1.6"
+            target="1.6"
+            debug="true"
+            optimize="true"
+            failonerror="true" 
+            encoding="UTF-8"
+        	includeantruntime="false">
+            
+            <src path="${src}"/>
+            <classpath refid="compile-classpath"/>
+        </javac>
+    </target>
+
+	<!-- Builds the WAR file. -->
+    <target name="dist" depends="javac" description="Builds the WAR file.">
+        <!-- Create the META-INF directory if it doesn't exist. -->
+        <mkdir dir="${web}/META-INF" />
+    	<!-- Create the directory for the results if they don't exist. -->
+        <mkdir dir="${dist}" />
+        <war
+            webxml="${web}/WEB-INF/web.xml"
+            destfile="${dist}/omh.war">
+        	
+            <classes dir="${build}/classes" />
+            <lib refid="run-dependencies" />
+            <webinf dir="${web}/WEB-INF" />
+            <metainf dir="${web}/META-INF" />
+            <zipfileset dir="${web}">
+                <exclude name="META-INF/**" />
+                <exclude name="WEB-INF/**" />
+            </zipfileset>
+        </war>
+    </target>  
+</project>

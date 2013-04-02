@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0">
+    
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<!--                       Web Application Settings                         -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+    <!-- The name and description of this web application.  -->
+    <display-name>Open mHealth Reference Implementation</display-name>
+    <description>
+        This is the reference implementation for the Open mHealth APIs. Feel
+        free to modify any of it, including this description, to meet your
+        needs.
+    </description>
+    
+    <!-- 
+        Define a small and/or large icon for this web application. The value of
+        these sub-tags should begin from the "web" folder, i.e. 
+        "/images/icon/my.ico" references the file 
+        "http://my.domain/my/app/images/icon/my.ico". The small image should be
+        16x16 pixels and the large image should be 32x32 pixels.
+     -->
+    <!-- 
+    <icon>
+        <small-icon>/images/icon/small.png</small-icon>
+        <large-icon>/images/icon/large.png</large-icon>
+    </icon>
+     -->
+     
+    <!--
+        The welcome file is the default file that will be served when someone
+        visits the root of your application context. If this is a function-only
+        web app, e.g. it doesn't serve static content, then this may not be
+        necessary. Also, the server's default web.xml may handle this for you,
+        and adding this will overwrite what the default web.xml states. In this
+        case, you would not want to define this.
+     -->
+    <!-- 
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.htm</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+     -->
+    
+    <!--
+        The error page listing give pointers to static files that should be
+        served when a Servlet or the server encounter return a specific HTTP
+        status code is returned or when a specific exception is thrown.
+     -->
+    <!-- 
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error/404.html</location>
+    </error-page>
+    <error-page>
+        <exception-type>
+            org.openmhealth.reference.exception.Http404Exception
+        </exception-type>
+        <location>/error/404.html</location>
+    </error-page>
+     -->
+     
+    <!--
+       The session configuration defines on the session timeout which is the
+       maximum number of minutes the Servlet is allowed to run before the
+       container forcibly kills it. Here we set a modest default of 1 minute.
+     -->
+    <session-config>
+       <session-timeout>1</session-timeout>
+    </session-config>
+
+    <!--  
+        The main configuration file for this Spring web application.  
+     -->  
+    <context-param>  
+        <param-name>contextConfigLocation</param-name>  
+        <param-value>/WEB-INF/config/spring-payload-config.xml</param-value>  
+    </context-param>  
+    
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<!--                               Listeners                                -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+    <!--
+        An example listener for web application startup and shutdown. It
+        responds to these events because it implements the
+        ServletContextListener interface.
+     -->
+     <!-- 
+     <listener>
+        <listener-class>
+            org.openmhealth.reference.listener.AppStartStopListener
+        </listener-class>
+     </listener>
+      -->
+    
+    <!-- Loads the configuration file. -->
+    <listener>
+        <listener-class>
+            org.openmhealth.reference.listener.ConfigurationFileImport
+        </listener-class>
+    </listener>
+    
+    <!-- Sets up logging. -->
+    <listener>
+        <listener-class>
+            org.openmhealth.reference.listener.LogSetup
+        </listener-class>
+    </listener>
+
+    <!--
+        Sets up the connection to the database. This must come after the
+        configuration file import listener.
+     -->
+     <listener>
+        <listener-class>
+            org.openmhealth.reference.listener.DatabaseSetup
+        </listener-class>
+    </listener>
+  
+    <!--  
+        Loads the Spring web application context using the config file defined
+        above.  
+    -->  
+    <listener>  
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>  
+    </listener>
+     
+     <!--
+        An example listener for when a new session is created or invalidated.
+        It responds to these events because it implements the
+        HttpSessionListener interface.
+     -->
+     <!-- 
+     <listener>
+        <listener-class>
+            org.openmhealth.reference.listener.SessionListener
+        </listener-class>
+     </listener>
+      -->
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<!--                                Filters                                 -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+    <!--
+        An example filter. A filter runs before and after the Servlet defined
+        to handle it.
+     -->
+    <!--
+    <filter>
+        <description>This is an example filter.</description>
+        <display-name>Example Filter</display-name>
+        <filter-name>exampleFilter</filter-name>
+        <filter-class>org.openmhealth.reference.filter.Example</filter-class>
+        <init-param>
+            <description>This is a sample parameter.</description>
+            <param-name>myParam</param-name>
+            <param-value>0</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>exampleFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+     -->
+     
+    <!-- Exception Filter -->
+    <filter>
+        <description>Catches any DomainExceptions that are thrown and converts them into their appropriate HTTP status codes.</description>
+        <display-name>Exception Filter</display-name>
+        <filter-name>exceptionFilter</filter-name>
+        <filter-class>
+            org.openmhealth.reference.filter.ExceptionFilter
+        </filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>exceptionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<!--                               Servlets                                 -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+    <!--
+        An example Servlet. A Servlet is the "business logic" for an URI
+        endpoint.
+     -->
+    <!-- 
+    <servlet>
+        <description>This is an example Servlet.</description>
+        <display-name>Example Servlet</display-name>
+        <servlet-name>exampleServlet</servlet-name>
+        <servlet-class>
+            org.openmhealth.reference.servlet.Example
+        </servlet-class>
+        <init-param>
+            <description>This is an out-of-order parameter.</description>
+            <param-name>myParam</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>exampleServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+     -->
+    
+    <!--  
+        The Spring Dispatcher Servlet for the REST services. The
+        'contextConfiguration' parameter with an empty value means that the  
+        Spring Context won't try to load a default file called
+        restservices-servlet.xml.  
+    -->  
+    <servlet>  
+        <servlet-name>omhController</servlet-name>  
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>  
+        <init-param>  
+             <param-name>contextConfigLocation</param-name>  
+             <param-value></param-value>  
+        </init-param>  
+        <load-on-startup>1</load-on-startup>  
+    </servlet>  
+    <!--  
+        This will be responsible for handling all other requests that are not
+        defined above which should be limited to the 
+    -->  
+    <servlet-mapping>  
+        <servlet-name>omhController</servlet-name>  
+        <url-pattern>/*</url-pattern>  
+    </servlet-mapping>
+</web-app>

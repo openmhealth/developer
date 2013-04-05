@@ -8,6 +8,13 @@ import org.openmhealth.reference.exception.OmhException;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 
+/**
+ * <p>
+ * The root class for all data access objects.
+ * </p>
+ *
+ * @author jojenki
+ */
 public class Dao {
 	/**
 	 * The property key for the server address.

@@ -21,10 +21,11 @@ public class MongoDbObject {
 	private String id;
 
 	/**
-	 * Default constructor which sets the database ID to null.
+	 * Default constructor which sets the database ID.
 	 */
 	@JsonCreator
 	protected MongoDbObject() {
+		// Do nothing.
 	}
 	
 	/**

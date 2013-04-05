@@ -42,5 +42,4 @@ public class InvalidAuthenticationException extends OmhException {
 
 		super(reason, cause);
 	}
-
 }

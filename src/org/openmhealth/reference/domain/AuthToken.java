@@ -8,6 +8,13 @@ import org.openmhealth.reference.exception.OmhException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * <p>
+ * A user's authentication token.
+ * </p>
+ *
+ * @author John Jenkins
+ */
 public class AuthToken extends MongoDbObject implements OmhObject {
 	/**
 	 * The version of this class for serialization purposes.
@@ -15,16 +22,39 @@ public class AuthToken extends MongoDbObject implements OmhObject {
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * The database token 
+	 * The JSON key for the authentication token.
 	 */
-	public static final String DB_KEY_TOKEN = "token";
-	public static final String DB_KEY_GRANTED = "granted";
-	public static final String DB_KEY_EXPIRES = "expires";
+	public static final String JSON_KEY_TOKEN = "token";
+	/**
+	 * The JSON key for the time the token was granted. 
+	 */
+	public static final String JSON_KEY_GRANTED = "granted";
+	/**
+	 * The JSON key for the time the token expires.
+	 */
+	public static final String JSON_KEY_EXPIRES = "expires";
+	/**
+	 * The default duration of the authentication token.
+	 */
 	public static final Long AUTH_TOKEN_LIFETIME = 1000 * 60 * 30L;
 	
+	/**
+	 * The authentication token.
+	 */
 	private final String token;
+	/**
+	 * The user-name of the user to whom the token applies.
+	 */
 	private final String username;
+	/**
+	 * The number of milliseconds since the epoch at which time the token was
+	 * granted.
+	 */
 	private final long granted;
+	/**
+	 * The number of milliseconds since the epoch at which time the token will
+	 * expire.
+	 */
 	private final long expires;
 	
 	/**
@@ -46,7 +76,7 @@ public class AuthToken extends MongoDbObject implements OmhObject {
 	}
 
 	/**
-	 * Creates an {@link AuthToken} object via a static build.
+	 * Creates an {@link AuthToken} object via injection from the data layer.
 	 * 
 	 * @param token The authentication token.
 	 * 
@@ -54,14 +84,16 @@ public class AuthToken extends MongoDbObject implements OmhObject {
 	 * 
 	 * @param granted The time when the token was granted.
 	 * 
-	 * @param expires The time when the token expires. 
+	 * @param expires The time when the token expires.
+	 * 
+	 * @throws OmhException The token and/or user-name are null.
 	 */
 	@JsonCreator
 	private AuthToken(
-		@JsonProperty(DB_KEY_TOKEN) final String token,
+		@JsonProperty(JSON_KEY_TOKEN) final String token,
 		@JsonProperty(User.JSON_KEY_USERNAME) final String username,
-		@JsonProperty(DB_KEY_GRANTED) final long granted,
-		@JsonProperty(DB_KEY_EXPIRES) final long expires) 
+		@JsonProperty(JSON_KEY_GRANTED) final long granted,
+		@JsonProperty(JSON_KEY_EXPIRES) final long expires) 
 		throws OmhException {
 		
 		if(token == null) {

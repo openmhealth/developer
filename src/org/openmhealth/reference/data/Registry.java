@@ -7,16 +7,22 @@ import org.mongojack.DBCursor;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
 import org.mongojack.JacksonDBCollection;
+import org.mongojack.internal.MongoJacksonMapperModule;
+import org.openmhealth.reference.concordia.OmhValidationController;
 import org.openmhealth.reference.domain.Schema;
 
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBObject;
 
 /**
- * The collection of known schemas as defined by the Open mHealth 
+ * <p>
+ * The collection of known schemas as defined by the Open mHealth
  * specification.
- *
+ * </p>
+ * 
  * @author John Jenkins
  */
 public class Registry {
@@ -24,6 +30,28 @@ public class Registry {
 	 * The name of the DB document/table/whatever that contains the registry.
 	 */
 	public static final String REGISTRY_DB_NAME = "registry";
+	
+	/**
+	 * The object mapper that should be used to parse {@link Schema}s.
+	 */
+	private static final ObjectMapper JSON_MAPPER;
+	static {
+		// Create the object mapper.
+		ObjectMapper mapper = new ObjectMapper();
+		
+		// Add our custom validation controller as an injectable parameter to
+		// the Schema's constructor.
+		InjectableValues.Std injectableValues = new InjectableValues.Std();
+		injectableValues
+			.addValue(
+				Schema.JSON_KEY_VALIDATION_CONTROLLER,
+				OmhValidationController.VALIDATION_CONTROLLER);
+		mapper.setInjectableValues(injectableValues);
+		
+		// Finally, we must configure the mapper to work with the MongoJack
+		// configuration.
+		JSON_MAPPER = MongoJacksonMapperModule.configure(mapper);
+	}
 	
 	/**
 	 * Default constructor. All access to the registry is static.
@@ -57,7 +85,11 @@ public class Registry {
 		// Get the connection to the registry with the Jackson wrapper.
 		JacksonDBCollection<Schema, Object> collection =
 			JacksonDBCollection
-				.wrap(db.getCollection(REGISTRY_DB_NAME), Schema.class);
+				.wrap(
+					db.getCollection(REGISTRY_DB_NAME),
+					Schema.class,
+					Object.class,
+					JSON_MAPPER);
 		
 		// Create the fields to limit the query.
 		List<Query> queries = new LinkedList<Query>();

@@ -7,6 +7,13 @@ import org.openmhealth.reference.exception.OmhException;
 
 import com.mongodb.QueryBuilder;
 
+/**
+ * <p>
+ * The collection of users.
+ * </p>
+ *
+ * @author John Jenkins
+ */
 public class UserBin {
 	/**
 	 * The name of the DB document/table/whatever that contains the user

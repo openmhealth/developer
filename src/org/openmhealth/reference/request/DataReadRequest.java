@@ -24,7 +24,7 @@ import org.openmhealth.reference.exception.OmhException;
  *
  * @author John Jenkins
  */
-public class DataRequest extends Request {
+public class DataReadRequest extends Request {
 	/**
 	 * The meta-data key that indicates the total number of data points that
 	 * matched the query before paging was applied.
@@ -72,7 +72,7 @@ public class DataRequest extends Request {
 	 * 
 	 * @throws OmhException A parameter was invalid.
 	 */
-	public DataRequest(
+	public DataReadRequest(
 		final String authToken,
 		final String schemaId,
 		final long version,
@@ -173,5 +173,4 @@ public class DataRequest extends Request {
 		// Set the data.
 		setData(result.toArray());
 	}
-
 }

@@ -14,7 +14,10 @@
     <!-- Create the list of necessary libraries for compiling. -->
     <fileset id="compile-dependencies" dir="${lib}">
         <include name="bson4jackson-2.1.0.jar" />
+        <include name="commons-fileupload-1.3.jar" />
+        <include name="commons-io-2.4.jar" />
         <include name="commons-logging-1.1.1.jar" />
+        <include name="Concordia-0.3.jar" />
         <include name="jackson-annotations-2.1.1.jar" />
         <include name="jackson-core-2.1.1.jar" />
         <include name="jackson-databind-2.1.1.jar" />
@@ -48,7 +51,10 @@
     <!-- Create the list of necessary libraries for running. -->
     <fileset id="run-dependencies" dir="${lib}">
         <include name="bson4jackson-2.1.0.jar" />
+        <include name="commons-fileupload-1.3.jar" />
+        <include name="commons-io-2.4.jar" />
         <include name="commons-logging-1.1.1.jar" />
+        <include name="Concordia-0.3.jar" />
         <include name="jackson-annotations-2.1.1.jar" />
         <include name="jackson-core-2.1.1.jar" />
         <include name="jackson-databind-2.1.1.jar" />

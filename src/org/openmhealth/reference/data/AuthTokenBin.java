@@ -55,7 +55,7 @@ public class AuthTokenBin {
 					AuthToken.class);
 		
 		// Make sure the token doesn't already exist.
-		if(collection.count(new BasicDBObject(AuthToken.DB_KEY_TOKEN, 1)) > 0) {
+		if(collection.count(new BasicDBObject(AuthToken.JSON_KEY_TOKEN, 1)) > 0) {
 			throw new OmhException("The token already exists.");
 		}
 		
@@ -89,11 +89,11 @@ public class AuthTokenBin {
 		QueryBuilder queryBuilder = QueryBuilder.start();
 		
 		// Add the authentication token to the query
-		queryBuilder.and(AuthToken.DB_KEY_TOKEN).is(token);
+		queryBuilder.and(AuthToken.JSON_KEY_TOKEN).is(token);
 		
 		// Add the expiration timer to ensure that this token has not expired.
 		queryBuilder
-			.and(AuthToken.DB_KEY_EXPIRES)
+			.and(AuthToken.JSON_KEY_EXPIRES)
 			.greaterThan(System.currentTimeMillis());
 		
 		// Execute query.

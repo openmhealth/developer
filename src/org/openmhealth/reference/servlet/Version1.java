@@ -8,7 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openmhealth.reference.exception.InvalidAuthenticationException;
 import org.openmhealth.reference.exception.OmhException;
 import org.openmhealth.reference.request.AuthTokenRequest;
-import org.openmhealth.reference.request.DataRequest;
+import org.openmhealth.reference.request.DataReadRequest;
+import org.openmhealth.reference.request.DataWriteRequest;
 import org.openmhealth.reference.request.Request;
 import org.openmhealth.reference.request.SchemaRequest;
 import org.springframework.stereotype.Controller;
@@ -96,6 +97,11 @@ public class Version1 {
 	 * returned.
 	 */
 	public static final String PARAM_COLUMN_LIST = "column_list";
+	
+	/**
+	 * The parameter for the data when it is being uploaded.
+	 */
+	public static final String PARAM_DATA = "data";
 	
 	/**
 	 * Creates an authentication request, authenticates the user and, if
@@ -310,7 +316,7 @@ public class Version1 {
 		// Handle the request.
 		return 
 			handleRequest(
-				new DataRequest(
+				new DataReadRequest(
 					authToken,
 					schemaId,
 					version,
@@ -319,6 +325,54 @@ public class Version1 {
 					numToSkip,
 					numToReturn),
 				response);
+	}
+	
+	/**
+	 * Writes the requested data.
+	 * 
+	 * @param authTokenParameter
+	 *        The authentication token as a parameter. The token must be
+	 *        provided either here or as a cookie.
+	 * 
+	 * @param schemaId
+	 *        The ID for the schema to which the data pertains. This is part of
+	 *        the request's path.
+	 * 
+	 * @param version
+	 *        The version of the schema to which the data pertains. This is
+	 *        part of the request's path.
+	 *        
+	 * @param data
+	 *        The data to be uploaded, which should be a JSON array of JSON
+	 *        objects where each object is a single data point.
+	 * 
+	 * @param response
+	 *        The HTTP response object.
+	 */
+	@RequestMapping(
+		value = "{" + PARAM_SCHEMA_ID + "}/{" + PARAM_SCHEMA_VERSION + "}/data",
+		method = RequestMethod.POST)
+	public @ResponseBody void setData(
+		@RequestParam(
+			value = PARAM_AUTHENTICATION_AUTH_TOKEN,
+			required = true)
+			final String authToken,
+		@PathVariable(PARAM_SCHEMA_ID) final String schemaId,
+		@PathVariable(PARAM_SCHEMA_VERSION) final Long version,
+		@RequestParam(
+			value = PARAM_DATA,
+			required = true)
+			final String data,
+		final HttpServletResponse response) {
+		
+		// Handle the request.
+		handleRequest(
+			new DataWriteRequest(
+				authToken,
+				schemaId,
+				version,
+				data),
+			response);
 	}
 	
 	/**

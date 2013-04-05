@@ -1,10 +1,18 @@
 package org.openmhealth.reference.domain;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import name.jenkins.paul.john.concordia.Concordia;
+import name.jenkins.paul.john.concordia.exception.ConcordiaException;
+import name.jenkins.paul.john.concordia.validator.ValidationController;
+
 import org.mongojack.MongoCollection;
 import org.openmhealth.reference.data.MongoDbObject;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.exception.OmhException;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -53,6 +61,14 @@ public class Schema extends MongoDbObject implements OmhObject {
 	 * The JSON key for the Concordia schema.
 	 */
 	public static final String JSON_KEY_SCHEMA = "schema";
+	/**
+	 * The JSON key for the {@link ValidationController} that will be used to
+	 * build the underlying {@link Concordia} object. If not set or not given,
+	 * the default one, {@link ValidationController#BASIC_CONTROLLER} will be
+	 * used.
+	 */
+	public static final String JSON_KEY_VALIDATION_CONTROLLER =
+		"validation_controller";
 
 	/**
 	 * The schema's ID.
@@ -85,7 +101,7 @@ public class Schema extends MongoDbObject implements OmhObject {
 	 * The actual schema for this {@link Schema} object.
 	 */
 	@JsonProperty(JSON_KEY_SCHEMA)
-	private final JsonNode /* FIXME: Concordia */schema;
+	private final Concordia schema;
 
 	/**
 	 * Creates a new schema (registry entry).
@@ -123,7 +139,9 @@ public class Schema extends MongoDbObject implements OmhObject {
 			final boolean timeAuthoritative,
 		@JsonProperty(JSON_KEY_TIME_ZONE_AUTHORITATIVE) 
 			final boolean timeZoneAuthoritative,
-		@JsonProperty(JSON_KEY_SCHEMA) final JsonNode /* FIXME: Concordia */schema)
+		@JsonProperty(JSON_KEY_SCHEMA) final JsonNode schema,
+		@JacksonInject(JSON_KEY_VALIDATION_CONTROLLER)
+			final ValidationController controller)
 		throws OmhException {
 
 		// Validate the ID.
@@ -145,7 +163,21 @@ public class Schema extends MongoDbObject implements OmhObject {
 
 		this.timeAuthoritative = timeAuthoritative;
 		this.timeZoneAuthoritative = timeZoneAuthoritative;
-		this.schema = schema;
+		try {
+			this.schema =
+				new Concordia(
+					new ByteArrayInputStream(schema.toString().getBytes()),
+					controller);
+		}
+		catch(IllegalArgumentException e) {
+			throw new OmhException("The schema is missing.", e);
+		}
+		catch(ConcordiaException e) {
+			throw new OmhException("The schema is invalid.", e);
+		}
+		catch(IOException e) {
+			throw new OmhException("The schema cannot be read.", e);
+		}
 	}
 
 	/**
@@ -171,7 +203,7 @@ public class Schema extends MongoDbObject implements OmhObject {
 	 * 
 	 * @return The schema.
 	 */
-	public JsonNode /* FIXME: Concordia */getSchema() {
+	public Concordia getSchema() {
 		return schema;
 	}
 
@@ -197,22 +229,23 @@ public class Schema extends MongoDbObject implements OmhObject {
 	public Data validateData(
 		final String owner,
 		final MetaData metaData,
-		final JsonNode data) throws OmhException {
+		final JsonNode data)
+		throws OmhException {
 
 		// Ensure the data is not null.
 		if(data == null) {
 			throw new OmhException("The data is null.");
 		}
-
+		
 		// Validate the data.
-		// FIXME:
-		// try {
-		// schema.validateData(data);
-		// }
-		// catch(CondordiaException e) {
-		// throw new OmhException("The data is invalid.", e);
-		// }
-
+		try {
+			schema.validateData(data);
+		}
+		catch(ConcordiaException e) {
+			throw new OmhException("The data is invalid.", e);
+		}
+		
+		// Return the result.
 		return new Data(owner, this, metaData, data);
 	}
 

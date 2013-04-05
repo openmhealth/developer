@@ -1,5 +1,7 @@
 package org.openmhealth.reference.data;
 
+import java.util.List;
+
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.domain.ColumnList;
@@ -122,5 +124,24 @@ public class DataSet {
 			result
 				.skip((new Long(numToSkip)).intValue())
 				.limit((new Long(numToReturn)).intValue());
+	}
+	
+	/**
+	 * Stores some data.
+	 * 
+	 * @param data
+	 *        The data to store.
+	 */
+	public static void setData(final List<Data> data) {
+		// Get the connection to the database.
+		DB db = Dao.getInstance().getDb();
+		
+		// Get the connection to the data with the Jackson wrapper.
+		JacksonDBCollection<Data, Object> collection =
+			JacksonDBCollection
+				.wrap(db.getCollection(DATA_DB_NAME), Data.class);
+		
+		// Insert the data.
+		collection.insert(data);
 	}
 }

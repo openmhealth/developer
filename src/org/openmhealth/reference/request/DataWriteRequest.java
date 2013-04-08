@@ -118,7 +118,7 @@ public class DataWriteRequest extends Request {
 		
 		// Check to be sure the schema is known.
 		DBCursor<Schema> schemas = 
-			Registry.getSchemas(schemaId, version, 0, 1);
+			Registry.getInstance().getSchemas(schemaId, version, 0, 1);
 		if(schemas.count() == 0) {
 			throw
 				new OmhException(
@@ -132,13 +132,14 @@ public class DataWriteRequest extends Request {
 		
 		// Get the authentication token object based on the parameterized
 		// authentication token.
-		AuthToken tokenObject = AuthTokenBin.getUser(authToken);
+		AuthToken tokenObject = AuthTokenBin.getInstance().getUser(authToken);
 		if(tokenObject == null) {
 			throw new OmhException("The token is unknown.");
 		}
 		
 		// Get the user to which the token belongs.
-		User requestingUser = UserBin.getUser(tokenObject.getUsername());
+		User requestingUser = 
+			UserBin.getInstance().getUser(tokenObject.getUsername());
 		if(requestingUser == null) {
 			throw new OmhException("The user no longer exists.");
 		}
@@ -210,6 +211,6 @@ public class DataWriteRequest extends Request {
 		}
 		
 		// Store the data.
-		DataSet.setData(dataPoints);
+		DataSet.getInstance().setData(dataPoints);
 	}
 }

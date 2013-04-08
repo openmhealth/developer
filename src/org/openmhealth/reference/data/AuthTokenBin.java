@@ -1,12 +1,7 @@
 package org.openmhealth.reference.data;
 
-import org.mongojack.DBCursor;
-import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.domain.AuthToken;
 import org.openmhealth.reference.exception.OmhException;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.QueryBuilder;
 
 /**
  * <p>
@@ -15,7 +10,7 @@ import com.mongodb.QueryBuilder;
  *
  * @author John Jenkins
  */
-public class AuthTokenBin {
+public abstract class AuthTokenBin {
 	/**
 	 * The name of the DB document/table/whatever that contains the
 	 * authentication tokens.
@@ -23,11 +18,24 @@ public class AuthTokenBin {
 	public static final String AUTH_TOKEN_BIN_DB_NAME = "auth_token_bin";
 	
 	/**
-	 * Default constructor. All access to the authentication token bin is
-	 * static.
+	 * The instance of this AuthTokenBin to use. 
 	 */
-	private AuthTokenBin() {
-		// Do nothing.
+	protected static AuthTokenBin instance;
+	
+	/**
+	 * Default constructor.
+	 */
+	protected AuthTokenBin() {
+		AuthTokenBin.instance = this;
+	}
+	
+	/**
+	 * Returns the singular instance of this class.
+	 * 
+	 * @return The singular instance of this class.
+	 */
+	public static AuthTokenBin getInstance() {
+		return instance;
 	}
 
 	/**
@@ -39,29 +47,7 @@ public class AuthTokenBin {
 	 * @throws OmhException
 	 *         The token is null.
 	 */
-	public static void storeToken(final AuthToken token) throws OmhException {
-		// Validate the parameter.
-		if(token == null) {
-			throw new OmhException("The token is null.");
-		}
-		
-		// Get the authentication token collection.
-		JacksonDBCollection<AuthToken, Object> collection =
-			JacksonDBCollection
-				.wrap(
-					Dao.getInstance()
-						.getDb()
-						.getCollection(AUTH_TOKEN_BIN_DB_NAME),
-					AuthToken.class);
-		
-		// Make sure the token doesn't already exist.
-		if(collection.count(new BasicDBObject(AuthToken.JSON_KEY_TOKEN, 1)) > 0) {
-			throw new OmhException("The token already exists.");
-		}
-		
-		// Save it.
-		collection.insert(token);
-	}
+	public abstract void storeToken(final AuthToken token) throws OmhException;
 	
 	/**
 	 * Retrieves the user to which an authentication token has been applied.
@@ -75,46 +61,5 @@ public class AuthTokenBin {
 	 * @throws OmhException
 	 *         Multiple copies of the same authentication token exist.
 	 */
-	public static AuthToken getUser(final String token) throws OmhException {
-		// Get the connection to the registry with the Jackson wrapper.
-		JacksonDBCollection<AuthToken, Object> collection =
-			JacksonDBCollection
-				.wrap(
-					Dao.getInstance()
-						.getDb()
-						.getCollection(AUTH_TOKEN_BIN_DB_NAME),
-					AuthToken.class);
-		
-		// Build the query.
-		QueryBuilder queryBuilder = QueryBuilder.start();
-		
-		// Add the authentication token to the query
-		queryBuilder.and(AuthToken.JSON_KEY_TOKEN).is(token);
-		
-		// Add the expiration timer to ensure that this token has not expired.
-		queryBuilder
-			.and(AuthToken.JSON_KEY_EXPIRES)
-			.greaterThan(System.currentTimeMillis());
-		
-		// Execute query.
-		DBCursor<AuthToken> result = collection.find(queryBuilder.get());
-		
-		// If multiple authentication tokens were returned, that is a violation
-		// of the system.
-		if(result.count() > 1) {
-			throw
-				new OmhException(
-					"Multiple copies of the same authentication token " +
-						"exist: " +
-						token);
-		}
-		
-		// If no tokens were returned, then return null.
-		if(result.count() == 0) {
-			return null;
-		}
-		else {
-			return result.next();
-		}
-	}
+	public abstract AuthToken getUser(final String token) throws OmhException;
 }

@@ -4,7 +4,7 @@ import jbcrypt.BCrypt;
 
 import org.mongojack.MongoCollection;
 import org.openmhealth.reference.data.AuthTokenBin;
-import org.openmhealth.reference.data.MongoDbObject;
+import org.openmhealth.reference.data.mongodb.MongoDbObject;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

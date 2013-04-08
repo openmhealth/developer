@@ -6,6 +6,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.openmhealth.reference.data.Dao;
+import org.openmhealth.reference.data.mongodb.MongoDao;
 
 /**
  * <p>
@@ -26,6 +27,8 @@ public class DatabaseSetup implements ServletContextListener {
 	private static final Logger LOGGER =
 		Logger.getLogger(DatabaseSetup.class.getName());
 	
+	private Dao dao = null;
+	
 	/**
 	 * Default constructor.
 	 */
@@ -34,12 +37,19 @@ public class DatabaseSetup implements ServletContextListener {
 	}
 
 	/**
+	 * <p>
 	 * Setup the connection to the database.
+	 * </p>
+	 * 
+	 * <p>
+	 * To replace the default MongoDB backedn with another backend, edit this
+	 * function to setup the proper DAO.
+	 * </p>
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		LOGGER.info("Setting up the DAO.");
-		Dao.setup(ConfigurationFileImport.getCustomProperties());
+		dao = new MongoDao(ConfigurationFileImport.getCustomProperties());
 	}
 
 	/**
@@ -48,6 +58,6 @@ public class DatabaseSetup implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
 		LOGGER.info("Shutting down the DAO.");
-		Dao.shutdown();
+		dao.shutdown();
 	}
 }

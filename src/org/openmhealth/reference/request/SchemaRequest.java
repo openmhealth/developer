@@ -79,6 +79,7 @@ public class SchemaRequest extends Request {
 		// Get the schema(s).
 		DBCursor<Schema> schemas =
 			Registry
+				.getInstance()
 				.getSchemas(
 					schemaId, 
 					schemaVersion, 

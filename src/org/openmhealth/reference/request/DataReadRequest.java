@@ -115,7 +115,7 @@ public class DataReadRequest extends Request {
 		}
 		
 		// Check to be sure the schema is known.
-		if(Registry.getSchemas(schemaId, version, 0, 1).count() == 0) {
+		if(Registry.getInstance().getSchemas(schemaId, version, 0, 1).count() == 0) {
 			throw
 				new OmhException(
 					"The schema ID, '" +
@@ -127,13 +127,14 @@ public class DataReadRequest extends Request {
 		
 		// Get the authentication token object based on the parameterized
 		// authentication token.
-		AuthToken tokenObject = AuthTokenBin.getUser(authToken);
+		AuthToken tokenObject = AuthTokenBin.getInstance().getUser(authToken);
 		if(tokenObject == null) {
 			throw new OmhException("The token is unknown.");
 		}
 		
 		// Get the user to which the token belongs.
-		User requestingUser = UserBin.getUser(tokenObject.getUsername());
+		User requestingUser = 
+			UserBin.getInstance().getUser(tokenObject.getUsername());
 		if(requestingUser == null) {
 			throw new OmhException("The user no longer exists.");
 		}
@@ -155,13 +156,15 @@ public class DataReadRequest extends Request {
 		
 		// Get the data.
 		DBCursor<Data> result =
-			DataSet.getData(
-				validatedOwner, 
-				schemaId, 
-				version, 
-				columnList, 
-				getNumToSkip(), 
-				getNumToReturn());
+			DataSet
+				.getInstance()
+				.getData(
+					validatedOwner, 
+					schemaId, 
+					version, 
+					columnList, 
+					getNumToSkip(), 
+					getNumToReturn());
 		
 		// Set the meta-data.
 		Map<String, Object> metaData = new HashMap<String, Object>();

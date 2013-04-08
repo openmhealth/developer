@@ -1,4 +1,4 @@
-package org.openmhealth.reference.data;
+package org.openmhealth.reference.data.mongodb;
 
 import org.mongojack.Id;
 import org.mongojack.ObjectId;

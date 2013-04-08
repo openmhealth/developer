@@ -2,7 +2,7 @@ package org.openmhealth.reference.domain;
 
 import org.mongojack.MongoCollection;
 import org.openmhealth.reference.data.DataSet;
-import org.openmhealth.reference.data.MongoDbObject;
+import org.openmhealth.reference.data.mongodb.MongoDbObject;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

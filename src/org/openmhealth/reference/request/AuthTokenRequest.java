@@ -75,7 +75,7 @@ public class AuthTokenRequest extends Request {
 		}
 
 		// Get the user.
-		User user = UserBin.getUser(username);
+		User user = UserBin.getInstance().getUser(username);
 		
 		// Make sure the user exists.
 		if(user == null) {
@@ -95,7 +95,7 @@ public class AuthTokenRequest extends Request {
 		AuthToken token = new AuthToken(user);
 		
 		// Save the token.
-		AuthTokenBin.storeToken(token);
+		AuthTokenBin.getInstance().storeToken(token);
 		
 		// Return the token to the user.
 		setData(token.getToken());

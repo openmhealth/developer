@@ -26,7 +26,7 @@ public class EnumValidator
 	 * The schema field name for string schemas that may be present and, if so,
 	 * must be an array of strings that are valid values for this data.
 	 */
-	public static final String ENUM_SCHEMA_FIELD = "enum";
+	public static final String ENUM_SCHEMA_FIELD = "allowed_values";
 
 	/**
 	 * Verifies that if {@link #ENUM_SCHEMA_FIELD} exists, it is an array of

@@ -6,10 +6,11 @@ import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.data.DataSet;
 import org.openmhealth.reference.data.MultiValueResult;
+import org.openmhealth.reference.data.mongodb.domain.MongoData;
+import org.openmhealth.reference.data.mongodb.domain.MongoSchema;
 import org.openmhealth.reference.domain.ColumnList;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MetaData;
-import org.openmhealth.reference.domain.Schema;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -34,7 +35,7 @@ public class MongoDataSet extends DataSet {
 	 * @see org.openmhealth.reference.data.DataSet#getData(java.lang.String, java.lang.String, long, org.openmhealth.reference.domain.ColumnList, java.lang.Long, java.lang.Long)
 	 */
 	@Override
-	public MultiValueResult<Data> getData(
+	public MultiValueResult<? extends Data> getData(
 		final String owner,
 		final String schemaId,
 		final long version,
@@ -46,42 +47,42 @@ public class MongoDataSet extends DataSet {
 		DB db = MongoDao.getInstance().getDb();
 		
 		// Get the connection to the data with the Jackson wrapper.
-		JacksonDBCollection<Data, Object> collection =
+		JacksonDBCollection<MongoData, Object> collection =
 			JacksonDBCollection
-				.wrap(db.getCollection(DATA_DB_NAME), Data.class);
+				.wrap(db.getCollection(DATA_DB_NAME), MongoData.class);
 		
 		// Build the query.
 		QueryBuilder queryBuilder = QueryBuilder.start();
 		
 		// Only select data for a single user.
-		queryBuilder.and(Data.JSON_KEY_OWNER).is(owner);
+		queryBuilder.and(MongoData.JSON_KEY_OWNER).is(owner);
 		
 		// Only select data for a given schema.
-		queryBuilder.and(Schema.JSON_KEY_ID).is(schemaId);
+		queryBuilder.and(MongoSchema.JSON_KEY_ID).is(schemaId);
 		
 		// Only select data for a given version of the the given schema.
-		queryBuilder.and(Schema.JSON_KEY_VERSION).is(version);
+		queryBuilder.and(MongoSchema.JSON_KEY_VERSION).is(version);
 		
 		// Create the projection.
 		DBObject projection = new BasicDBObject();
 		// Add the owner field.
-		projection.put(Data.JSON_KEY_OWNER, 1);
+		projection.put(MongoData.JSON_KEY_OWNER, 1);
 		// Add the schema ID field.
-		projection.put(Schema.JSON_KEY_ID, 1);
+		projection.put(MongoSchema.JSON_KEY_ID, 1);
 		// Add the schema version.
-		projection.put(Schema.JSON_KEY_VERSION, 1);
+		projection.put(MongoSchema.JSON_KEY_VERSION, 1);
 		// Add the meta-data field.
-		projection.put(Data.JSON_KEY_METADATA, 1);
+		projection.put(MongoData.JSON_KEY_METADATA, 1);
 		// Add all of the data or add only the specified columns if given.
 		if(columnList.size() == 0) {
-			projection.put(Data.JSON_KEY_DATA, 1);
+			projection.put(MongoData.JSON_KEY_DATA, 1);
 		}
 		else {
 			if((columnList != null) && (columnList.size() > 0)) {
 				for(String column : columnList.toList()) {
 					projection
 						.put(
-							Data.JSON_KEY_DATA +
+							MongoData.JSON_KEY_DATA +
 								ColumnList.COLUMN_SEPARATOR +
 								column,
 							1);
@@ -90,20 +91,20 @@ public class MongoDataSet extends DataSet {
 		}
 		
 		// Build the query.
-		DBCursor<Data> result =
+		DBCursor<MongoData> result =
 			collection.find(queryBuilder.get(), projection);
 		
 		// Build the sort field by sorting in reverse chronological order.
 		DBObject sort = new BasicDBObject();
 		sort.put(
-			Data.JSON_KEY_METADATA + 
+			MongoData.JSON_KEY_METADATA + 
 				ColumnList.COLUMN_SEPARATOR + 
 				MetaData.JSON_KEY_TIMESTAMP,
 			-1);
 		result.sort(sort);
 		
 		return 
-			new MongoMultiValueResult<Data>(
+			new MongoMultiValueResult<MongoData>(
 				result
 					.skip((new Long(numToSkip)).intValue())
 					.limit((new Long(numToReturn)).intValue()));

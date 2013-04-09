@@ -2,7 +2,6 @@ package org.openmhealth.reference.domain;
 
 import java.util.UUID;
 
-import org.openmhealth.reference.data.mongodb.MongoDbObject;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -15,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author John Jenkins
  */
-public class AuthToken extends MongoDbObject implements OmhObject {
+public class AuthToken implements OmhObject {
 	/**
 	 * The version of this class for serialization purposes.
 	 */
@@ -41,39 +40,25 @@ public class AuthToken extends MongoDbObject implements OmhObject {
 	/**
 	 * The authentication token.
 	 */
+	@JsonProperty(JSON_KEY_TOKEN)
 	private final String token;
 	/**
 	 * The user-name of the user to whom the token applies.
 	 */
+	@JsonProperty(User.JSON_KEY_USERNAME)
 	private final String username;
 	/**
 	 * The number of milliseconds since the epoch at which time the token was
 	 * granted.
 	 */
+	@JsonProperty(JSON_KEY_GRANTED)
 	private final long granted;
 	/**
 	 * The number of milliseconds since the epoch at which time the token will
 	 * expire.
 	 */
+	@JsonProperty(JSON_KEY_EXPIRES)
 	private final long expires;
-	
-	/**
-	 * Creates a new authentication token for a user.
-	 * 
-	 * @param user The authentication token for a user.
-	 * 
-	 * @throws OmhException The user is null.
-	 */
-	public AuthToken(final User user) throws OmhException {
-		if(user == null) {
-			throw new OmhException("The user is null.");
-		}
-		
-		token = UUID.randomUUID().toString();
-		username = user.getUsername();
-		granted = System.currentTimeMillis();
-		expires = granted + AUTH_TOKEN_LIFETIME;
-	}
 
 	/**
 	 * Creates an {@link AuthToken} object via injection from the data layer.
@@ -89,7 +74,7 @@ public class AuthToken extends MongoDbObject implements OmhObject {
 	 * @throws OmhException The token and/or user-name are null.
 	 */
 	@JsonCreator
-	private AuthToken(
+	public AuthToken(
 		@JsonProperty(JSON_KEY_TOKEN) final String token,
 		@JsonProperty(User.JSON_KEY_USERNAME) final String username,
 		@JsonProperty(JSON_KEY_GRANTED) final long granted,
@@ -107,6 +92,24 @@ public class AuthToken extends MongoDbObject implements OmhObject {
 		this.username = username;
 		this.granted = granted;
 		this.expires = expires;
+	}
+	
+	/**
+	 * Creates a new authentication token for a user.
+	 * 
+	 * @param user The authentication token for a user.
+	 * 
+	 * @throws OmhException The user is null.
+	 */
+	public AuthToken(final User user) throws OmhException {
+		if(user == null) {
+			throw new OmhException("The user is null.");
+		}
+		
+		token = UUID.randomUUID().toString();
+		username = user.getUsername();
+		granted = System.currentTimeMillis();
+		expires = granted + AUTH_TOKEN_LIFETIME;
 	}
 	
 	/**

@@ -2,9 +2,6 @@ package org.openmhealth.reference.domain;
 
 import jbcrypt.BCrypt;
 
-import org.mongojack.MongoCollection;
-import org.openmhealth.reference.data.AuthTokenBin;
-import org.openmhealth.reference.data.mongodb.MongoDbObject;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -22,8 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author John Jenkins
  */
-@MongoCollection(name = AuthTokenBin.AUTH_TOKEN_BIN_DB_NAME)
-public class User extends MongoDbObject implements OmhObject {
+public class User implements OmhObject {
 	/**
 	 * The version of this class for serialization purposes.
 	 */

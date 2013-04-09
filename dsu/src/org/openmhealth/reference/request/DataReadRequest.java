@@ -155,7 +155,7 @@ public class DataReadRequest extends Request {
 		}
 		
 		// Get the data.
-		MultiValueResult<Data> result =
+		MultiValueResult<? extends Data> result =
 			DataSet
 				.getInstance()
 				.getData(

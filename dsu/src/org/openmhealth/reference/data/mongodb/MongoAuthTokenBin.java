@@ -3,6 +3,7 @@ package org.openmhealth.reference.data.mongodb;
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.data.AuthTokenBin;
+import org.openmhealth.reference.data.mongodb.domain.MongoAuthToken;
 import org.openmhealth.reference.domain.AuthToken;
 import org.openmhealth.reference.exception.OmhException;
 
@@ -61,28 +62,28 @@ public class MongoAuthTokenBin extends AuthTokenBin {
 	@Override
 	public AuthToken getUser(final String token) throws OmhException {
 		// Get the connection to the registry with the Jackson wrapper.
-		JacksonDBCollection<AuthToken, Object> collection =
+		JacksonDBCollection<MongoAuthToken, Object> collection =
 			JacksonDBCollection
 				.wrap(
 					MongoDao
 						.getInstance()
 						.getDb()
 						.getCollection(AUTH_TOKEN_BIN_DB_NAME),
-					AuthToken.class);
+					MongoAuthToken.class);
 		
 		// Build the query.
 		QueryBuilder queryBuilder = QueryBuilder.start();
 		
 		// Add the authentication token to the query
-		queryBuilder.and(AuthToken.JSON_KEY_TOKEN).is(token);
+		queryBuilder.and(MongoAuthToken.JSON_KEY_TOKEN).is(token);
 		
 		// Add the expiration timer to ensure that this token has not expired.
 		queryBuilder
-			.and(AuthToken.JSON_KEY_EXPIRES)
+			.and(MongoAuthToken.JSON_KEY_EXPIRES)
 			.greaterThan(System.currentTimeMillis());
 		
 		// Execute query.
-		DBCursor<AuthToken> result = collection.find(queryBuilder.get());
+		DBCursor<MongoAuthToken> result = collection.find(queryBuilder.get());
 		
 		// If multiple authentication tokens were returned, that is a violation
 		// of the system.

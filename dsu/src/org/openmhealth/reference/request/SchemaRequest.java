@@ -77,7 +77,7 @@ public class SchemaRequest extends Request {
 		}
 		
 		// Get the schema(s).
-		MultiValueResult<Schema> schemas =
+		MultiValueResult<? extends Schema> schemas =
 			Registry
 				.getInstance()
 				.getSchemas(

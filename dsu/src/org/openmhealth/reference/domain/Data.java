@@ -1,8 +1,5 @@
 package org.openmhealth.reference.domain;
 
-import org.mongojack.MongoCollection;
-import org.openmhealth.reference.data.DataSet;
-import org.openmhealth.reference.data.mongodb.MongoDbObject;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -21,8 +18,12 @@ import com.fasterxml.jackson.databind.JsonNode;
  * 
  * @author John Jenkins
  */
-@MongoCollection(name = DataSet.DATA_DB_NAME)
-public class Data extends MongoDbObject {
+public class Data implements OmhObject {
+	/**
+	 * The version of this class used for serialization purposes.
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * <p>
 	 * The JSON key for the identifier of a user that owns this data.
@@ -123,10 +124,11 @@ public class Data extends MongoDbObject {
 		this.metaData = metaData;
 		this.data = data;
 	}
-
+	
 	/**
-	 * Creates a new data object. This should only be used by serialization
-	 * methods when they are pulling already-validated data from the database.
+	 * Creates a new data object. This should only be used internally when a
+	 * class only knows the schema ID and version but doesn't have a
+	 * {@link Schema} object to use.
 	 * 
 	 * @param owner
 	 * 		  The identifier for the user that owns the data.
@@ -147,7 +149,7 @@ public class Data extends MongoDbObject {
 	 *         Any of the parameters is null.
 	 */
 	@JsonCreator
-	private Data(
+	protected Data(
 		@JsonProperty(JSON_KEY_OWNER)
 		final String owner,
 		@JsonProperty(Schema.JSON_KEY_ID)
@@ -159,7 +161,7 @@ public class Data extends MongoDbObject {
 		@JsonProperty(JSON_KEY_DATA)
 		final JsonNode data)
 		throws OmhException {
-
+		
 		if(owner == null) {
 			throw new OmhException("The owner is null.");
 		}
@@ -169,13 +171,11 @@ public class Data extends MongoDbObject {
 		if(data == null) {
 			throw new OmhException("The data is null.");
 		}
-
-		this.owner = owner;
 		
-		schema = null;
+		this.owner = owner;
+		this.schema = null;
 		this.schemaId = schemaId;
 		this.schemaVersion = schemaVersion;
-		
 		this.metaData = metaData;
 		this.data = data;
 	}

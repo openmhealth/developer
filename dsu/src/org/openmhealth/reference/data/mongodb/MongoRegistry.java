@@ -11,6 +11,7 @@ import org.mongojack.internal.MongoJacksonMapperModule;
 import org.openmhealth.reference.concordia.OmhValidationController;
 import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
+import org.openmhealth.reference.data.mongodb.domain.MongoSchema;
 import org.openmhealth.reference.domain.Schema;
 
 import com.fasterxml.jackson.databind.InjectableValues;
@@ -62,7 +63,7 @@ public class MongoRegistry extends Registry {
 	 * @see org.openmhealth.reference.data.Registry#getSchemas(java.lang.String, java.lang.Long, long, long)
 	 */
 	@Override
-	public MultiValueResult<Schema> getSchemas(
+	public MultiValueResult<? extends Schema> getSchemas(
 		final String schemaId, 
 		final Long schemaVersion,
 		final long numToSkip,
@@ -72,11 +73,11 @@ public class MongoRegistry extends Registry {
 		DB db = MongoDao.getInstance().getDb();
 		
 		// Get the connection to the registry with the Jackson wrapper.
-		JacksonDBCollection<Schema, Object> collection =
+		JacksonDBCollection<MongoSchema, Object> collection =
 			JacksonDBCollection
 				.wrap(
 					db.getCollection(REGISTRY_DB_NAME),
-					Schema.class,
+					MongoSchema.class,
 					Object.class,
 					JSON_MAPPER);
 		
@@ -85,16 +86,17 @@ public class MongoRegistry extends Registry {
 		
 		// Add the schema ID, if given.
 		if(schemaId != null) {
-			queries.add(DBQuery.is(Schema.JSON_KEY_ID, schemaId));
+			queries.add(DBQuery.is(MongoSchema.JSON_KEY_ID, schemaId));
 		}
 		
 		// Add the schema version, if given.
 		if(schemaVersion != null) {
-			queries.add(DBQuery.is(Schema.JSON_KEY_VERSION, schemaVersion));
+			queries
+				.add(DBQuery.is(MongoSchema.JSON_KEY_VERSION, schemaVersion));
 		}
 		
 		// Build the query based on the number of parameters.
-		DBCursor<Schema> result;
+		DBCursor<MongoSchema> result;
 		if(queries.size() == 0) {
 			result = collection.find();
 		}
@@ -105,11 +107,11 @@ public class MongoRegistry extends Registry {
 
 		// Build the sort field.
 		DBObject sort = new BasicDBObject();
-		sort.put(Schema.JSON_KEY_ID, -1);
-		sort.put(Schema.JSON_KEY_VERSION, -1);
+		sort.put(MongoSchema.JSON_KEY_ID, -1);
+		sort.put(MongoSchema.JSON_KEY_VERSION, -1);
 		
 		return
-			new MongoMultiValueResult<Schema>(
+			new MongoMultiValueResult<MongoSchema>(
 				result
 					.sort(sort)
 					.skip((new Long(numToSkip)).intValue())

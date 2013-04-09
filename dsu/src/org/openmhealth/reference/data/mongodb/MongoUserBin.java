@@ -3,6 +3,7 @@ package org.openmhealth.reference.data.mongodb;
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.data.UserBin;
+import org.openmhealth.reference.data.mongodb.domain.MongoUser;
 import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.OmhException;
 
@@ -43,22 +44,22 @@ public class MongoUserBin extends UserBin {
 		}
 		
 		// Get the authentication token collection.
-		JacksonDBCollection<User, Object> collection =
+		JacksonDBCollection<MongoUser, Object> collection =
 			JacksonDBCollection
 				.wrap(
 					MongoDao.getInstance()
 						.getDb()
 						.getCollection(DB_NAME_USER_BIN),
-					User.class);
+					MongoUser.class);
 		
 		// Build the query.
 		QueryBuilder queryBuilder = QueryBuilder.start();
 		
 		// Add the authentication token to the query
-		queryBuilder.and(User.JSON_KEY_USERNAME).is(username);
+		queryBuilder.and(MongoUser.JSON_KEY_USERNAME).is(username);
 		
 		// Execute query.
-		DBCursor<User> result = collection.find(queryBuilder.get());
+		DBCursor<MongoUser> result = collection.find(queryBuilder.get());
 		
 		// If multiple authentication tokens were returned, that is a violation
 		// of the system.

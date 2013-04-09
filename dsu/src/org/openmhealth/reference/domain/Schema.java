@@ -7,9 +7,6 @@ import name.jenkins.paul.john.concordia.Concordia;
 import name.jenkins.paul.john.concordia.exception.ConcordiaException;
 import name.jenkins.paul.john.concordia.validator.ValidationController;
 
-import org.mongojack.MongoCollection;
-import org.openmhealth.reference.data.Registry;
-import org.openmhealth.reference.data.mongodb.MongoDbObject;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -28,8 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * 
  * @author John Jenkins
  */
-@MongoCollection(name = Registry.REGISTRY_DB_NAME)
-public class Schema extends MongoDbObject implements OmhObject {
+public class Schema implements OmhObject {
 	/**
 	 * The version of this class for serialization purposes.
 	 */

@@ -117,7 +117,7 @@ public class DataWriteRequest extends Request {
 		}
 		
 		// Check to be sure the schema is known.
-		MultiValueResult<Schema> schemas = 
+		MultiValueResult<? extends Schema> schemas = 
 			Registry.getInstance().getSchemas(schemaId, version, 0, 1);
 		if(schemas.count() == 0) {
 			throw

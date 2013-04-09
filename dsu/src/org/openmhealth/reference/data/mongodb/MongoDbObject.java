@@ -1,10 +1,7 @@
 package org.openmhealth.reference.data.mongodb;
 
-import org.mongojack.Id;
-import org.mongojack.ObjectId;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
 /**
  * The base class for any MongoDB object. This contains basic MongoDB
@@ -12,29 +9,21 @@ import com.fasterxml.jackson.annotation.JsonSetter;
  *
  * @author John Jenkins
  */
-public class MongoDbObject {
+@JsonAutoDetect(
+	fieldVisibility = Visibility.DEFAULT,
+	getterVisibility = Visibility.NONE,
+	setterVisibility = Visibility.NONE,
+	creatorVisibility = Visibility.DEFAULT)
+public interface MongoDbObject {
 	/**
-	 * The database ID.
+	 * The JSON key for the database's ID field.
 	 */
-	@Id
-	@ObjectId
-	private String id;
-
-	/**
-	 * Default constructor which sets the database ID.
-	 */
-	@JsonCreator
-	protected MongoDbObject() {
-		// Do nothing.
-	}
+	public static final String DATABASE_FIELD_ID = "_id";
 	
 	/**
-	 * The method for setting the database ID.
+	 * Returns the database ID for this entity.
 	 * 
-	 * @param id The database ID.
+	 * @return The database ID for this entity.
 	 */
-	@JsonSetter("_id")
-	private void setDbId(final String id) {
-		this.id = id;
-	}
+	public String getDatabaseId();
 }

@@ -57,7 +57,7 @@ public abstract class DataSet {
 	 * 
 	 * @return A database cursor that references the applicable data.
 	 */
-	public abstract MultiValueResult<Data> getData(
+	public abstract MultiValueResult<? extends Data> getData(
 		final String owner,
 		final String schemaId,
 		final long version,

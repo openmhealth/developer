@@ -50,7 +50,7 @@ public abstract class Registry {
 	 * @return A cursor for the list of schemas, which is more efficient than
 	 * 		   creating a new list here.
 	 */
-	public abstract MultiValueResult<Schema> getSchemas(
+	public abstract MultiValueResult<? extends Schema> getSchemas(
 		final String schemaId, 
 		final Long schemaVersion,
 		final long numToSkip,

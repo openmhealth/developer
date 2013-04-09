@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mongojack.DBCursor;
 import org.openmhealth.reference.data.AuthTokenBin;
 import org.openmhealth.reference.data.DataSet;
+import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.data.UserBin;
 import org.openmhealth.reference.domain.AuthToken;
@@ -155,7 +155,7 @@ public class DataReadRequest extends Request {
 		}
 		
 		// Get the data.
-		DBCursor<Data> result =
+		MultiValueResult<Data> result =
 			DataSet
 				.getInstance()
 				.getData(
@@ -174,6 +174,6 @@ public class DataReadRequest extends Request {
 		setMetaData(metaData);
 		
 		// Set the data.
-		setData(result.toArray());
+		setData(result);
 	}
 }

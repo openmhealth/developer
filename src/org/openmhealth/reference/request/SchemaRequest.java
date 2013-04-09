@@ -2,7 +2,7 @@ package org.openmhealth.reference.request;
 
 import java.util.Map;
 
-import org.mongojack.DBCursor;
+import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.domain.Schema;
 import org.openmhealth.reference.exception.NoSuchSchemaException;
@@ -77,7 +77,7 @@ public class SchemaRequest extends Request {
 		}
 		
 		// Get the schema(s).
-		DBCursor<Schema> schemas =
+		MultiValueResult<Schema> schemas =
 			Registry
 				.getInstance()
 				.getSchemas(
@@ -109,7 +109,7 @@ public class SchemaRequest extends Request {
 			}
 			
 			// Get the singular result.
-			Schema result = schemas.next();
+			Schema result = schemas.iterator().next();
 			
 			// Convert the result to a map.
 			ObjectMapper mapper = new ObjectMapper();
@@ -129,7 +129,7 @@ public class SchemaRequest extends Request {
 		}
 		else {
 			// Return the list of schemas.
-			setData(schemas.toArray());
+			setData(schemas);
 		}
 	}
 }

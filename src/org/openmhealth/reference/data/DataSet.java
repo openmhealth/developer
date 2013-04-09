@@ -2,7 +2,6 @@ package org.openmhealth.reference.data;
 
 import java.util.List;
 
-import org.mongojack.DBCursor;
 import org.openmhealth.reference.domain.ColumnList;
 import org.openmhealth.reference.domain.Data;
 
@@ -58,7 +57,7 @@ public abstract class DataSet {
 	 * 
 	 * @return A database cursor that references the applicable data.
 	 */
-	public abstract DBCursor<Data> getData(
+	public abstract MultiValueResult<Data> getData(
 		final String owner,
 		final String schemaId,
 		final long version,

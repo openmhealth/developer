@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mongojack.DBCursor;
 import org.openmhealth.reference.data.AuthTokenBin;
 import org.openmhealth.reference.data.DataSet;
+import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.data.UserBin;
 import org.openmhealth.reference.domain.AuthToken;
@@ -117,7 +117,7 @@ public class DataWriteRequest extends Request {
 		}
 		
 		// Check to be sure the schema is known.
-		DBCursor<Schema> schemas = 
+		MultiValueResult<Schema> schemas = 
 			Registry.getInstance().getSchemas(schemaId, version, 0, 1);
 		if(schemas.count() == 0) {
 			throw
@@ -128,7 +128,7 @@ public class DataWriteRequest extends Request {
 						version +
 						"', pair is unknown.");
 		}
-		Schema schema = schemas.next();
+		Schema schema = schemas.iterator().next();
 		
 		// Get the authentication token object based on the parameterized
 		// authentication token.

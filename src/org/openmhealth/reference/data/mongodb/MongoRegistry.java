@@ -9,6 +9,7 @@ import org.mongojack.DBQuery.Query;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.internal.MongoJacksonMapperModule;
 import org.openmhealth.reference.concordia.OmhValidationController;
+import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.domain.Schema;
 
@@ -61,7 +62,7 @@ public class MongoRegistry extends Registry {
 	 * @see org.openmhealth.reference.data.Registry#getSchemas(java.lang.String, java.lang.Long, long, long)
 	 */
 	@Override
-	public DBCursor<Schema> getSchemas(
+	public MultiValueResult<Schema> getSchemas(
 		final String schemaId, 
 		final Long schemaVersion,
 		final long numToSkip,
@@ -108,9 +109,10 @@ public class MongoRegistry extends Registry {
 		sort.put(Schema.JSON_KEY_VERSION, -1);
 		
 		return
-			result
-				.sort(sort)
-				.skip((new Long(numToSkip)).intValue())
-				.limit((new Long(numToReturn)).intValue());
+			new MongoMultiValueResult<Schema>(
+				result
+					.sort(sort)
+					.skip((new Long(numToSkip)).intValue())
+					.limit((new Long(numToReturn)).intValue()));
 	}
 }

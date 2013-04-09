@@ -5,6 +5,7 @@ import java.util.List;
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.data.DataSet;
+import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.domain.ColumnList;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MetaData;
@@ -33,7 +34,7 @@ public class MongoDataSet extends DataSet {
 	 * @see org.openmhealth.reference.data.DataSet#getData(java.lang.String, java.lang.String, long, org.openmhealth.reference.domain.ColumnList, java.lang.Long, java.lang.Long)
 	 */
 	@Override
-	public DBCursor<Data> getData(
+	public MultiValueResult<Data> getData(
 		final String owner,
 		final String schemaId,
 		final long version,
@@ -102,9 +103,10 @@ public class MongoDataSet extends DataSet {
 		result.sort(sort);
 		
 		return 
-			result
-				.skip((new Long(numToSkip)).intValue())
-				.limit((new Long(numToReturn)).intValue());
+			new MongoMultiValueResult<Data>(
+				result
+					.skip((new Long(numToSkip)).intValue())
+					.limit((new Long(numToReturn)).intValue()));
 	}
 	
 	/*

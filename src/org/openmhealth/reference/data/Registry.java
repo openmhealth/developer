@@ -1,6 +1,5 @@
 package org.openmhealth.reference.data;
 
-import org.mongojack.DBCursor;
 import org.openmhealth.reference.domain.Schema;
 
 /**
@@ -51,7 +50,7 @@ public abstract class Registry {
 	 * @return A cursor for the list of schemas, which is more efficient than
 	 * 		   creating a new list here.
 	 */
-	public abstract DBCursor<Schema> getSchemas(
+	public abstract MultiValueResult<Schema> getSchemas(
 		final String schemaId, 
 		final Long schemaVersion,
 		final long numToSkip,

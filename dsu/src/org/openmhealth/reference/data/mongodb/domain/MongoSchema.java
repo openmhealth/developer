@@ -4,7 +4,6 @@ import name.jenkins.paul.john.concordia.validator.ValidationController;
 
 import org.mongojack.MongoCollection;
 import org.openmhealth.reference.data.Registry;
-import org.openmhealth.reference.data.mongodb.MongoDbObject;
 import org.openmhealth.reference.domain.Schema;
 import org.openmhealth.reference.exception.OmhException;
 

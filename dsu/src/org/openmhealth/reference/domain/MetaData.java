@@ -36,13 +36,30 @@ public class MetaData implements OmhObject {
 	 * @author John Jenkins
 	 */
 	public static class Builder {
+		/**
+		 * The current ID for this meta-data.
+		 */
 		private String id = null;
+		/**
+		 * The current timestamp for this meta-data.
+		 */
 		private DateTime timestamp = null;
 		
 		/**
 		 * Creates an empty builder.
 		 */
-		public Builder() {};
+		public Builder() {
+			// Do nothing.
+		}
+		
+		/**
+		 * Returns the currently set ID.
+		 * 
+		 * @return The currently set ID.
+		 */
+		public String getId() {
+			return id;
+		}
 		
 		/**
 		 * Returns true if an ID has been set; false, otherwise.
@@ -60,6 +77,15 @@ public class MetaData implements OmhObject {
 		 */
 		public void setId(final String id) {
 			this.id = id;
+		}
+		
+		/**
+		 * Returns the currently set timestamp.
+		 * 
+		 * @return The currently set timestamp.
+		 */
+		public DateTime getTimestamp() {
+			return timestamp;
 		}
 		
 		/**

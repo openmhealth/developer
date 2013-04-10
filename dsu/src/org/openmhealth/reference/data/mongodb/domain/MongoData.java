@@ -2,7 +2,6 @@ package org.openmhealth.reference.data.mongodb.domain;
 
 import org.mongojack.MongoCollection;
 import org.openmhealth.reference.data.Registry;
-import org.openmhealth.reference.data.mongodb.MongoDbObject;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MetaData;
 import org.openmhealth.reference.domain.Schema;

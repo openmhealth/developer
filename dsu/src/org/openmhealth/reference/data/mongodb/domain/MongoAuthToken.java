@@ -2,7 +2,6 @@ package org.openmhealth.reference.data.mongodb.domain;
 
 import org.mongojack.MongoCollection;
 import org.openmhealth.reference.data.AuthTokenBin;
-import org.openmhealth.reference.data.mongodb.MongoDbObject;
 import org.openmhealth.reference.domain.AuthToken;
 import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.OmhException;
@@ -45,7 +44,7 @@ public class MongoAuthToken extends AuthToken implements MongoDbObject {
 	 * @throws OmhException The token and/or user-name are null.
 	 */
 	@JsonCreator
-	private MongoAuthToken(
+	protected MongoAuthToken(
 		@JsonProperty(DATABASE_FIELD_ID) final String dbId, 
 		@JsonProperty(JSON_KEY_TOKEN) final String token,
 		@JsonProperty(User.JSON_KEY_USERNAME) final String username,

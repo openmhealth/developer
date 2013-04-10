@@ -159,6 +159,11 @@ public class Schema implements OmhObject {
 
 		this.timeAuthoritative = timeAuthoritative;
 		this.timeZoneAuthoritative = timeZoneAuthoritative;
+		
+		// Make sure the schema is not null.
+		if(schema == null) {
+			throw new OmhException("The schema is null.");
+		}
 		try {
 			this.schema =
 				new Concordia(
@@ -257,8 +262,27 @@ public class Schema implements OmhObject {
 	 *         The ID is invalid.
 	 */
 	public static String validateId(final String id) throws OmhException {
-		// Currently, there are no rules for schema IDs.
-		return id.trim();
+		// Validate that the ID is not null.
+		if(id == null) {
+			throw new OmhException("The ID is null.");
+		}
+		
+		// Remove surrounding whitespace.
+		String idTrimmed = id.trim();
+		
+		// Validate that the ID is not empty or only whitespace.
+		if(idTrimmed.length() == 0) {
+			throw new OmhException("The ID is empty or only whitespace.");
+		}
+		
+		// TODO: Add validation for it beginning with "omh:". Don't forget to
+		// add the test cases.
+		
+		// TODO: Add validation that the string only contain "legal"
+		// characters. Don't forget to add the test cases.
+		
+		// Return the trimmed ID.
+		return idTrimmed;
 	}
 
 	/**

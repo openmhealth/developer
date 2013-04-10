@@ -9,10 +9,11 @@
     <property name="build" location="build" />
     <property name="lib" location="lib" />
     <property name="src" location="src" />
+    <property name="test" location="test"/>
     <property name="web" location="web" />
 
     <!-- Create the list of necessary libraries for compiling. -->
-    <fileset id="compile-dependencies" dir="${lib}">
+    <fileset id="dependencies.compile" dir="${lib}">
         <include name="bson4jackson-2.1.0.jar" />
         <include name="commons-fileupload-1.3.jar" />
         <include name="commons-io-2.4.jar" />
@@ -44,12 +45,18 @@
         <include name="spring-webmvc-3.2.1.RELEASE.jar" />
         <include name="spring-webmvc-portlet-3.2.1.RELEASE.jar" />
     </fileset>
-    <path id="compile-classpath">
-        <fileset refid="compile-dependencies"/>
+    <path id="classpath.compile">
+        <fileset refid="dependencies.compile"/>
+    </path>
+	
+    <!-- Create the list of necessary libraries for testing. -->
+    <path id="classpath.test">
+        <fileset refid="dependencies.compile"/>
+        <pathelement location="${build}/classes"/>
     </path>
     
     <!-- Create the list of necessary libraries for running. -->
-    <fileset id="run-dependencies" dir="${lib}">
+    <fileset id="dependencies.run" dir="${lib}">
         <include name="bson4jackson-2.1.0.jar" />
         <include name="commons-fileupload-1.3.jar" />
         <include name="commons-io-2.4.jar" />
@@ -101,12 +108,34 @@
         	includeantruntime="false">
             
             <src path="${src}"/>
-            <classpath refid="compile-classpath"/>
+        	<src path="${test}"/>
+            <classpath refid="classpath.compile"/>
         </javac>
+    </target>
+	
+    <!-- Target to test the code. -->
+    <target
+        name="test"
+        depends="javac"
+        description="Executes the JUnit tests.">
+        
+        <echo message="----------------------------------------"/>
+        <echo message="- Testing the Java Module              -"/>
+        <echo message="----------------------------------------"/>
+
+        <junit printsummary="yes" haltonfailure="yes">
+            <classpath refid="classpath.test"/>
+            <formatter type="plain" usefile="false"/>
+            <batchtest>
+                <fileset dir="${test}">
+                    <include name="**"/>
+                </fileset>
+            </batchtest>
+        </junit>
     </target>
 
 	<!-- Builds the WAR file. -->
-    <target name="dist" depends="javac" description="Builds the WAR file.">
+    <target name="dist" depends="javac, test" description="Builds the WAR file.">
         <!-- Create the META-INF directory if it doesn't exist. -->
         <mkdir dir="${web}/META-INF" />
     	<!-- Create the directory for the results if they don't exist. -->
@@ -116,7 +145,7 @@
             destfile="${dist}/omh.war">
         	
             <classes dir="${build}/classes" />
-            <lib refid="run-dependencies" />
+            <lib refid="dependencies.run" />
             <webinf dir="${web}/WEB-INF" />
             <metainf dir="${web}/META-INF" />
             <zipfileset dir="${web}">

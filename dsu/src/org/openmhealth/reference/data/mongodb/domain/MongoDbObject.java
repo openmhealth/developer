@@ -1,4 +1,4 @@
-package org.openmhealth.reference.data.mongodb;
+package org.openmhealth.reference.data.mongodb.domain;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;

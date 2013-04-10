@@ -11,6 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <p>
  * A user's authentication token.
  * </p>
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
  *
  * @author John Jenkins
  */
@@ -86,6 +90,17 @@ public class AuthToken implements OmhObject {
 		}
 		if(username == null) {
 			throw new OmhException("The user-name is null.");
+		}
+		if(granted > System.currentTimeMillis()) {
+			throw
+				new OmhException(
+					"An authentication token cannot be granted in the " +
+						"future.");
+		}
+		if(granted > expires) {
+			throw
+				new OmhException(
+					"A token cannot expire before it was granted.");
 		}
 		
 		this.token = token;

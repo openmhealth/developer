@@ -48,9 +48,11 @@ public class User implements OmhObject {
 	/**
 	 * Creates a new user.
 	 * 
-	 * @param username This user's username.
+	 * @param username
+	 *        This user's username.
 	 * 
-	 * @throws OmhException The username was invalid.
+	 * @throws OmhException
+	 *         The username was invalid.
 	 */
 	@JsonCreator
 	public User(
@@ -60,6 +62,15 @@ public class User implements OmhObject {
 		
 		if(username == null) {
 			throw new OmhException("The username is null.");
+		}
+		if(username.trim().length() == 0) {
+			throw new OmhException("The username is empty.");
+		}
+		if(password == null) {
+			throw new OmhException("The password is null.");
+		}
+		if(password.trim().length() == 0) {
+			throw new OmhException("The password is empty.");
 		}
 		
 		this.username = validateUsername(username);
@@ -78,11 +89,13 @@ public class User implements OmhObject {
 	/**
 	 * Checks if a given password matches the database's password.
 	 * 
-	 * @param password The plain-text password to check.
+	 * @param password
+	 *        The plain-text password to check.
 	 * 
 	 * @return True if the passwords match; false, otherwise.
 	 * 
-	 * @throws OmhException The password is null.
+	 * @throws OmhException
+	 *         The password is null.
 	 */
 	public boolean checkPassword(final String password) throws OmhException {
 		// Validate the parameter.
@@ -97,11 +110,13 @@ public class User implements OmhObject {
 	/**
 	 * Validates that a user-name is valid.
 	 * 
-	 * @param username The user-name to validate.
+	 * @param username
+	 *        The user-name to validate.
 	 * 
 	 * @return The trimmed user-name.
 	 * 
-	 * @throws OmhException The user-name was invalid.
+	 * @throws OmhException
+	 *         The user-name was invalid.
 	 */
 	public static String validateUsername(
 		final String username)

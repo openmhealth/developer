@@ -73,12 +73,12 @@
     </session-config>
 
     <!--  
-        The main configuration file for this Spring web application.  
+        The main configuration files for this Spring web application.  
      -->  
     <context-param>  
         <param-name>contextConfigLocation</param-name>  
-        <param-value>/WEB-INF/config/spring-payload-config.xml</param-value>  
-    </context-param>  
+        <param-value>/WEB-INF/config/spring/*.xml</param-value>  
+    </context-param>
     
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
 <!--                               Listeners                                -->
@@ -103,7 +103,10 @@
         </listener-class>
     </listener>
     
-    <!-- Sets up logging. -->
+    <!-- 
+        Sets up logging. This must come after the configuration file import
+        listener.
+     -->
     <listener>
         <listener-class>
             org.openmhealth.reference.listener.LogSetup
@@ -121,8 +124,8 @@
     </listener>
   
     <!--  
-        Loads the Spring web application context using the config file defined
-        above.  
+        Loads the Spring web application context using the configuration file
+        defined above.  
     -->  
     <listener>  
         <listener-class>
@@ -133,8 +136,9 @@
      <!--
         An example listener for when a new session is created or invalidated.
         It responds to these events because it implements the
-        HttpSessionListener interface.
-     -->
+        HttpSessionListener interface. These are generally not used in favor of
+        filters (see below).
+      -->
      <!-- 
      <listener>
         <listener-class>
@@ -170,7 +174,7 @@
      
     <!-- Exception Filter -->
     <filter>
-        <description>Catches any DomainExceptions that are thrown and converts them into their appropriate HTTP status codes.</description>
+        <description>Catches any exceptions that are thrown and converts them into their appropriate HTTP status codes.</description>
         <display-name>Exception Filter</display-name>
         <filter-name>exceptionFilter</filter-name>
         <filter-class>
@@ -212,9 +216,9 @@
     
     <!--  
         The Spring Dispatcher Servlet for the REST services. The
-        'contextConfiguration' parameter with an empty value means that the  
+        'contextConfigLocation' parameter with an empty value means that the  
         Spring Context won't try to load a default file called
-        restservices-servlet.xml.  
+        "restservices-servlet.xml".  
     -->  
     <servlet>  
         <servlet-name>omhController</servlet-name>  
@@ -228,8 +232,7 @@
         <load-on-startup>1</load-on-startup>  
     </servlet>  
     <!--  
-        This will be responsible for handling all other requests that are not
-        defined above which should be limited to the 
+        This will be responsible for handling all requests.
     -->  
     <servlet-mapping>  
         <servlet-name>omhController</servlet-name>  

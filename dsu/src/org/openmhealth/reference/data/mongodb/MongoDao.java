@@ -73,9 +73,13 @@ public class MongoDao extends Dao {
 		}
 		
 		// Instantiate the specific components.
-		new MongoAuthTokenBin();
+		new MongoAuthenticationTokenBin();
+		new MongoAuthorizationCodeBin();
+		new MongoAuthorizationCodeVerificationBin();
+		new MongoAuthorizationTokenBin();
 		new MongoDataSet();
 		new MongoRegistry();
+		new MongoThirdPartyBin();
 		new MongoUserBin();
 	}
 	

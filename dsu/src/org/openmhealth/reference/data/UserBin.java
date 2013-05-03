@@ -30,10 +30,10 @@ public abstract class UserBin {
 	 * The name of the DB document/table/whatever that contains the user
 	 * definitions.
 	 */
-	public static final String DB_NAME_USER_BIN = "users";
+	public static final String DB_NAME = "users";
 	
 	/**
-	 * The instance of this MongoUserBin to use. 
+	 * The instance of this UserBin to use. 
 	 */
 	protected static UserBin instance;
 

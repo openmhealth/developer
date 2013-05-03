@@ -17,9 +17,17 @@ package org.openmhealth.reference.domain;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+
 /**
  * <p>This is a marker interface for all domain objects.</p>
  *
  * @author John Jenkins
  */
+@JsonAutoDetect(
+	fieldVisibility = Visibility.DEFAULT,
+	getterVisibility = Visibility.NONE,
+	setterVisibility = Visibility.NONE,
+	creatorVisibility = Visibility.DEFAULT)
 public interface OmhObject extends Serializable {}

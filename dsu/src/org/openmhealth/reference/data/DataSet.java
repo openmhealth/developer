@@ -29,7 +29,7 @@ public abstract class DataSet {
 	/**
 	 * The name of the DB document/table/whatever that contains the data.
 	 */
-	public static final String DATA_DB_NAME = "data";
+	public static final String DB_NAME = "data";
 	
 	/**
 	 * The instance of this MongoDataSet to use. 

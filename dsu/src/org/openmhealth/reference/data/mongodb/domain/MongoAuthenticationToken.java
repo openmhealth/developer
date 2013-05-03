@@ -16,8 +16,8 @@
 package org.openmhealth.reference.data.mongodb.domain;
 
 import org.mongojack.MongoCollection;
-import org.openmhealth.reference.data.AuthTokenBin;
-import org.openmhealth.reference.domain.AuthToken;
+import org.openmhealth.reference.data.AuthenticationTokenBin;
+import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.OmhException;
 
@@ -27,13 +27,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * <p>
- * A MongoDB extension of the {@link AuthToken} type.
+ * A MongoDB extension of the {@link AuthenticationToken} type.
  * </p>
  *
  * @author John Jenkins
  */
-@MongoCollection(name = AuthTokenBin.AUTH_TOKEN_BIN_DB_NAME)
-public class MongoAuthToken extends AuthToken implements MongoDbObject {
+@MongoCollection(name = AuthenticationTokenBin.DB_NAME)
+public class MongoAuthenticationToken
+	extends AuthenticationToken
+	implements MongoDbObject {
+	
 	/**
 	 * The ID for this class which is used for serialization. 
 	 */
@@ -46,7 +49,7 @@ public class MongoAuthToken extends AuthToken implements MongoDbObject {
 	private final String id;
 
 	/**
-	 * Creates an {@link AuthToken} object via injection from the data layer.
+	 * Creates an {@link AuthenticationToken} object via injection from the data layer.
 	 * 
 	 * @param token The authentication token.
 	 * 
@@ -59,7 +62,7 @@ public class MongoAuthToken extends AuthToken implements MongoDbObject {
 	 * @throws OmhException The token and/or user-name are null.
 	 */
 	@JsonCreator
-	protected MongoAuthToken(
+	protected MongoAuthenticationToken(
 		@JsonProperty(DATABASE_FIELD_ID) final String dbId, 
 		@JsonProperty(JSON_KEY_TOKEN) final String token,
 		@JsonProperty(User.JSON_KEY_USERNAME) final String username,

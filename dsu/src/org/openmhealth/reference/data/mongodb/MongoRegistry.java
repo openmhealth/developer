@@ -91,7 +91,7 @@ public class MongoRegistry extends Registry {
 		JacksonDBCollection<MongoSchema, Object> collection =
 			JacksonDBCollection
 				.wrap(
-					db.getCollection(REGISTRY_DB_NAME),
+					db.getCollection(DB_NAME),
 					MongoSchema.class,
 					Object.class,
 					JSON_MAPPER);

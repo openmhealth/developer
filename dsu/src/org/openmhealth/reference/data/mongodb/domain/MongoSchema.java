@@ -20,6 +20,7 @@ import name.jenkins.paul.john.concordia.validator.ValidationController;
 import org.mongojack.MongoCollection;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.domain.Schema;
+import org.openmhealth.reference.domain.ThirdParty;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -30,12 +31,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * <p>
- * A MongoDB extension of the {@link Schema} type.
+ * The MongoDB-specific variant of a {@link Schema} object.
  * </p>
  *
  * @author John Jenkins
  */
-@MongoCollection(name = Registry.REGISTRY_DB_NAME)
+@MongoCollection(name = Registry.DB_NAME)
 public class MongoSchema extends Schema implements MongoDbObject {
 	/**
 	 * The ID for this class which is used for serialization. 
@@ -49,7 +50,10 @@ public class MongoSchema extends Schema implements MongoDbObject {
 	private final String id;
 
 	/**
-	 * Creates a new schema (registry entry).
+	 * Used for deserializing a MongoDB-variant of a {@link ThirdParty} entity.
+	 * 
+	 * @param dbId
+	 * 		  The MongoDB ID for this entity.
 	 * 
 	 * @param id
 	 *        The ID for this schema.

@@ -19,12 +19,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmhealth.reference.data.AuthTokenBin;
+import org.openmhealth.reference.data.AuthenticationTokenBin;
 import org.openmhealth.reference.data.DataSet;
 import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.data.UserBin;
-import org.openmhealth.reference.domain.AuthToken;
+import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MetaData;
 import org.openmhealth.reference.domain.Schema;
@@ -98,8 +98,6 @@ public class DataWriteRequest extends Request {
 		final String data)		
 		throws OmhException {
 		
-		super(0L, 1L);
-		
 		if(authToken == null) {
 			throw
 				new InvalidAuthenticationException(
@@ -147,7 +145,7 @@ public class DataWriteRequest extends Request {
 		
 		// Get the authentication token object based on the parameterized
 		// authentication token.
-		AuthToken tokenObject = AuthTokenBin.getInstance().getUser(authToken);
+		AuthenticationToken tokenObject = AuthenticationTokenBin.getInstance().getToken(authToken);
 		if(tokenObject == null) {
 			throw new OmhException("The token is unknown.");
 		}

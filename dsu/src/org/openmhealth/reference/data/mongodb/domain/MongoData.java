@@ -16,7 +16,7 @@
 package org.openmhealth.reference.data.mongodb.domain;
 
 import org.mongojack.MongoCollection;
-import org.openmhealth.reference.data.Registry;
+import org.openmhealth.reference.data.DataSet;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MetaData;
 import org.openmhealth.reference.domain.Schema;
@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  *
  * @author John Jenkins
  */
-@MongoCollection(name = Registry.REGISTRY_DB_NAME)
+@MongoCollection(name = DataSet.DB_NAME)
 public class MongoData extends Data implements MongoDbObject {
 	/**
 	 * The ID for this class which is used for serialization. 

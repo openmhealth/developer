@@ -21,7 +21,7 @@ import org.openmhealth.reference.exception.OmhException;
 
 /**
  * <p>
- * Test everything about the {@link AuthToken} class.
+ * Test everything about the {@link AuthenticationToken} class.
  * </p>
  *
  * @author John Jenkins
@@ -53,7 +53,7 @@ public class AuthTokenTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthTokenStringStringLongLongTokenNull() {
-		new AuthToken(null, USERNAME, GRANTED, EXPIRES);
+		new AuthenticationToken(null, USERNAME, GRANTED, EXPIRES);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class AuthTokenTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthTokenStringStringLongLongUsernameNull() {
-		new AuthToken(TOKEN, null, GRANTED, EXPIRES);
+		new AuthenticationToken(TOKEN, null, GRANTED, EXPIRES);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class AuthTokenTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthTokenStringStringLongLongGrantedInFuture() {
-		new AuthToken(TOKEN, USERNAME, GRANTED + (60000), EXPIRES);
+		new AuthenticationToken(TOKEN, USERNAME, GRANTED + (60000), EXPIRES);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class AuthTokenTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthTokenStringStringLongLongExpiresBeforeGranted() {
-		new AuthToken(TOKEN, USERNAME, GRANTED, GRANTED - 1);
+		new AuthenticationToken(TOKEN, USERNAME, GRANTED, GRANTED - 1);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testAuthTokenStringStringLongLongExpiresEqualsGranted() {
-		new AuthToken(TOKEN, USERNAME, GRANTED, GRANTED);
+		new AuthenticationToken(TOKEN, USERNAME, GRANTED, GRANTED);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testAuthTokenStringStringLongLong() {
-		new AuthToken(TOKEN, USERNAME, GRANTED, EXPIRES);
+		new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class AuthTokenTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthTokenUserNull() {
-		new AuthToken(null);
+		new AuthenticationToken(null);
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testAuthTokenUser() {
-		new AuthToken(USER);
+		new AuthenticationToken(USER);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetToken() {
-		AuthToken authToken = new AuthToken(TOKEN, USERNAME, GRANTED, EXPIRES);
+		AuthenticationToken authToken = new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
 		Assert.assertEquals(TOKEN, authToken.getToken());
 	}
 
@@ -129,7 +129,7 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetTokenUser() {
-		AuthToken authToken = new AuthToken(USER);
+		AuthenticationToken authToken = new AuthenticationToken(USER);
 		Assert.assertNotNull(authToken.getToken());
 	}
 
@@ -138,7 +138,7 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetUsername() {
-		AuthToken authToken = new AuthToken(TOKEN, USERNAME, GRANTED, EXPIRES);
+		AuthenticationToken authToken = new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
 		Assert.assertEquals(USERNAME, authToken.getUsername());
 	}
 
@@ -149,7 +149,7 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetUsernameUser() {
-		AuthToken authToken = new AuthToken(USER);
+		AuthenticationToken authToken = new AuthenticationToken(USER);
 		Assert.assertEquals(USER.getUsername(), authToken.getUsername());
 	}
 
@@ -158,7 +158,7 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetGranted() {
-		AuthToken authToken = new AuthToken(TOKEN, USERNAME, GRANTED, EXPIRES);
+		AuthenticationToken authToken = new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
 		Assert.assertEquals(GRANTED, authToken.getGranted());
 	}
 
@@ -167,7 +167,7 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetExpires() {
-		AuthToken authToken = new AuthToken(TOKEN, USERNAME, GRANTED, EXPIRES);
+		AuthenticationToken authToken = new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
 		Assert.assertEquals(EXPIRES, authToken.getExpires());
 	}
 
@@ -177,10 +177,10 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetExpiresUser() {
-		AuthToken authToken = new AuthToken(USER);
+		AuthenticationToken authToken = new AuthenticationToken(USER);
 		Assert
 			.assertEquals(
-				authToken.getGranted() + AuthToken.AUTH_TOKEN_LIFETIME,
+				authToken.getGranted() + AuthenticationToken.AUTH_TOKEN_LIFETIME,
 				authToken.getExpires());
 	}
 }

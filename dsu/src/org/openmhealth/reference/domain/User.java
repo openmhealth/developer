@@ -100,6 +100,15 @@ public class User implements OmhObject {
 	public String getUsername() {
 		return username;
 	}
+
+	/**
+	 * Returns the user's hashed password.
+	 * 
+	 * @return The user's hashed password. 
+	 */
+	public String getPassword() {
+		return password;
+	}
 	
 	/**
 	 * Checks if a given password matches the database's password.

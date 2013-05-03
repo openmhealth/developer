@@ -15,7 +15,7 @@
  ******************************************************************************/
 package org.openmhealth.reference.data;
 
-import org.openmhealth.reference.domain.AuthToken;
+import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.exception.OmhException;
 
 /**
@@ -25,23 +25,23 @@ import org.openmhealth.reference.exception.OmhException;
  *
  * @author John Jenkins
  */
-public abstract class AuthTokenBin {
+public abstract class AuthenticationTokenBin {
 	/**
 	 * The name of the DB document/table/whatever that contains the
 	 * authentication tokens.
 	 */
-	public static final String AUTH_TOKEN_BIN_DB_NAME = "auth_token_bin";
+	public static final String DB_NAME = "authentication_token_bin";
 	
 	/**
-	 * The instance of this AuthTokenBin to use. 
+	 * The instance of this AuthenticationTokenBin to use. 
 	 */
-	protected static AuthTokenBin instance;
+	protected static AuthenticationTokenBin instance;
 	
 	/**
 	 * Default constructor.
 	 */
-	protected AuthTokenBin() {
-		AuthTokenBin.instance = this;
+	protected AuthenticationTokenBin() {
+		instance = this;
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public abstract class AuthTokenBin {
 	 * 
 	 * @return The singular instance of this class.
 	 */
-	public static AuthTokenBin getInstance() {
+	public static AuthenticationTokenBin getInstance() {
 		return instance;
 	}
 
@@ -62,19 +62,24 @@ public abstract class AuthTokenBin {
 	 * @throws OmhException
 	 *         The token is null.
 	 */
-	public abstract void storeToken(final AuthToken token) throws OmhException;
+	public abstract void storeToken(
+		final AuthenticationToken token)
+		throws OmhException;
 	
 	/**
-	 * Retrieves the user to which an authentication token has been applied.
+	 * Retrieves the {@link AuthenticationToken} object based on the given
+	 * token string.
 	 * 
 	 * @param token
 	 *        The authentication token.
 	 * 
-	 * @return The user to which the authentication token belongs or null if
-	 *         the the authentication token does not exist or is expired.
+	 * @return The {@link AuthenticationToken} or null if the authentication 
+	 * 		   token string does not exist or is expired.
 	 * 
 	 * @throws OmhException
 	 *         Multiple copies of the same authentication token exist.
 	 */
-	public abstract AuthToken getUser(final String token) throws OmhException;
+	public abstract AuthenticationToken getToken(
+		final String token)
+		throws OmhException;
 }

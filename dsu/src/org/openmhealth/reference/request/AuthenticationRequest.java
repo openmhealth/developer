@@ -15,9 +15,9 @@
  ******************************************************************************/
 package org.openmhealth.reference.request;
 
-import org.openmhealth.reference.data.AuthTokenBin;
+import org.openmhealth.reference.data.AuthenticationTokenBin;
 import org.openmhealth.reference.data.UserBin;
-import org.openmhealth.reference.domain.AuthToken;
+import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.InvalidAuthenticationException;
 import org.openmhealth.reference.exception.OmhException;
@@ -29,7 +29,7 @@ import org.openmhealth.reference.exception.OmhException;
  *
  * @author John Jenkins
  */
-public class AuthTokenRequest extends Request {
+public class AuthenticationRequest extends Request {
 	/**
 	 * The message to return to the user if the authentication fails. This
 	 * should be used in all non-system failure cases to mitigate leaking any
@@ -56,23 +56,26 @@ public class AuthTokenRequest extends Request {
 	 * 
 	 * @throws OmhException The user-name or password was null.
 	 */
-	public AuthTokenRequest(
+	public AuthenticationRequest(
 		final String username,
 		final String password)
 		throws OmhException {
 		
-		// There is no paging for this request, so dummy values can be given.
-		super(0L, 1L);
-		
+		// Validate the username.
 		if(username == null) {
 			throw new OmhException("The username is missing.");
 		}
+		else {
+			this.username = username;
+		}
+		
+		// Validate the password.
 		if(password == null) {
 			throw new OmhException("The password is missing.");
 		}
-		
-		this.username = username;
-		this.password = password;
+		else {
+			this.password = password;
+		}
 	}
 
 	/*
@@ -90,6 +93,39 @@ public class AuthTokenRequest extends Request {
 		}
 
 		// Get the user.
+		User user = getUser(username, password);
+		
+		// Create the user's authentication token.
+		AuthenticationToken token = new AuthenticationToken(user);
+		
+		// Save the token.
+		AuthenticationTokenBin.getInstance().storeToken(token);
+		
+		// Return the token to the user.
+		setData(token.getToken());
+	}
+	
+	/**
+	 * Retrieves a {@link User} object from the given credentials if one exists
+	 * or throws an exception if they are invalid.
+	 * 
+	 * @param username
+	 *        The user's username.
+	 * 
+	 * @param password
+	 *        The user's password.
+	 * 
+	 * @return The authenticated User object.
+	 * 
+	 * @throws OmhException
+	 *         The username was unknown or the password was incorrect.
+	 */
+	public static User getUser(
+		final String username,
+		final String password) 
+		throws OmhException {
+		
+		// Get the user.
 		User user = UserBin.getInstance().getUser(username);
 		
 		// Make sure the user exists.
@@ -106,13 +142,6 @@ public class AuthTokenRequest extends Request {
 					MESSAGE_AUTHENTICATION_FAILURE);
 		}
 		
-		// Create the user's authentication token.
-		AuthToken token = new AuthToken(user);
-		
-		// Save the token.
-		AuthTokenBin.getInstance().storeToken(token);
-		
-		// Return the token to the user.
-		setData(token.getToken());
+		return user;
 	}
 }

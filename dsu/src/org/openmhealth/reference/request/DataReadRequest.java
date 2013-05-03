@@ -19,12 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openmhealth.reference.data.AuthTokenBin;
+import org.openmhealth.reference.data.AuthenticationTokenBin;
 import org.openmhealth.reference.data.DataSet;
 import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.data.UserBin;
-import org.openmhealth.reference.domain.AuthToken;
+import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.ColumnList;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.Schema;
@@ -39,7 +39,7 @@ import org.openmhealth.reference.exception.OmhException;
  *
  * @author John Jenkins
  */
-public class DataReadRequest extends Request {
+public class DataReadRequest extends ListRequest {
 	/**
 	 * The meta-data key that indicates the total number of data points that
 	 * matched the query before paging was applied.
@@ -142,7 +142,7 @@ public class DataReadRequest extends Request {
 		
 		// Get the authentication token object based on the parameterized
 		// authentication token.
-		AuthToken tokenObject = AuthTokenBin.getInstance().getUser(authToken);
+		AuthenticationToken tokenObject = AuthenticationTokenBin.getInstance().getToken(authToken);
 		if(tokenObject == null) {
 			throw new OmhException("The token is unknown.");
 		}

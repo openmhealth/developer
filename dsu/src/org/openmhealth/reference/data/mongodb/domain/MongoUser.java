@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author John Jenkins
  */
-@MongoCollection(name = UserBin.DB_NAME_USER_BIN)
+@MongoCollection(name = UserBin.DB_NAME)
 public class MongoUser extends User implements MongoDbObject {
 	/**
 	 * The ID for this class which is used for serialization. 

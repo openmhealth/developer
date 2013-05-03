@@ -41,7 +41,7 @@ public class MongoDataSet extends DataSet {
 	/**
 	 * Default constructor.
 	 */
-	public MongoDataSet() {
+	protected MongoDataSet() {
 		// Do nothing.
 	}
 
@@ -64,7 +64,7 @@ public class MongoDataSet extends DataSet {
 		// Get the connection to the data with the Jackson wrapper.
 		JacksonDBCollection<MongoData, Object> collection =
 			JacksonDBCollection
-				.wrap(db.getCollection(DATA_DB_NAME), MongoData.class);
+				.wrap(db.getCollection(DB_NAME), MongoData.class);
 		
 		// Build the query.
 		QueryBuilder queryBuilder = QueryBuilder.start();
@@ -137,7 +137,7 @@ public class MongoDataSet extends DataSet {
 		// Get the connection to the data with the Jackson wrapper.
 		JacksonDBCollection<Data, Object> collection =
 			JacksonDBCollection
-				.wrap(db.getCollection(DATA_DB_NAME), Data.class);
+				.wrap(db.getCollection(DB_NAME), Data.class);
 		
 		// Insert the data.
 		collection.insert(data);

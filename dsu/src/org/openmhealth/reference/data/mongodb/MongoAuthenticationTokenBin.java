@@ -17,9 +17,9 @@ package org.openmhealth.reference.data.mongodb;
 
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
-import org.openmhealth.reference.data.AuthTokenBin;
-import org.openmhealth.reference.data.mongodb.domain.MongoAuthToken;
-import org.openmhealth.reference.domain.AuthToken;
+import org.openmhealth.reference.data.AuthenticationTokenBin;
+import org.openmhealth.reference.data.mongodb.domain.MongoAuthenticationToken;
+import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.mongodb.BasicDBObject;
@@ -32,37 +32,42 @@ import com.mongodb.QueryBuilder;
  *
  * @author John Jenkins
  */
-public class MongoAuthTokenBin extends AuthTokenBin {
+public class MongoAuthenticationTokenBin extends AuthenticationTokenBin {
 	/**
 	 * Default constructor.
 	 */
-	protected MongoAuthTokenBin() {
+	protected MongoAuthenticationTokenBin() {
 		// Do nothing.
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openmhealth.reference.data.AuthTokenBin#storeToken(org.openmhealth.reference.domain.AuthToken)
+	 * @see org.openmhealth.reference.data.AuthenticationTokenBin#storeToken(org.openmhealth.reference.domain.AuthenticationToken)
 	 */
 	@Override
-	public void storeToken(final AuthToken token) throws OmhException {
+	public void storeToken(final AuthenticationToken token) throws OmhException {
 		// Validate the parameter.
 		if(token == null) {
 			throw new OmhException("The token is null.");
 		}
 		
 		// Get the authentication token collection.
-		JacksonDBCollection<AuthToken, Object> collection =
+		JacksonDBCollection<AuthenticationToken, Object> collection =
 			JacksonDBCollection
 				.wrap(
 					MongoDao
 						.getInstance()
 						.getDb()
-						.getCollection(AUTH_TOKEN_BIN_DB_NAME),
-					AuthToken.class);
+						.getCollection(DB_NAME),
+					AuthenticationToken.class);
 		
 		// Make sure the token doesn't already exist.
-		if(collection.count(new BasicDBObject(AuthToken.JSON_KEY_TOKEN, 1)) > 0) {
+		if(collection
+			.count(
+				new BasicDBObject(
+					AuthenticationToken.JSON_KEY_TOKEN,
+					token.getToken())) > 0) {
+			
 			throw new OmhException("The token already exists.");
 		}
 		
@@ -72,33 +77,38 @@ public class MongoAuthTokenBin extends AuthTokenBin {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.openmhealth.reference.data.AuthTokenBin#getUser(java.lang.String)
+	 * @see org.openmhealth.reference.data.AuthenticationTokenBin#getUser(java.lang.String)
 	 */
 	@Override
-	public AuthToken getUser(final String token) throws OmhException {
-		// Get the connection to the registry with the Jackson wrapper.
-		JacksonDBCollection<MongoAuthToken, Object> collection =
+	public AuthenticationToken getToken(
+		final String token)
+		throws OmhException {
+		
+		// Get the connection to the authentication token bin with the Jackson
+		// wrapper.
+		JacksonDBCollection<MongoAuthenticationToken, Object> collection =
 			JacksonDBCollection
 				.wrap(
 					MongoDao
 						.getInstance()
 						.getDb()
-						.getCollection(AUTH_TOKEN_BIN_DB_NAME),
-					MongoAuthToken.class);
+						.getCollection(DB_NAME),
+					MongoAuthenticationToken.class);
 		
 		// Build the query.
 		QueryBuilder queryBuilder = QueryBuilder.start();
 		
-		// Add the authentication token to the query
-		queryBuilder.and(MongoAuthToken.JSON_KEY_TOKEN).is(token);
+		// Add the authentication token to the query.
+		queryBuilder.and(AuthenticationToken.JSON_KEY_TOKEN).is(token);
 		
 		// Add the expiration timer to ensure that this token has not expired.
 		queryBuilder
-			.and(MongoAuthToken.JSON_KEY_EXPIRES)
+			.and(MongoAuthenticationToken.JSON_KEY_EXPIRES)
 			.greaterThan(System.currentTimeMillis());
 		
 		// Execute query.
-		DBCursor<MongoAuthToken> result = collection.find(queryBuilder.get());
+		DBCursor<MongoAuthenticationToken> result =
+			collection.find(queryBuilder.get());
 		
 		// If multiple authentication tokens were returned, that is a violation
 		// of the system.

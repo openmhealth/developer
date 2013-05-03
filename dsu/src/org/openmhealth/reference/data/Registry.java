@@ -29,7 +29,7 @@ public abstract class Registry {
 	/**
 	 * The name of the DB document/table/whatever that contains the registry.
 	 */
-	public static final String REGISTRY_DB_NAME = "registry";
+	public static final String DB_NAME = "registry";
 	
 	/**
 	 * The instance of this Registry to use. 

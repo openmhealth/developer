@@ -64,7 +64,7 @@ public class MongoUserBin extends UserBin {
 				.wrap(
 					MongoDao.getInstance()
 						.getDb()
-						.getCollection(DB_NAME_USER_BIN),
+						.getCollection(DB_NAME),
 					MongoUser.class);
 		
 		// Build the query.

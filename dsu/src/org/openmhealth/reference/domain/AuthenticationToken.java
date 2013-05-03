@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author John Jenkins
  */
-public class AuthToken implements OmhObject {
+public class AuthenticationToken implements OmhObject {
 	/**
 	 * The version of this class for serialization purposes.
 	 */
@@ -80,7 +80,8 @@ public class AuthToken implements OmhObject {
 	private final long expires;
 
 	/**
-	 * Creates an {@link AuthToken} object via injection from the data layer.
+	 * Creates an {@link AuthenticationToken} object via injection from the
+	 * data layer.
 	 * 
 	 * @param token The authentication token.
 	 * 
@@ -93,7 +94,7 @@ public class AuthToken implements OmhObject {
 	 * @throws OmhException The token and/or user-name are null.
 	 */
 	@JsonCreator
-	public AuthToken(
+	public AuthenticationToken(
 		@JsonProperty(JSON_KEY_TOKEN) final String token,
 		@JsonProperty(User.JSON_KEY_USERNAME) final String username,
 		@JsonProperty(JSON_KEY_GRANTED) final long granted,
@@ -131,7 +132,7 @@ public class AuthToken implements OmhObject {
 	 * 
 	 * @throws OmhException The user is null.
 	 */
-	public AuthToken(final User user) throws OmhException {
+	public AuthenticationToken(final User user) throws OmhException {
 		if(user == null) {
 			throw new OmhException("The user is null.");
 		}

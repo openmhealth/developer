@@ -145,7 +145,8 @@ public class DataWriteRequest extends Request {
 		
 		// Get the authentication token object based on the parameterized
 		// authentication token.
-		AuthenticationToken tokenObject = AuthenticationTokenBin.getInstance().getToken(authToken);
+		AuthenticationToken tokenObject =
+			AuthenticationTokenBin.getInstance().getToken(authToken);
 		if(tokenObject == null) {
 			throw new OmhException("The token is unknown.");
 		}

@@ -30,6 +30,7 @@ import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.Schema;
 import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.InvalidAuthenticationException;
+import org.openmhealth.reference.exception.NoSuchSchemaException;
 import org.openmhealth.reference.exception.OmhException;
 
 /**
@@ -132,7 +133,7 @@ public class DataReadRequest extends ListRequest {
 		// Check to be sure the schema is known.
 		if(Registry.getInstance().getSchemas(schemaId, version, 0, 1).count() == 0) {
 			throw
-				new OmhException(
+				new NoSuchSchemaException(
 					"The schema ID, '" +
 						schemaId +
 						"', and version, '" +
@@ -142,7 +143,8 @@ public class DataReadRequest extends ListRequest {
 		
 		// Get the authentication token object based on the parameterized
 		// authentication token.
-		AuthenticationToken tokenObject = AuthenticationTokenBin.getInstance().getToken(authToken);
+		AuthenticationToken tokenObject =
+			AuthenticationTokenBin.getInstance().getToken(authToken);
 		if(tokenObject == null) {
 			throw new OmhException("The token is unknown.");
 		}

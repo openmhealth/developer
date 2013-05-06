@@ -50,6 +50,7 @@ import org.openmhealth.reference.request.AuthenticationRequest;
 import org.openmhealth.reference.request.DataReadRequest;
 import org.openmhealth.reference.request.DataWriteRequest;
 import org.openmhealth.reference.request.ListRequest;
+import org.openmhealth.reference.request.OauthRegistrationRequest;
 import org.openmhealth.reference.request.Request;
 import org.openmhealth.reference.request.SchemaRequest;
 import org.springframework.stereotype.Controller;
@@ -179,6 +180,57 @@ public class Version1 {
 		return
 			handleRequest(
 				new AuthenticationRequest(username, password), response);
+	}
+
+	/**
+	 * Creates a registration request for a third-party ("client" in OAuth
+	 * parlance).
+	 * 
+	 * @param authToken
+	 *        The user's authentication token.
+	 * 
+	 * @param name
+	 *        The third-party's name.
+	 * 
+	 * @param description
+	 *        The third-party's description.
+	 * 
+	 * @param redirectUri
+	 *        The location to redirect the user to after they have responded to
+	 *        an authorization request from this third-party.
+	 * 
+	 * @param response
+	 *        The HTTP response.
+	 */
+	@RequestMapping(
+		value = "auth/oauth/registration",
+		method = RequestMethod.POST)
+	public void thirdPartyRegistration(
+		@RequestParam(
+			value = PARAM_AUTHENTICATION_AUTH_TOKEN,
+			required = true)
+			final String authToken,
+		@RequestParam(
+			value = ThirdParty.JSON_KEY_NAME,
+			required = true)
+			final String name,
+		@RequestParam(
+			value = ThirdParty.JSON_KEY_DESCRIPTION,
+			required = true)
+			final String description,
+		@RequestParam(
+			value = ThirdParty.JSON_KEY_REDIRECT_URI,
+			required = true)
+			final String redirectUri,
+		final HttpServletResponse response) {
+		
+		handleRequest(
+			new OauthRegistrationRequest(
+				authToken, 
+				name, 
+				description, 
+				redirectUri),
+			response);
 	}
 	
 	/**

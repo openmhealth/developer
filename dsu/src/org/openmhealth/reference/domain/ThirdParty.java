@@ -35,10 +35,6 @@ public class ThirdParty implements OmhObject {
 	 */
 	public static final String JSON_KEY_SHARED_SECRET = "sharedSecret";
 	/**
-	 * The JSON key for the URI.
-	 */
-	public static final String JSON_KEY_REDIRECT_URI = "redirectUri";
-	/**
 	 * The JSON key for the name.
 	 */
 	public static final String JSON_KEY_NAME = "name";
@@ -46,6 +42,10 @@ public class ThirdParty implements OmhObject {
 	 * The JSON key for the description.
 	 */
 	public static final String JSON_KEY_DESCRIPTION = "description";
+	/**
+	 * The JSON key for the redirect URI.
+	 */
+	public static final String JSON_KEY_REDIRECT_URI = "redirectUri";
 
 	/**
 	 * The user that created this third-party identity.
@@ -63,12 +63,6 @@ public class ThirdParty implements OmhObject {
 	@JsonProperty(JSON_KEY_SHARED_SECRET)
 	private final String sharedSecret;
 	/**
-	 * The URI to use to redirect the user after authorization has been granted
-	 * or not.
-	 */
-	@JsonProperty(JSON_KEY_REDIRECT_URI)
-	private final URI redirectUri;
-	/**
 	 * A user-friendly name for this third-party.
 	 */
 	@JsonProperty(JSON_KEY_NAME)
@@ -78,6 +72,12 @@ public class ThirdParty implements OmhObject {
 	 */
 	@JsonProperty(JSON_KEY_DESCRIPTION)
 	private final String description;
+	/**
+	 * The URI to use to redirect the user after authorization has been granted
+	 * or not.
+	 */
+	@JsonProperty(JSON_KEY_REDIRECT_URI)
+	private final URI redirectUri;
 
 	/**
 	 * Creates a new third-party entity created by some user with a given
@@ -100,19 +100,65 @@ public class ThirdParty implements OmhObject {
 	 *         Any of the parameters is null or empty.
 	 */
 	public ThirdParty(
-		final String owner,
+		final User owner,
 		final String name,
 		final String description,
 		final URI redirectUri)
 		throws OmhException {
-
-		this(
-			owner, 
-			UUID.randomUUID().toString(), 
-			UUID.randomUUID().toString(), 
-			name,
-			description,
-			redirectUri);
+		
+		// Validate the owner.
+		if(owner == null) {
+			throw new OmhException("The owner is null.");
+		}
+		else {
+			this.owner = owner.getUsername();
+		}
+		
+		// Validate the name.
+		if(name == null) {
+			throw new OmhException("The name is null.");
+		}
+		else {
+			// Trim the name.
+			String trimmedName = name.trim();
+			
+			// Verify that the name isn't empty.
+			if(trimmedName.length() == 0) {
+				throw new OmhException("The name is empty.");
+			}
+			else {
+				this.name = name;
+			}
+		}
+		
+		// Validate the description.
+		if(description == null) {
+			throw new OmhException("The description is null.");
+		}
+		else {
+			// Trim the description.
+			String trimmedDescription = description.trim();
+			
+			// Verify that the description isn't empty.
+			if(trimmedDescription.length() == 0) {
+				throw new OmhException("The description is empty.");
+			}
+			else {
+				this.description = description;
+			}
+		}
+		
+		// Validate the redirect URI.
+		if(redirectUri == null) {
+			throw new OmhException("The redirect URI is invalid.");
+		}
+		else {
+			this.redirectUri = redirectUri;
+		}
+		
+		// Generate a random ID and secret for this third-party.
+		this.id = UUID.randomUUID().toString();
+		this.sharedSecret = UUID.randomUUID().toString();
 	}
 	
 	/**
@@ -250,15 +296,6 @@ public class ThirdParty implements OmhObject {
 	}
 	
 	/**
-	 * Returns the redirect URI.
-	 * 
-	 * @return The redirect URI.
-	 */
-	public URI getRedirectUri() {
-		return redirectUri;
-	}
-	
-	/**
 	 * Returns the name.
 	 * 
 	 * @return The name.
@@ -274,5 +311,14 @@ public class ThirdParty implements OmhObject {
 	 */
 	public String getDescription() {
 		return description;
+	}
+	
+	/**
+	 * Returns the redirect URI.
+	 * 
+	 * @return The redirect URI.
+	 */
+	public URI getRedirectUri() {
+		return redirectUri;
 	}
 }

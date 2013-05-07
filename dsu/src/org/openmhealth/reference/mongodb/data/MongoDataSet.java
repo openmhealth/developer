@@ -20,12 +20,13 @@ import java.util.List;
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.data.DataSet;
-import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.domain.ColumnList;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MetaData;
+import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.domain.Schema;
 import org.openmhealth.reference.mongodb.domain.MongoData;
+import org.openmhealth.reference.mongodb.domain.MongoMultiValueResult;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;

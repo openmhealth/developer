@@ -25,10 +25,6 @@ import org.openmhealth.reference.exception.OmhException;
  * The root class for all requests.
  * </p>
  * 
- * <p>
- * This class is mutable.
- * </p>
- * 
  * @author John Jenkins
  */
 public abstract class Request<T> {

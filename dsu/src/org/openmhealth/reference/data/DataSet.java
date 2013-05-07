@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.openmhealth.reference.domain.ColumnList;
 import org.openmhealth.reference.domain.Data;
+import org.openmhealth.reference.domain.MultiValueResult;
 
 /**
  * The data associated with their schema as defined by the Open mHealth.

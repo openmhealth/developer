@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.openmhealth.reference.mongodb.data;
+package org.openmhealth.reference.mongodb.domain;
 
 import java.util.Iterator;
 
 import org.mongojack.DBCursor;
-import org.openmhealth.reference.data.MultiValueResult;
+import org.openmhealth.reference.domain.MultiValueResult;
 
 /**
  * <p>

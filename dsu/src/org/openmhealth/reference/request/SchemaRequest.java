@@ -17,8 +17,8 @@ package org.openmhealth.reference.request;
 
 import java.util.Map;
 
-import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
+import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.domain.Schema;
 import org.openmhealth.reference.exception.NoSuchSchemaException;
 import org.openmhealth.reference.exception.OmhException;

@@ -24,9 +24,10 @@ import org.mongojack.DBQuery.Query;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.internal.MongoJacksonMapperModule;
 import org.openmhealth.reference.concordia.OmhValidationController;
-import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
+import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.domain.Schema;
+import org.openmhealth.reference.mongodb.domain.MongoMultiValueResult;
 import org.openmhealth.reference.mongodb.domain.MongoSchema;
 
 import com.fasterxml.jackson.databind.InjectableValues;

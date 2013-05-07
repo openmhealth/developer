@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.openmhealth.reference.data;
 
+import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.domain.Schema;
 
 /**

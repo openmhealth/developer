@@ -7,10 +7,6 @@ import org.openmhealth.reference.exception.OmhException;
  * The root class for all requests that may return more than one entity.
  * </p>
  * 
- * <p>
- * This class is mutable.
- * </p>
- * 
  * @author John Jenkins
  */
 public abstract class ListRequest<T> extends Request<T> {
@@ -21,10 +17,10 @@ public abstract class ListRequest<T> extends Request<T> {
 	 */
 	public static final String DEFAULT_NUMBER_TO_SKIP_STRING = "0";
 	/**
-	 * For paging, the default numer of items to skip if not given.
+	 * For paging, the default number of items to skip if not given.
 	 */
-	public static final long DEFAULT_NUMBER_TO_SKIP = Long
-		.decode(DEFAULT_NUMBER_TO_SKIP_STRING);
+	public static final long DEFAULT_NUMBER_TO_SKIP =
+		Long.decode(DEFAULT_NUMBER_TO_SKIP_STRING);
 
 	/**
 	 * The number must be a String to be used in the annotations. When
@@ -35,8 +31,8 @@ public abstract class ListRequest<T> extends Request<T> {
 	/**
 	 * For paging, the default number of items to skip if not given.
 	 */
-	public static final long DEFAULT_NUMBER_TO_RETURN = Long
-		.decode(DEFAULT_NUMBER_TO_RETURN_STRING);
+	public static final long DEFAULT_NUMBER_TO_RETURN =
+		Long.decode(DEFAULT_NUMBER_TO_RETURN_STRING);
 
 	/**
 	 * The number of elements to skip.

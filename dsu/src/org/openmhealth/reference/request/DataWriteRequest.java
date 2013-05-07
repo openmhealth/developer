@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openmhealth.reference.data.DataSet;
-import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MetaData;
+import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.domain.Schema;
 import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.InvalidAuthenticationException;

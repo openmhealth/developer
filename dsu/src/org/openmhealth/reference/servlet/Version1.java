@@ -1215,12 +1215,13 @@ public class Version1 {
 		// Make sure the authentication token was a parameter. This prevents
 		// malicious code from "hijacking" the token by performing a POST and
 		// having the browser inject it as only a cookie.
-		if(!
-			(Boolean)
-				request
-					.getAttribute(
-						AuthFilter
-							.ATTRIBUTE_AUTHENTICATION_TOKEN_IS_PARAM)) {
+		Object authenticationTokenIsParam =
+			request
+				.getAttribute(
+					AuthFilter.ATTRIBUTE_AUTHENTICATION_TOKEN_IS_PARAM);
+		if(
+			(authenticationTokenIsParam == null) || 
+			(! ((Boolean) authenticationTokenIsParam))) {
 			
 			throw
 				new OmhException(

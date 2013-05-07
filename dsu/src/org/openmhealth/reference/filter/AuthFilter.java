@@ -2,6 +2,8 @@ package org.openmhealth.reference.filter;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -76,8 +78,10 @@ public class AuthFilter implements Filter {
 		final FilterChain chain)
 		throws IOException, ServletException {
 		
+		// Get the set of authentication tokens and make sure they match.
+		Set<String> authTokens = new HashSet<String>();
+		
 		// Get the authentication tokens from the cookies.
-		String authTokenFromCookies = null;
 		if(request instanceof HttpServletRequest) {
 			// Cast the HTTP request.
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -93,71 +97,42 @@ public class AuthFilter implements Filter {
 						.PARAM_AUTHENTICATION_AUTH_TOKEN
 						.equals(cookie.getName())) {
 						
-						if(authTokenFromCookies == null) {
-							authTokenFromCookies = cookie.getValue();
-						}
-						else {
-							throw
-								new InvalidAuthenticationException(
-									"Multiple authentication cookies were " +
-										"given.");
-						}
+						// Add the token now. We will validate the case where
+						// there are multiple, different tokens later.
+						authTokens.add(cookie.getValue());
 					}
 				}
 			}
 		}
 		
 		// Get the authentication tokens from the parameters.
-		String authTokenFromParameters = null;
 		boolean authTokenIsFromParameters = false;
-		String[] authTokens =
+		String[] authTokenParameters =
 			request
 				.getParameterValues(Version1.PARAM_AUTHENTICATION_AUTH_TOKEN);
 		// If any authentication token parameters exist, validate that there is
 		// only one and then remember it.
-		if(authTokens != null) {
+		if(authTokenParameters != null) {
 			// If multiple authentication tokens were given, throw an
 			// exception.
-			if(authTokens.length > 1) {
+			if(authTokenParameters.length > 1) {
 				throw 
 					new InvalidAuthenticationException(
 						"Multiple authentication tokens were given.");
 			}
 			// If exactly one was given, save it to compare it to the
-			if(authTokens.length == 1) {
-				authTokenFromParameters = authTokens[0];
+			if(authTokenParameters.length == 1) {
+				authTokens.add(authTokenParameters[0]);
 				authTokenIsFromParameters = true;
 			}
 		}
 		
-		// If both a cookie and parameter were given, make sure they match.
-		if(
-			(authTokenFromCookies != null) &&
-			(authTokenFromParameters != null)) {
-			
-			if(! authTokenFromCookies.equals(authTokenFromParameters)) {
-				throw
-					new InvalidAuthenticationException(
-						"The authentication token from the cookies did not " +
-							"match the one from the parameters.");
-			}
-		}
-		
-		// Get the authentication token to validate.
-		String authToken;
-		if(authTokenFromParameters != null) {
-			authToken = authTokenFromParameters;
-		}
-		else {
-			authToken = authTokenFromCookies;
-		}
-		
-		// If the authentication token is not null, attempt to get a user for
-		// it.
-		if(authToken != null) {
+		// Validate that if a token was given, only one token was given.
+		if(authTokens.size() == 1) {
 			// Attempt to get the authentication token.
 			AuthenticationToken authTokenObject =
-				AuthenticationTokenBin.getInstance().getToken(authToken);
+				AuthenticationTokenBin
+					.getInstance().getToken(authTokens.iterator().next());
 			if(authTokenObject == null) {
 				throw
 					new InvalidAuthenticationException(
@@ -167,13 +142,19 @@ public class AuthFilter implements Filter {
 			// Associate the authentication token with the request.
 			request
 				.setAttribute(ATTRIBUTE_AUTHENTICATION_TOKEN, authTokenObject);
-			// Indicate if the token used to find this user was a parameter or
-			// not.
-			request
-				.setAttribute(
-					ATTRIBUTE_AUTHENTICATION_TOKEN_IS_PARAM,
-					authTokenIsFromParameters);
 		}
+		// Make sure multiple, different authentication token were not given.
+		else if(authTokens.size() > 1) {
+			throw
+				new InvalidAuthenticationException(
+					"Multiple, different authentication tokens were given.");
+		}
+
+		// Indicate if the token used to find this user was a parameter or not.
+		request
+			.setAttribute(
+				ATTRIBUTE_AUTHENTICATION_TOKEN_IS_PARAM,
+				authTokenIsFromParameters);
 		
 		// Attempt to get the authentication from the third-party.
 		if(request instanceof HttpServletRequest) {

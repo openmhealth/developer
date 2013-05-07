@@ -257,7 +257,7 @@ public class Schema implements OmhObject {
 
 		// Ensure the data is not null.
 		if(data == null) {
-			throw new OmhException("The data is null.");
+			throw new OmhException("The data field is null.");
 		}
 		
 		// Validate the data.

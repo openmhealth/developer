@@ -201,13 +201,23 @@ public class DataWriteRequest extends Request<Object> {
 			// Attempt to get the schema data.
 			JsonNode schemaData = dataObject.get(Data.JSON_KEY_DATA);
 			
+			// If the data is missing, fail the request.
+			if(schemaData == null) {
+				throw
+					new OmhException(
+						"A data point's '" +
+							Data.JSON_KEY_DATA +
+							"' field is missing.");
+			}
+			
 			// Create and add the point to the set of data.
 			dataPoints
 				.add(
-					schema.validateData(
-						requestingUser.getUsername(),
-						metaData,
-						schemaData));
+					schema
+						.validateData(
+							requestingUser.getUsername(),
+							metaData,
+							schemaData));
 		}
 		
 		// Store the data.

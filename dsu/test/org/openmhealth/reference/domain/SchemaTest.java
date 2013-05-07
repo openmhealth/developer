@@ -42,7 +42,7 @@ public class SchemaTest {
 	/**
 	 * A valid ID to use for testing.
 	 */
-	public static final String ID = "abc123";
+	public static final String ID = "omh:abc_123";
 	/**
 	 * A valid version to use for testing.
 	 */

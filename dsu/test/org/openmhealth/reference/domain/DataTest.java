@@ -58,7 +58,7 @@ public class DataTest {
 		// Create the schema.
 		SCHEMA =
 			new Schema(
-				"abc123",
+				SchemaTest.ID,
 				1,
 				1,
 				true,

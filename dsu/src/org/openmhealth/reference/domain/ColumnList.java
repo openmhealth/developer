@@ -47,7 +47,7 @@ public class ColumnList {
 	 * @param columns
 	 *        The list of columns.
 	 */
-	public ColumnList(List<String> columns) {
+	public ColumnList(final List<String> columns) {
 		// If the columns are null, then this should just be an empty object.
 		if(columns == null) {
 			return;
@@ -55,6 +55,7 @@ public class ColumnList {
 		
 		// Add each of the columns as children.
 		for(String column : columns) {
+			// Process the node.
 			addChild(column);
 		}
 	}

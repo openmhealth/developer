@@ -21,7 +21,9 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
 /**
- * <p>This is a marker interface for all domain objects.</p>
+ * <p>
+ * This is a marker interface for all domain objects.
+ * </p>
  *
  * @author John Jenkins
  */

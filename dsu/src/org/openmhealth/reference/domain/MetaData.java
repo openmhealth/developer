@@ -24,8 +24,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
+ * <p>
  * This class represents the meta-data for a data stream. All fields are 
  * optional. This class is immutable and, therefore, thread-safe.
+ * </p>
  *
  * @author John Jenkins
  */
@@ -45,9 +47,11 @@ public class MetaData implements OmhObject {
 	public static final String JSON_KEY_TIMESTAMP = "timestamp";
 	
 	/**
+	 * <p>
 	 * This class is responsible for building new MetaData objects. This
 	 * class is mutable and, therefore, not thread-safe.
-	 *
+	 * </p>
+	 * 
 	 * @author John Jenkins
 	 */
 	public static class Builder {

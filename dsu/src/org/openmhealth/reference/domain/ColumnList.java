@@ -23,7 +23,9 @@ import java.util.Map;
 import org.openmhealth.reference.exception.OmhException;
 
 /**
+ * <p>
  * A list of desired columns.
+ * </p>
  *
  * @author John Jenkins
  */

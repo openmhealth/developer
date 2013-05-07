@@ -39,41 +39,50 @@ import org.joda.time.format.DateTimeParserBucket;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
- * <p>Factory that creates instances of DateTimeFormatter for the W3C's
- * profile of the ISO 8601 standard.</p>
+ * <p>
+ * Factory that creates instances of DateTimeFormatter for the W3C's profile of
+ * the ISO 8601 standard.
+ * </p>
  * 
- * <p>ISO8601 is the international standard for data interchange and 
- * defines many formats for representing date and time information. W3C has
- * created a shorter, more specific list of formats.</p>
+ * <p>
+ * ISO8601 is the international standard for data interchange and defines many
+ * formats for representing date and time information. W3C has created a
+ * shorter, more specific list of formats.
+ * </p>
  * 
- * <p>One major difference between this and the ISODateTimeFormatter is
- * that this will always parse non-zone'd values, e.g. year, year-month,
- * and year-month-day, with a default zone of UTC as opposed to the
- * ISODateTimeFormatter which will give them JodaTime's configured default
- * time zone.</p>
- *
+ * <p>
+ * One major difference between this and the ISODateTimeFormatter is that this
+ * will always parse non-zone'd values, e.g. year, year-month, and
+ * year-month-day, with a default zone of UTC as opposed to the
+ * ISODateTimeFormatter which will give them JodaTime's configured default time
+ * zone.
+ * </p>
+ * 
  * @author John Jenkins
  */
 public class ISOW3CDateTimeFormat {
 	/**
-	 * <p>A DateTimeParser that implements the W3C profile of the ISO 8601
+	 * <p>
+	 * A DateTimeParser that implements the W3C profile of the ISO 8601
 	 * representation of dates and times
-	 * ({@link http://www.w3.org/TR/NOTE-datetime}).</p>
+	 * ({@link http://www.w3.org/TR/NOTE-datetime}).
+	 * </p>
 	 * 
-	 * <p>The most common use-case of this library is through the
+	 * <p>
+	 * The most common use-case of this library is through the
 	 * ISOW3CDateTimeFormat, which will create an instance of this parser.
-	 * <pre>
-	 * ISOW3CDateTimeFormat.dateTime();
-	 * </pre>
+	 * 
+	 * <pre>ISOW3CDateTimeFormat.dateTime();</pre>
+	 * 
 	 * For date-only formats, the zone is set to UTC. Like all DateTimeParsers,
 	 * the zone information is overridden with JodaTime's default zone. If you
 	 * are creating this parser yourself and would like to preserve the zone,
 	 * be sure to call 'withOffsetParsed()' on the resulting parser.
-	 * <pre>
-	 * (new ISOW3CDateTimeParser()).withOffsetParsed();
-	 * </pre>
+	 * 
+	 * <pre>(new ISOW3CDateTimeParser()).withOffsetParsed();</pre>
+	 * 
 	 * </p>
-	 *
+	 * 
 	 * @author John Jenkins
 	 */
 	public static class ISOW3CDateTimeParser implements DateTimeParser {

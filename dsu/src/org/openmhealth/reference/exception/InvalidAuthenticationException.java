@@ -16,8 +16,10 @@
 package org.openmhealth.reference.exception;
 
 /**
+ * <p>
  * A specific exception that should be used when a user's authentication
  * information is invalid.
+ * </p>
  * 
  * @author John Jenkins
  */

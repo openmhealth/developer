@@ -16,7 +16,9 @@
 package org.openmhealth.reference.exception;
 
 /**
+ * <p>
  * The parent class for all exceptions within this domain.
+ * </p>
  * 
  * @author John Jenkins
  */

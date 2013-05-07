@@ -16,8 +16,10 @@
 package org.openmhealth.reference.exception;
 
 /**
+ * <p>
  * A specific exception that should be used when a specific schema is missing
  * that the user is requesting.
+ * </p>
  * 
  * @author John Jenkins
  */

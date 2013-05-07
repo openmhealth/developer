@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.openmhealth.reference.data.mongodb.data;
+package org.openmhealth.reference.mongodb.data;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,8 +26,8 @@ import org.mongojack.internal.MongoJacksonMapperModule;
 import org.openmhealth.reference.concordia.OmhValidationController;
 import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
-import org.openmhealth.reference.data.mongodb.domain.MongoSchema;
 import org.openmhealth.reference.domain.Schema;
+import org.openmhealth.reference.mongodb.domain.MongoSchema;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;

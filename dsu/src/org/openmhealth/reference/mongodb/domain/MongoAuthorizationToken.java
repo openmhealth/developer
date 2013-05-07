@@ -1,4 +1,4 @@
-package org.openmhealth.reference.data.mongodb.domain;
+package org.openmhealth.reference.mongodb.domain;
 
 import org.openmhealth.reference.domain.AuthorizationToken;
 import org.openmhealth.reference.exception.OmhException;
@@ -88,7 +88,7 @@ public class MongoAuthorizationToken
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openmhealth.reference.data.mongodb.data.MongoDbObject#getDatabaseId()
+	 * @see org.openmhealth.reference.mongodb.data.MongoDbObject#getDatabaseId()
 	 */
 	@Override
 	public String getDatabaseId() {

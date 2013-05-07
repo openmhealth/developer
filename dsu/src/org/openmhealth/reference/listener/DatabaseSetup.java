@@ -21,7 +21,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.openmhealth.reference.data.Dao;
-import org.openmhealth.reference.data.mongodb.data.MongoDao;
+import org.openmhealth.reference.mongodb.data.MongoDao;
 
 /**
  * <p>

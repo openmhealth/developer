@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.openmhealth.reference.data.mongodb.data;
+package org.openmhealth.reference.mongodb.data;
 
 import java.util.List;
 
@@ -21,11 +21,11 @@ import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.data.DataSet;
 import org.openmhealth.reference.data.MultiValueResult;
-import org.openmhealth.reference.data.mongodb.domain.MongoData;
 import org.openmhealth.reference.domain.ColumnList;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MetaData;
 import org.openmhealth.reference.domain.Schema;
+import org.openmhealth.reference.mongodb.domain.MongoData;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;

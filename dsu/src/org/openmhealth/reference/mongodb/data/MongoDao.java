@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.openmhealth.reference.data.mongodb.data;
+package org.openmhealth.reference.mongodb.data;
 
 import java.net.UnknownHostException;
 import java.util.Properties;

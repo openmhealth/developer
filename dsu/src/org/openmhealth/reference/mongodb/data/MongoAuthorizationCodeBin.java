@@ -1,11 +1,11 @@
-package org.openmhealth.reference.data.mongodb.data;
+package org.openmhealth.reference.mongodb.data;
 
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.data.AuthorizationCodeBin;
-import org.openmhealth.reference.data.mongodb.domain.MongoAuthorizationCode;
 import org.openmhealth.reference.domain.AuthorizationCode;
 import org.openmhealth.reference.exception.OmhException;
+import org.openmhealth.reference.mongodb.domain.MongoAuthorizationCode;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;

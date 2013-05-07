@@ -1,11 +1,11 @@
-package org.openmhealth.reference.data.mongodb.data;
+package org.openmhealth.reference.mongodb.data;
 
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.data.ThirdPartyBin;
-import org.openmhealth.reference.data.mongodb.domain.MongoThirdParty;
 import org.openmhealth.reference.domain.ThirdParty;
 import org.openmhealth.reference.exception.OmhException;
+import org.openmhealth.reference.mongodb.domain.MongoThirdParty;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;

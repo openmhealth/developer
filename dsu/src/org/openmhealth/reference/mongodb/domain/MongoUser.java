@@ -13,29 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.openmhealth.reference.data.mongodb.domain;
+package org.openmhealth.reference.mongodb.domain;
 
 import org.mongojack.MongoCollection;
-import org.openmhealth.reference.data.DataSet;
-import org.openmhealth.reference.domain.Data;
-import org.openmhealth.reference.domain.MetaData;
-import org.openmhealth.reference.domain.Schema;
+import org.openmhealth.reference.data.UserBin;
+import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * <p>
- * A MongoDB extension of the {@link Data} type.
+ * A MongoDB extension of the {@link User} type.
  * </p>
  *
  * @author John Jenkins
  */
-@MongoCollection(name = DataSet.DB_NAME)
-public class MongoData extends Data implements MongoDbObject {
+@MongoCollection(name = UserBin.DB_NAME)
+public class MongoUser extends User implements MongoDbObject {
 	/**
 	 * The ID for this class which is used for serialization. 
 	 */
@@ -48,38 +45,20 @@ public class MongoData extends Data implements MongoDbObject {
 	private final String dbId;
 
 	/**
-	 * Creates a new data object. This should only be used by serialization
-	 * methods when they are pulling already-validated data from the database.
+	 * Creates a new user.
 	 * 
-	 * @param owner
-	 * 		  The identifier for the user that owns the data.
+	 * @param username This user's username.
 	 * 
-	 * @param schemaId
-	 * 		  The ID of the schema that was used to validate this data.
-	 * 
-	 * @param schemaVersion
-	 * 		  The version of the schema that was used to validate this data.
-	 * 
-	 * @param metaData
-	 *        The meta-data for this data.
-	 * 
-	 * @param data
-	 *        The data.
-	 * 
-	 * @throws OmhException
-	 *         Any of the parameters is null.
+	 * @throws OmhException The username was invalid.
 	 */
 	@JsonCreator
-	private MongoData(
+	public MongoUser(
 		@JsonProperty(DATABASE_FIELD_ID) final String dbId,
-		@JsonProperty(JSON_KEY_OWNER) final String owner,
-		@JsonProperty(Schema.JSON_KEY_ID) final String schemaId,
-		@JsonProperty(Schema.JSON_KEY_VERSION) final long schemaVersion,
-		@JsonProperty(JSON_KEY_METADATA) final MetaData metaData,
-		@JsonProperty(JSON_KEY_DATA) final JsonNode data)
+		@JsonProperty(JSON_KEY_USERNAME) final String username,
+		@JsonProperty(JSON_KEY_PASSWORD) final String password)
 		throws OmhException {
-
-		super(owner, schemaId, schemaVersion, metaData, data);
+		
+		super(username, password);
 		
 		// Store the MongoDB ID.
 		if(dbId == null) {
@@ -92,7 +71,7 @@ public class MongoData extends Data implements MongoDbObject {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openmhealth.reference.data.mongodb.data.MongoDbObject#getDatabaseId()
+	 * @see org.openmhealth.reference.mongodb.data.MongoDbObject#getDatabaseId()
 	 */
 	@Override
 	public String getDatabaseId() {

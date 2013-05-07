@@ -1,4 +1,4 @@
-package org.openmhealth.reference.data.mongodb.domain;
+package org.openmhealth.reference.mongodb.domain;
 
 import org.openmhealth.reference.domain.AuthorizationCodeVerification;
 import org.openmhealth.reference.exception.OmhException;
@@ -70,7 +70,7 @@ public class MongoAuthorizationCodeVerification
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openmhealth.reference.data.mongodb.data.MongoDbObject#getDatabaseId()
+	 * @see org.openmhealth.reference.mongodb.data.MongoDbObject#getDatabaseId()
 	 */
 	@Override
 	public String getDatabaseId() {

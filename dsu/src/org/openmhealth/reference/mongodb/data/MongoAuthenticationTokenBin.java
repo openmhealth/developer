@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.openmhealth.reference.data.mongodb.data;
+package org.openmhealth.reference.mongodb.data;
 
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.openmhealth.reference.data.AuthenticationTokenBin;
-import org.openmhealth.reference.data.mongodb.domain.MongoAuthenticationToken;
 import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.exception.OmhException;
+import org.openmhealth.reference.mongodb.domain.MongoAuthenticationToken;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;

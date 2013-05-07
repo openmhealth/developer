@@ -79,23 +79,51 @@ public class AuthenticationToken implements OmhObject {
 	 */
 	@JsonProperty(JSON_KEY_EXPIRES)
 	private final long expires;
+	
+	/**
+	 * Creates a new authentication token for a user.
+	 * 
+	 * @param user
+	 *        The authentication token for a user.
+	 * 
+	 * @throws OmhException
+	 *         The user is null.
+	 */
+	public AuthenticationToken(final User user) throws OmhException {
+		if(user == null) {
+			throw new OmhException("The user is null.");
+		}
+		
+		token = UUID.randomUUID().toString();
+		username = user.getUsername();
+		granted = System.currentTimeMillis();
+		expires = granted + AUTH_TOKEN_LIFETIME;
+	}
 
 	/**
 	 * Creates an {@link AuthenticationToken} object via injection from the
-	 * data layer.
+	 * data layer. When creating a new authentication token,
+	 * {@link #AuthenticationToken(User)} should be used.
 	 * 
-	 * @param token The authentication token.
+	 * @param token
+	 *        The authentication token.
 	 * 
-	 * @param username The user's user-name.
+	 * @param username
+	 *        The user's user-name.
 	 * 
-	 * @param granted The time when the token was granted.
+	 * @param granted
+	 *        The time when the token was granted.
 	 * 
-	 * @param expires The time when the token expires.
+	 * @param expires
+	 *        The time when the token expires.
 	 * 
-	 * @throws OmhException The token and/or user-name are null.
+	 * @throws OmhException
+	 *         The token and/or user-name are null, the token is being granted
+	 *         in the future, or the token is being granted after it has
+	 *         expired.
 	 */
 	@JsonCreator
-	public AuthenticationToken(
+	protected AuthenticationToken(
 		@JsonProperty(JSON_KEY_TOKEN) final String token,
 		@JsonProperty(User.JSON_KEY_USERNAME) final String username,
 		@JsonProperty(JSON_KEY_GRANTED) final long granted,
@@ -124,24 +152,6 @@ public class AuthenticationToken implements OmhObject {
 		this.username = username;
 		this.granted = granted;
 		this.expires = expires;
-	}
-	
-	/**
-	 * Creates a new authentication token for a user.
-	 * 
-	 * @param user The authentication token for a user.
-	 * 
-	 * @throws OmhException The user is null.
-	 */
-	public AuthenticationToken(final User user) throws OmhException {
-		if(user == null) {
-			throw new OmhException("The user is null.");
-		}
-		
-		token = UUID.randomUUID().toString();
-		username = user.getUsername();
-		granted = System.currentTimeMillis();
-		expires = granted + AUTH_TOKEN_LIFETIME;
 	}
 	
 	/**

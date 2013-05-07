@@ -26,7 +26,7 @@ import org.openmhealth.reference.exception.OmhException;
  *
  * @author John Jenkins
  */
-public class AuthTokenTest {
+public class AuthenticationTokenTest {
 	/**
 	 * A valid token to use for testing.
 	 */
@@ -47,6 +47,22 @@ public class AuthTokenTest {
 	 * A {@link User} object to use for testing.
 	 */
 	public static final User USER = new User(USERNAME, "Test.Password0");
+
+	/**
+	 * Test that a user must be given to the constructor.
+	 */
+	@Test(expected = OmhException.class)
+	public void testAuthTokenUserNull() {
+		new AuthenticationToken(null);
+	}
+
+	/**
+	 * Test that an authentication token can be created from a user.
+	 */
+	@Test
+	public void testAuthTokenUser() {
+		new AuthenticationToken(USER);
+	}
 
 	/**
 	 * Test that an authentication token must be given to the constructor.
@@ -99,27 +115,12 @@ public class AuthTokenTest {
 	}
 
 	/**
-	 * Test that a user must be given to the constructor.
-	 */
-	@Test(expected = OmhException.class)
-	public void testAuthTokenUserNull() {
-		new AuthenticationToken(null);
-	}
-
-	/**
-	 * Test that an authentication token can be created from a user.
-	 */
-	@Test
-	public void testAuthTokenUser() {
-		new AuthenticationToken(USER);
-	}
-
-	/**
 	 * Test that the same authentication token given can be retrieved.
 	 */
 	@Test
 	public void testGetToken() {
-		AuthenticationToken authToken = new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
+		AuthenticationToken authToken =
+			new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
 		Assert.assertEquals(TOKEN, authToken.getToken());
 	}
 
@@ -138,7 +139,8 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetUsername() {
-		AuthenticationToken authToken = new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
+		AuthenticationToken authToken =
+			new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
 		Assert.assertEquals(USERNAME, authToken.getUsername());
 	}
 
@@ -158,7 +160,8 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetGranted() {
-		AuthenticationToken authToken = new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
+		AuthenticationToken authToken =
+			new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
 		Assert.assertEquals(GRANTED, authToken.getGranted());
 	}
 
@@ -167,7 +170,8 @@ public class AuthTokenTest {
 	 */
 	@Test
 	public void testGetExpires() {
-		AuthenticationToken authToken = new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
+		AuthenticationToken authToken =
+			new AuthenticationToken(TOKEN, USERNAME, GRANTED, EXPIRES);
 		Assert.assertEquals(EXPIRES, authToken.getExpires());
 	}
 
@@ -180,7 +184,8 @@ public class AuthTokenTest {
 		AuthenticationToken authToken = new AuthenticationToken(USER);
 		Assert
 			.assertEquals(
-				authToken.getGranted() + AuthenticationToken.AUTH_TOKEN_LIFETIME,
+				authToken.getGranted() +
+					AuthenticationToken.AUTH_TOKEN_LIFETIME,
 				authToken.getExpires());
 	}
 }

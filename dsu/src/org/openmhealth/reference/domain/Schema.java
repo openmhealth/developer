@@ -17,6 +17,7 @@ package org.openmhealth.reference.domain;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import name.jenkins.paul.john.concordia.Concordia;
 import name.jenkins.paul.john.concordia.exception.ConcordiaException;
@@ -45,6 +46,12 @@ public class Schema implements OmhObject {
 	 * The version of this class for serialization purposes.
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * The pattern to use for validating schema IDs.
+	 */
+	private static final Pattern PATTERN_ID =
+		Pattern.compile("omh(:[a-zA-Z0-9_]+)+");
 
 	/**
 	 * The JSON key for the ID of a schema.
@@ -290,11 +297,16 @@ public class Schema implements OmhObject {
 			throw new OmhException("The ID is empty or only whitespace.");
 		}
 		
-		// TODO: Add validation for it beginning with "omh:". Don't forget to
-		// add the test cases.
-		
-		// TODO: Add validation that the string only contain "legal"
-		// characters. Don't forget to add the test cases.
+		// Validate that the trimmed ID matches the pattern.
+		if(! PATTERN_ID.matcher(idTrimmed).matches()) {
+			throw
+				new OmhException(
+					"The schema ID is invalid. It must be colon " +
+						"deliminated, alphanumeric sections, with or " +
+						"without underscores, where the first section is " +
+						"\"omh\": " +
+						idTrimmed);
+		}
 		
 		// Return the trimmed ID.
 		return idTrimmed;

@@ -47,7 +47,7 @@ public class MongoSchema extends Schema implements MongoDbObject {
 	 * The database ID for this object.
 	 */
 	@JsonIgnore
-	private final String id;
+	private final String dbId;
 
 	/**
 	 * Used for deserializing a MongoDB-variant of a {@link ThirdParty} entity.
@@ -55,7 +55,7 @@ public class MongoSchema extends Schema implements MongoDbObject {
 	 * @param dbId
 	 * 		  The MongoDB ID for this entity.
 	 * 
-	 * @param id
+	 * @param dbId
 	 *        The ID for this schema.
 	 * 
 	 * @param version
@@ -108,16 +108,16 @@ public class MongoSchema extends Schema implements MongoDbObject {
 			throw new OmhException("The MongoDB ID is missing.");
 		}
 		else {
-			this.id = dbId;
+			this.dbId = dbId;
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openmhealth.reference.data.mongodb.MongoDbObject#getDatabaseId()
+	 * @see org.openmhealth.reference.data.mongodb.data.MongoDbObject#getDatabaseId()
 	 */
 	@Override
 	public String getDatabaseId() {
-		return id;
+		return dbId;
 	}
 }

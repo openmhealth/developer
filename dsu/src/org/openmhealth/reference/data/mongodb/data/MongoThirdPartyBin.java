@@ -1,4 +1,4 @@
-package org.openmhealth.reference.data.mongodb;
+package org.openmhealth.reference.data.mongodb.data;
 
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
@@ -8,6 +8,7 @@ import org.openmhealth.reference.domain.ThirdParty;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import com.mongodb.QueryBuilder;
 
 /**
@@ -19,10 +20,15 @@ import com.mongodb.QueryBuilder;
  */
 public class MongoThirdPartyBin extends ThirdPartyBin {
 	/**
-	 * Default constructor
+	 * Default constructor.
 	 */
 	protected MongoThirdPartyBin() {
-		// Do nothing.
+		// Get the collection to add indexes to.
+		DBCollection collection =
+			MongoDao.getInstance().getDb().getCollection(DB_NAME);
+		
+		// Ensure that there is an index on the ID.
+		collection.ensureIndex(ThirdParty.JSON_KEY_ID);
 	}
 
 	/*

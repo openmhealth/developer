@@ -27,7 +27,7 @@ public class MongoAuthorizationCodeVerification
 	 * The database ID for this object.
 	 */
 	@JsonIgnore
-	private final String id;
+	private final String dbId;
 
 	/**
 	 * Used for deserializing a MongoDB-variant of an
@@ -64,16 +64,16 @@ public class MongoAuthorizationCodeVerification
 			throw new OmhException("The MongoDB ID is missing.");
 		}
 		else {
-			this.id = dbId;
+			this.dbId = dbId;
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openmhealth.reference.data.mongodb.MongoDbObject#getDatabaseId()
+	 * @see org.openmhealth.reference.data.mongodb.data.MongoDbObject#getDatabaseId()
 	 */
 	@Override
 	public String getDatabaseId() {
-		return id;
+		return dbId;
 	}
 }

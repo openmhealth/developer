@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.openmhealth.reference.data.mongodb;
+package org.openmhealth.reference.data.mongodb.data;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,12 +33,12 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
+import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
 /**
  * <p>
- * The collection of known schemas as defined by the Open mHealth
- * specification.
+ * The interface to the database-backed Registry.
  * </p>
  * 
  * @author John Jenkins
@@ -67,10 +67,17 @@ public class MongoRegistry extends Registry {
 	}
 	
 	/**
-	 * Default constructor. All access to the registry is static.
+	 * Default constructor.
 	 */
 	protected MongoRegistry() {
-		// Do nothing.
+		// Get the collection to add indexes to.
+		DBCollection collection =
+			MongoDao.getInstance().getDb().getCollection(DB_NAME);
+
+		// Ensure that there is an index on the ID.
+		collection.ensureIndex(Schema.JSON_KEY_ID);
+		// Ensure that there is an index on the version.
+		collection.ensureIndex(Schema.JSON_KEY_VERSION);
 	}
 
 	/*

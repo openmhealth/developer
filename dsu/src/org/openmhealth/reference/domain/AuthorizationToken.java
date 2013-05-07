@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.openmhealth.reference.data.AuthorizationCodeBin;
+import org.openmhealth.reference.data.AuthorizationCodeVerificationBin;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -237,6 +238,19 @@ public class AuthorizationToken implements OmhObject {
 		this.creationTime = DateTime.now().getMillis();
 		this.expirationTime =
 			this.creationTime + DEFAULT_TOKEN_LIFETIME_MILLIS;
+	}
+	
+	/**
+	 * Returns the authorization code verification that backs this
+	 * authorization token.
+	 * 
+	 * @return The authorization code verification that backs this
+	 *         authorization token.
+	 */
+	public AuthorizationCodeVerification getAuthorizationCodeVerification() {
+		return
+			AuthorizationCodeVerificationBin
+				.getInstance().getVerification(authorizationCode);
 	}
 	
 	/**

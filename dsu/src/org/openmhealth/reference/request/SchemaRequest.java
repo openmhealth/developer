@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @author John Jenkins
  */
-public class SchemaRequest extends ListRequest {
+public class SchemaRequest extends ListRequest<Object> {
 	/**
 	 * The specific schema ID being requested or null if no specific schema ID
 	 * is being requested.

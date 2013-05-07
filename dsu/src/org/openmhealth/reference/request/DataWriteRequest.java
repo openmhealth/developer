@@ -19,11 +19,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmhealth.reference.data.AuthenticationTokenBin;
 import org.openmhealth.reference.data.DataSet;
 import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
-import org.openmhealth.reference.data.UserBin;
 import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MetaData;
@@ -48,7 +46,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  *
  * @author John Jenkins
  */
-public class DataWriteRequest extends Request {
+public class DataWriteRequest extends Request<Object> {
 	/**
 	 * The JSON factory that is used to create the parser that will be used to
 	 * parse the data.
@@ -58,7 +56,7 @@ public class DataWriteRequest extends Request {
 	/**
 	 * The authentication token for the requesting user.
 	 */
-	private final String authToken;
+	private final AuthenticationToken authToken;
 	/**
 	 * The ID of the schema from which the data was generated.
 	 */
@@ -92,7 +90,7 @@ public class DataWriteRequest extends Request {
 	 *         A parameter was invalid.
 	 */
 	public DataWriteRequest(
-		final String authToken,
+		final AuthenticationToken authToken,
 		final String schemaId,
 		final long version,
 		final String data)		
@@ -143,20 +141,8 @@ public class DataWriteRequest extends Request {
 		}
 		Schema schema = schemas.iterator().next();
 		
-		// Get the authentication token object based on the parameterized
-		// authentication token.
-		AuthenticationToken tokenObject =
-			AuthenticationTokenBin.getInstance().getToken(authToken);
-		if(tokenObject == null) {
-			throw new OmhException("The token is unknown.");
-		}
-		
-		// Get the user to which the token belongs.
-		User requestingUser = 
-			UserBin.getInstance().getUser(tokenObject.getUsername());
-		if(requestingUser == null) {
-			throw new OmhException("The user no longer exists.");
-		}
+		// Get the user that owns this token.
+		User requestingUser = authToken.getUser();
 		
 		// Parse the data.
 		JsonNode dataNode;

@@ -31,7 +31,7 @@ import org.openmhealth.reference.exception.OmhException;
  * 
  * @author John Jenkins
  */
-public abstract class Request {
+public abstract class Request<T> {
 	/**
 	 * The meta-data to be returned. This won't be generated until after this
 	 * request was serviced.
@@ -41,7 +41,7 @@ public abstract class Request {
 	 * The data to be returned. This won't be generated until after this
 	 * request was serviced.
 	 */
-	private Object data = null;
+	private T data = null;
 
 	/**
 	 * An internal state variable
@@ -73,7 +73,7 @@ public abstract class Request {
 	 * @return The data produced by servicing this request or null if the
 	 *         request has not yet been serviced.
 	 */
-	public Object getData() {
+	public T getData() {
 		return data;
 	}
 
@@ -126,7 +126,7 @@ public abstract class Request {
 	 * @throws OmhException
 	 *         There was an error executing the request.
 	 */
-	protected void setData(final Object data) throws OmhException {
+	protected void setData(final T data) throws OmhException {
 		if(data == null) {
 			throw new OmhException("The data is null.");
 		}

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.openmhealth.reference.data.mongodb;
+package org.openmhealth.reference.data.mongodb.data;
 
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
@@ -23,6 +23,7 @@ import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import com.mongodb.QueryBuilder;
 
 /**
@@ -37,7 +38,14 @@ public class MongoAuthenticationTokenBin extends AuthenticationTokenBin {
 	 * Default constructor.
 	 */
 	protected MongoAuthenticationTokenBin() {
-		// Do nothing.
+		// Get the collection to add indexes to.
+		DBCollection collection =
+			MongoDao.getInstance().getDb().getCollection(DB_NAME);
+
+		// Ensure that there is an index on the token.
+		collection.ensureIndex(AuthenticationToken.JSON_KEY_TOKEN);
+		// Ensure that there is an index on the expiration time.
+		collection.ensureIndex(AuthenticationToken.JSON_KEY_EXPIRES);
 	}
 
 	/*

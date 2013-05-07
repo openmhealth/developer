@@ -29,7 +29,7 @@ import org.openmhealth.reference.exception.OmhException;
  *
  * @author John Jenkins
  */
-public class AuthenticationRequest extends Request {
+public class AuthenticationRequest extends Request<AuthenticationToken> {
 	/**
 	 * The message to return to the user if the authentication fails. This
 	 * should be used in all non-system failure cases to mitigate leaking any
@@ -102,7 +102,7 @@ public class AuthenticationRequest extends Request {
 		AuthenticationTokenBin.getInstance().storeToken(token);
 		
 		// Return the token to the user.
-		setData(token.getToken());
+		setData(token);
 	}
 	
 	/**

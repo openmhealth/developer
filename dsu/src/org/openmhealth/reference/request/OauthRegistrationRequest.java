@@ -3,12 +3,9 @@ package org.openmhealth.reference.request;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.openmhealth.reference.data.AuthenticationTokenBin;
 import org.openmhealth.reference.data.ThirdPartyBin;
-import org.openmhealth.reference.data.UserBin;
 import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.ThirdParty;
-import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.OmhException;
 
 /**
@@ -18,10 +15,23 @@ import org.openmhealth.reference.exception.OmhException;
  *
  * @author John Jenkins
  */
-public class OauthRegistrationRequest extends Request {
-	private final String authToken;
+public class OauthRegistrationRequest extends Request<Object> {
+	/**
+	 * The requesting user's authentication token.
+	 */
+	private final AuthenticationToken authToken;
+	/**
+	 * The name of the third-party.
+	 */
 	private final String name;
+	/**
+	 * The description for the third-party.
+	 */
 	private final String description;
+	/**
+	 * The URI to redirect the user to after they have responded to an
+	 * authorization request.
+	 */
 	private final URI redirectUri;
 
 	/**
@@ -42,7 +52,7 @@ public class OauthRegistrationRequest extends Request {
 	 *        option to grant or deny an authorization request.
 	 */
 	public OauthRegistrationRequest(
-		final String authToken,
+		final AuthenticationToken authToken,
 		final String name,
 		final String description,
 		final String redirectUri) {
@@ -104,28 +114,12 @@ public class OauthRegistrationRequest extends Request {
 		else {
 			setServiced();
 		}
-		
-		// Get the authentication token object based on the parameterized
-		// authentication token.
-		AuthenticationToken tokenObject =
-			AuthenticationTokenBin.getInstance().getToken(authToken);
-		if(tokenObject == null) {
-			throw new OmhException("The token is unknown.");
-		}
-		
-		// Get the user to which the token belongs.
-		User requestingUser = 
-			UserBin.getInstance().getUser(tokenObject.getUsername());
-		if(requestingUser == null) {
-			throw new OmhException("The user no longer exists.");
-		}
-
 		// Create the ThirdParty object and store them.
 		ThirdPartyBin
 			.getInstance()
 			.storeThirdParty(
 				new ThirdParty(
-					requestingUser, 
+					authToken.getUser(), 
 					name, 
 					description, 
 					redirectUri));

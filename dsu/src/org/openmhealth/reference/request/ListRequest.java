@@ -13,7 +13,7 @@ import org.openmhealth.reference.exception.OmhException;
  * 
  * @author John Jenkins
  */
-public abstract class ListRequest extends Request {
+public abstract class ListRequest<T> extends Request<T> {
 	/**
 	 * The number must be a String to be used in the annotations. When
 	 * referencing this value, always use its decoded form

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,15 +38,18 @@ import org.apache.amber.oauth2.common.message.types.TokenType;
 import org.openmhealth.reference.data.AuthorizationCodeBin;
 import org.openmhealth.reference.data.AuthorizationCodeVerificationBin;
 import org.openmhealth.reference.data.AuthorizationTokenBin;
+import org.openmhealth.reference.data.MultiValueResult;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.data.ThirdPartyBin;
+import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.AuthorizationCode;
 import org.openmhealth.reference.domain.AuthorizationCodeVerification;
 import org.openmhealth.reference.domain.AuthorizationToken;
+import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.ThirdParty;
 import org.openmhealth.reference.domain.User;
-import org.openmhealth.reference.exception.InvalidAuthenticationException;
 import org.openmhealth.reference.exception.OmhException;
+import org.openmhealth.reference.filter.AuthFilter;
 import org.openmhealth.reference.request.AuthenticationRequest;
 import org.openmhealth.reference.request.DataReadRequest;
 import org.openmhealth.reference.request.DataWriteRequest;
@@ -54,7 +58,6 @@ import org.openmhealth.reference.request.OauthRegistrationRequest;
 import org.openmhealth.reference.request.Request;
 import org.openmhealth.reference.request.SchemaRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -166,7 +169,7 @@ public class Version1 {
 	 * @return A View object that will contain the user's authentication token.
 	 */
 	@RequestMapping(value = "auth", method = RequestMethod.POST)
-	public @ResponseBody Object getAuthentication(
+	public @ResponseBody String getAuthentication(
 		@RequestParam(
 			value = PARAM_AUTHENTICATION_USERNAME,
 			required = true)
@@ -175,19 +178,39 @@ public class Version1 {
 			value = PARAM_AUTHENTICATION_PASSWORD,
 			required = true)
 			final String password,
+		final HttpServletRequest request,
 		final HttpServletResponse response) {
-
-		return
+		
+		// Create the authentication request from parameters.
+		AuthenticationToken token =
 			handleRequest(
-				new AuthenticationRequest(username, password), response);
+				new AuthenticationRequest(username, password),
+				response);
+		
+		// Add a cookie for the authentication token.
+		Cookie cookie =
+			new Cookie(PARAM_AUTHENTICATION_AUTH_TOKEN, token.getToken());
+		// Set the expiration on the cookie.
+		cookie
+			.setMaxAge(
+				new Long(
+					(token.getExpires() - System.currentTimeMillis()) / 1000)
+				.intValue());
+		// Build the path without the "auth" part.
+		String requestUri = request.getRequestURI();
+		cookie.setPath(requestUri.substring(0, requestUri.length() - 5));
+		// Make sure the cookie is only used with HTTPS.
+		cookie.setSecure(true);
+		// Add the cookie to the response.
+		response.addCookie(cookie);
+		
+		// Return the token.
+		return token.getToken();
 	}
 
 	/**
 	 * Creates a registration request for a third-party ("client" in OAuth
 	 * parlance).
-	 * 
-	 * @param authToken
-	 *        The user's authentication token.
 	 * 
 	 * @param name
 	 *        The third-party's name.
@@ -198,6 +221,9 @@ public class Version1 {
 	 * @param redirectUri
 	 *        The location to redirect the user to after they have responded to
 	 *        an authorization request from this third-party.
+	 *        
+	 * @param request
+	 *        The HTTP request.
 	 * 
 	 * @param response
 	 *        The HTTP response.
@@ -206,10 +232,6 @@ public class Version1 {
 		value = "auth/oauth/registration",
 		method = RequestMethod.POST)
 	public void thirdPartyRegistration(
-		@RequestParam(
-			value = PARAM_AUTHENTICATION_AUTH_TOKEN,
-			required = true)
-			final String authToken,
 		@RequestParam(
 			value = ThirdParty.JSON_KEY_NAME,
 			required = true)
@@ -222,11 +244,32 @@ public class Version1 {
 			value = ThirdParty.JSON_KEY_REDIRECT_URI,
 			required = true)
 			final String redirectUri,
+		final HttpServletRequest request,
 		final HttpServletResponse response) {
+		
+		// Make sure the authentication token was a parameter. This prevents
+		// malicious code from "hijacking" the token by performing a POST and
+		// having the browser inject it as only a cookie.
+		if(!
+			(Boolean)
+				request
+					.getAttribute(
+						AuthFilter
+							.ATTRIBUTE_AUTHENTICATION_TOKEN_IS_PARAM)) {
+			
+			throw
+				new OmhException(
+					"To register a third-party, the authentication token is " +
+						"required as a parameter.");
+		}
 		
 		handleRequest(
 			new OauthRegistrationRequest(
-				authToken, 
+				(AuthenticationToken)
+					request
+						.getAttribute(
+							AuthFilter
+								.ATTRIBUTE_AUTHENTICATION_TOKEN), 
 				name, 
 				description, 
 				redirectUri),
@@ -1056,14 +1099,6 @@ public class Version1 {
 	/**
 	 * Retrieves the requested data.
 	 * 
-	 * @param authTokenCookie
-	 *        The authentication token as a cookie. The token must be provided
-	 *        either here or as a parameter.
-	 * 
-	 * @param authTokenParameter
-	 *        The authentication token as a parameter. The token must be
-	 *        provided either here or as a cookie.
-	 * 
 	 * @param schemaId
 	 *        The ID for the schema to which the data pertains. This is part of
 	 *        the request's path.
@@ -1083,6 +1118,9 @@ public class Version1 {
 	 * 
 	 * @param numToReturn
 	 *        The number of data points to return to facilitate paging.
+	 *        
+	 * @param request
+	 *        The HTTP request object.
 	 * 
 	 * @param response
 	 *        The HTTP response object.
@@ -1093,15 +1131,7 @@ public class Version1 {
 	@RequestMapping(
 		value = "{" + PARAM_SCHEMA_ID + "}/{" + PARAM_SCHEMA_VERSION + "}/data",
 		method = RequestMethod.GET)
-	public @ResponseBody Object getData(
-		@CookieValue(
-			value = PARAM_AUTHENTICATION_AUTH_TOKEN,
-			required = false)
-			final String authTokenCookie,
-		@RequestParam(
-			value = PARAM_AUTHENTICATION_AUTH_TOKEN,
-			required = false)
-			final String authTokenParameter,
+	public @ResponseBody MultiValueResult<? extends Data> getData(
 		@PathVariable(PARAM_SCHEMA_ID) final String schemaId,
 		@PathVariable(PARAM_SCHEMA_VERSION) final Long version,
 		@RequestParam(
@@ -1122,17 +1152,23 @@ public class Version1 {
 			required = false,
 			defaultValue = ListRequest.DEFAULT_NUMBER_TO_RETURN_STRING)
 			final long numToReturn,
+		final HttpServletRequest request,
 		final HttpServletResponse response) {
-		
-		// Handle authentication.
-		String authToken =
-			handleAuthentication(authTokenCookie, authTokenParameter, false);
 
 		// Handle the request.
 		return 
 			handleRequest(
 				new DataReadRequest(
-					authToken,
+					(AuthenticationToken)
+						request
+							.getAttribute(
+								AuthFilter
+									.ATTRIBUTE_AUTHENTICATION_TOKEN),
+					(AuthorizationToken)
+						request
+							.getAttribute(
+								AuthFilter
+									.ATTRIBUTE_AUTHORIZATION_TOKEN),
 					schemaId,
 					version,
 					owner,
@@ -1145,10 +1181,6 @@ public class Version1 {
 	/**
 	 * Writes the requested data.
 	 * 
-	 * @param authTokenParameter
-	 *        The authentication token as a parameter. The token must be
-	 *        provided either here or as a cookie.
-	 * 
 	 * @param schemaId
 	 *        The ID for the schema to which the data pertains. This is part of
 	 *        the request's path.
@@ -1160,6 +1192,9 @@ public class Version1 {
 	 * @param data
 	 *        The data to be uploaded, which should be a JSON array of JSON
 	 *        objects where each object is a single data point.
+	 *        
+	 * @param request
+	 *        The HTTP request object.
 	 * 
 	 * @param response
 	 *        The HTTP response object.
@@ -1167,18 +1202,38 @@ public class Version1 {
 	@RequestMapping(
 		value = "{" + PARAM_SCHEMA_ID + "}/{" + PARAM_SCHEMA_VERSION + "}/data",
 		method = RequestMethod.POST)
-	public @ResponseBody void putData(
-		@RequestParam(
-			value = PARAM_AUTHENTICATION_AUTH_TOKEN,
-			required = true)
-			final String authToken,
+	public void putData(
 		@PathVariable(PARAM_SCHEMA_ID) final String schemaId,
 		@PathVariable(PARAM_SCHEMA_VERSION) final Long version,
 		@RequestParam(
 			value = PARAM_DATA,
 			required = true)
 			final String data,
+		final HttpServletRequest request,
 		final HttpServletResponse response) {
+		
+		// Make sure the authentication token was a parameter. This prevents
+		// malicious code from "hijacking" the token by performing a POST and
+		// having the browser inject it as only a cookie.
+		if(!
+			(Boolean)
+				request
+					.getAttribute(
+						AuthFilter
+							.ATTRIBUTE_AUTHENTICATION_TOKEN_IS_PARAM)) {
+			
+			throw
+				new OmhException(
+					"To upload data, the authentication token is required " +
+						"as a parameter.");
+		}
+		
+		// Get the authentication token.
+		AuthenticationToken authToken =
+			(AuthenticationToken)
+				request
+					.getAttribute(
+						AuthFilter.ATTRIBUTE_AUTHENTICATION_TOKEN);
 		
 		// Handle the request.
 		handleRequest(
@@ -1188,70 +1243,6 @@ public class Version1 {
 				version,
 				data),
 			response);
-	}
-	
-	/**
-	 * Checks the cookie and parameter authentication tokens and returns the
-	 * appropriate one or null if none were given.
-	 * 
-	 * @param cookie
-	 *        The authentication token from the HTTP cookies.
-	 * 
-	 * @param parameter
-	 *        The authentication token from the parameters.
-	 * 
-	 * @param onlyParameter
-	 *        A flag indicating if the authentication token may only be a
-	 *        parameter. If true, there will still be a check to ensure that,
-	 *        if a cookie is given, it matches the parameter, if given.
-	 * 
-	 * @return The most appropriate authentication token.
-	 * 
-	 * @throws InvalidAuthenticationException
-	 *         The authentication tokens did not match, or it was only given as
-	 *         a cookie but required to be a parameter.
-	 */
-	private String handleAuthentication(
-		final String cookie,
-		final String parameter,
-		final boolean onlyParameter)
-		throws OmhException {
-		
-		// If neither was given, then return null.
-		if((cookie == null) && (parameter == null)) {
-			return null;
-		}
-		// If they were both given,
-		else if((cookie != null) && (parameter != null)) {
-			// If they are equal, then return one.
-			if(cookie.equals(parameter)) {
-				return parameter;
-			}
-			// Otherwise, complain about them not being equal.
-			else {
-				throw
-					new InvalidAuthenticationException(
-						"The authentication token cookie was not equal to " +
-							"the authentication token parameter.");
-			}
-		}
-		// If only the cookie was given, then check to be sure it is allowed as
-		// only a cookie.
-		else if(cookie != null) {
-			if(onlyParameter) {
-				throw
-					new InvalidAuthenticationException(
-						"The authentication token was only given as a " +
-							"cookie, but it is required to be a parameter.");
-			}
-			else {
-				return cookie;
-			}
-		}
-		// If they were both given, then return that.
-		else {
-			return parameter;
-		}
 	}
 	
 	/**
@@ -1266,8 +1257,8 @@ public class Version1 {
 	 * 
 	 * @return The object to be returned to the user.
 	 */
-	private Object handleRequest(
-		final Request request,
+	private <T> T handleRequest(
+		final Request<? extends T> request,
 		final HttpServletResponse response) {
 		
 		// Service the request.

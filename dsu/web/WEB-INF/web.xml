@@ -185,6 +185,20 @@
         <filter-name>exceptionFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
+    <!-- Authentication Filter -->
+    <filter>
+        <description>Looks for authentication information and stores any found with the request.</description>
+        <display-name>Authentication Filter</display-name>
+        <filter-name>authenticationFilter</filter-name>
+        <filter-class>
+            org.openmhealth.reference.filter.AuthFilter
+        </filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>authenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
 <!--                               Servlets                                 -->

@@ -1,4 +1,4 @@
-package org.openmhealth.reference.data.mongodb;
+package org.openmhealth.reference.data.mongodb.data;
 
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
@@ -8,6 +8,7 @@ import org.openmhealth.reference.domain.AuthorizationCodeVerification;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import com.mongodb.QueryBuilder;
 
 /**
@@ -25,7 +26,14 @@ public class MongoAuthorizationCodeVerificationBin
 	 * Default constructor.
 	 */
 	protected MongoAuthorizationCodeVerificationBin() {
-		// Do nothing.
+		// Get the collection to add indexes to.
+		DBCollection collection =
+			MongoDao.getInstance().getDb().getCollection(DB_NAME);
+		
+		// Ensure that there is an index on the code.
+		collection
+			.ensureIndex(
+				AuthorizationCodeVerification.JSON_KEY_AUTHORIZATION_CODE);
 	}
 
 	/*

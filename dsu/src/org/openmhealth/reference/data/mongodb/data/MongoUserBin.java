@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.openmhealth.reference.data.mongodb;
+package org.openmhealth.reference.data.mongodb.data;
 
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
@@ -22,11 +22,12 @@ import org.openmhealth.reference.data.mongodb.domain.MongoUser;
 import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.OmhException;
 
+import com.mongodb.DBCollection;
 import com.mongodb.QueryBuilder;
 
 /**
  * <p>
- * The collection of users.
+ * The interface to the database-backed collection of users.
  * </p>
  *
  * @author John Jenkins
@@ -36,7 +37,12 @@ public class MongoUserBin extends UserBin {
 	 * Default constructor. All access to the user bin is static.
 	 */
 	protected MongoUserBin() {
-		// Do nothing.
+		// Get the collection to add indexes to.
+		DBCollection collection =
+			MongoDao.getInstance().getDb().getCollection(DB_NAME);
+		
+		// Ensure that there is an index on the username.
+		collection.ensureIndex(User.JSON_KEY_USERNAME);
 	}
 
 	/**

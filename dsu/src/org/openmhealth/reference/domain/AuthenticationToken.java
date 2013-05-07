@@ -17,6 +17,7 @@ package org.openmhealth.reference.domain;
 
 import java.util.UUID;
 
+import org.openmhealth.reference.data.UserBin;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -161,6 +162,31 @@ public class AuthenticationToken implements OmhObject {
 	 */
 	public String getUsername() {
 		return username;
+	}
+	
+	/**
+	 * Returns the user associated with this authentication token.
+	 * 
+	 * @return The user associated with this authentication token.
+	 * 
+	 * @throws OmhException
+	 *         There is an internal error or the user associated with this
+	 *         token no longer exists.
+	 */
+	public User getUser() throws OmhException {
+		// Attempt to get the user.
+		User user = UserBin.getInstance().getUser(username);
+		
+		// If the user no longer exists, throw an exception.
+		if(user == null) {
+			throw
+				new OmhException(
+					"The user that is associated with this token no longer " +
+						"exists.");
+		}
+		
+		// Return the user.
+		return user; 
 	}
 	
 	/**

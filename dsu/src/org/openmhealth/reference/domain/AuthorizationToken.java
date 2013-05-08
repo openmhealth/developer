@@ -86,98 +86,6 @@ public class AuthorizationToken implements OmhObject {
 	private final long expirationTime;
 	
 	/**
-	 * Creates an authorization token presumably from an existing one since all
-	 * of the fields are given. To create a new token, it is recommended that
-	 * {@link #AuthorizationToken(User, ThirdParty, Set)} be used.
-	 * 
-	 * @param owner
-	 *        The unique identifier for the user to whom this token pertains.
-	 * 
-	 * @param thirdParty
-	 *        The unique identifier for the third-party to which this token
-	 *        pertains.
-	 * 
-	 * @param authorizationCode
-	 *        The unique identifier for the authorization code that backs this
-	 *        token.
-	 * 
-	 * @param accessToken
-	 *        The access token value for this authorization token.
-	 * 
-	 * @param refreshToken
-	 *        The refresh token value for this authorization token.
-	 * 
-	 * @param creationTime
-	 *        The number of milliseconds since the epoch at which time this
-	 *        token was created.
-	 * 
-	 * @param expirationTime
-	 *        The number of milliseconds since the epoch at which time this
-	 *        token expires.
-	 * 
-	 * @throws OmhException
-	 *         A parameter is invalid.
-	 * 
-	 * @see #AuthorizationToken(User, ThirdParty, Set)
-	 */
-	@JsonCreator
-	public AuthorizationToken(
-		@JsonProperty(JSON_KEY_AUTHORIZATION_CODE)
-			final String authorizationCode,
-		@JsonProperty(JSON_KEY_ACCESS_TOKEN) final String accessToken,
-		@JsonProperty(JSON_KEY_REFRESH_TOKEN) final String refreshToken,
-		@JsonProperty(JSON_KEY_CREATION_TIME) final long creationTime,
-		@JsonProperty(JSON_KEY_EXPIRATION_TIME) final long expirationTime)
-		throws OmhException {
-		
-		// Validate the authorization code.
-		if(authorizationCode == null) {
-			throw new OmhException("The authorization code is null.");
-		}
-		else {
-			this.authorizationCode = authorizationCode;
-		}
-		
-		// Validate the access token.
-		if(accessToken == null) {
-			throw new OmhException("The access token is null.");
-		}
-		else {
-			this.accessToken = accessToken;
-		}
-		
-		// Validate the refresh token.
-		if(refreshToken == null) {
-			throw new OmhException("The refresh token is null.");
-		}
-		else {
-			this.refreshToken = refreshToken;
-		}
-		
-		// Validate the creation time.
-		DateTime creationTimeDateTime = new DateTime(creationTime);
-		if(creationTimeDateTime.isAfterNow()) {
-			throw
-				new OmhException(
-					"The token's creation time cannot be in the future.");
-		}
-		else {
-			this.creationTime = creationTime;
-		}
-		
-		// Validate the expiration time.
-		if(creationTimeDateTime.isAfter(expirationTime)) {
-			throw
-				new OmhException(
-					"The token's expiration time cannot be before its " +
-						"creation time.");
-		}
-		else {
-			this.expirationTime = expirationTime;
-		}
-	}
-	
-	/**
 	 * Creates a new authorization token.
 	 * 
 	 * @param verification
@@ -241,6 +149,98 @@ public class AuthorizationToken implements OmhObject {
 	}
 	
 	/**
+	 * Creates an authorization token presumably from an existing one since all
+	 * of the fields are given. To create a new token, it is recommended that
+	 * {@link #AuthorizationToken(User, ThirdParty, Set)} be used.
+	 * 
+	 * @param owner
+	 *        The unique identifier for the user to whom this token pertains.
+	 * 
+	 * @param thirdParty
+	 *        The unique identifier for the third-party to which this token
+	 *        pertains.
+	 * 
+	 * @param authorizationCode
+	 *        The unique identifier for the authorization code that backs this
+	 *        token.
+	 * 
+	 * @param accessToken
+	 *        The access token value for this authorization token.
+	 * 
+	 * @param refreshToken
+	 *        The refresh token value for this authorization token.
+	 * 
+	 * @param creationTime
+	 *        The number of milliseconds since the epoch at which time this
+	 *        token was created.
+	 * 
+	 * @param expirationTime
+	 *        The number of milliseconds since the epoch at which time this
+	 *        token expires.
+	 * 
+	 * @throws OmhException
+	 *         A parameter is invalid.
+	 * 
+	 * @see #AuthorizationToken(User, ThirdParty, Set)
+	 */
+	@JsonCreator
+	protected AuthorizationToken(
+		@JsonProperty(JSON_KEY_AUTHORIZATION_CODE)
+			final String authorizationCode,
+		@JsonProperty(JSON_KEY_ACCESS_TOKEN) final String accessToken,
+		@JsonProperty(JSON_KEY_REFRESH_TOKEN) final String refreshToken,
+		@JsonProperty(JSON_KEY_CREATION_TIME) final long creationTime,
+		@JsonProperty(JSON_KEY_EXPIRATION_TIME) final long expirationTime)
+		throws OmhException {
+		
+		// Validate the authorization code.
+		if(authorizationCode == null) {
+			throw new OmhException("The authorization code is null.");
+		}
+		else {
+			this.authorizationCode = authorizationCode;
+		}
+		
+		// Validate the access token.
+		if(accessToken == null) {
+			throw new OmhException("The access token is null.");
+		}
+		else {
+			this.accessToken = accessToken;
+		}
+		
+		// Validate the refresh token.
+		if(refreshToken == null) {
+			throw new OmhException("The refresh token is null.");
+		}
+		else {
+			this.refreshToken = refreshToken;
+		}
+		
+		// Validate the creation time.
+		DateTime creationTimeDateTime = new DateTime(creationTime);
+		if(creationTimeDateTime.isAfterNow()) {
+			throw
+				new OmhException(
+					"The token's creation time cannot be in the future.");
+		}
+		else {
+			this.creationTime = creationTime;
+		}
+		
+		// Validate the expiration time.
+		if(creationTimeDateTime.isAfter(expirationTime)) {
+			throw
+				new OmhException(
+					"The token's expiration time cannot be before its " +
+						"creation time.");
+		}
+		else {
+			this.expirationTime = expirationTime;
+		}
+	}
+	
+	/**
 	 * Returns the authorization code verification that backs this
 	 * authorization token.
 	 * 
@@ -285,9 +285,10 @@ public class AuthorizationToken implements OmhObject {
 	/**
 	 * Returns the number of milliseconds before the access token expires.
 	 * 
-	 * @return The number of milliseconds before the access token expires.
+	 * @return The number of milliseconds before the access token expires. This
+	 *         may be negative if the token has already expired.
 	 */
 	public long getExpirationIn() {
-		return DateTime.now().getMillis() - expirationTime;
+		return expirationTime - DateTime.now().getMillis();
 	}
 }

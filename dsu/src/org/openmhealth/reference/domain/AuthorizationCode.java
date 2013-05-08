@@ -92,11 +92,54 @@ public class AuthorizationCode implements OmhObject {
 	 */
 	@JsonProperty(JSON_KEY_STATE)
 	private final String state;
+
+	/**
+	 * Creates a new, valid authorization code.
+	 * 
+	 * @param thirdParty
+	 *        The third-party to which this token will apply.
+	 * 
+	 * @param scopes
+	 *        The set of scopes, e.g. schema IDs, that apply to this
+	 *        authorization token.
+	 * 
+	 * @throws OmhException
+	 *         A parameter is invalid.
+	 */
+	public AuthorizationCode(
+		final ThirdParty thirdParty,
+		final Set<String> scopes,
+		final String state) 
+		throws OmhException {
+		
+		// Validate the parameters.
+		if(thirdParty == null) {
+			throw new OmhException("The third-party is null.");
+		}
+		else if(scopes == null) {
+			throw new OmhException("The scopes is null.");
+		}
+		else if(scopes.size() == 0) {
+			throw
+				new OmhException(
+					"An authorization token cannot be created without any " +
+						"scope.");
+		}
+		
+		// Store the relevant information.
+		this.thirdParty = thirdParty.getId();
+		this.code = UUID.randomUUID().toString();
+		this.creationTime = DateTime.now().getMillis();
+		this.expirationTime =
+			this.creationTime + DEFAULT_CODE_LIFETIME_MILLIS;
+		this.scopes.addAll(scopes);
+		this.state = state;
+	}
 	
 	/**
 	 * Creates an authorization code presumably from an existing one since all
 	 * of the fields are given. To create a new code, it is recommended that
-	 * {@link} be used.
+	 * {@link #AuthorizationCode(ThirdParty, Set, String)} be used.
 	 * 
 	 * @param thirdParty
 	 *        The unique identifier for the third-party to which this token
@@ -126,7 +169,7 @@ public class AuthorizationCode implements OmhObject {
 	 * @see #AuthorizationCode(ThirdParty, Set)
 	 */
 	@JsonCreator
-	public AuthorizationCode(
+	protected AuthorizationCode(
 		@JsonProperty(JSON_KEY_THIRD_PARTY) final String thirdParty,
 		@JsonProperty(JSON_KEY_CODE) final String code,
 		@JsonProperty(JSON_KEY_CREATION_TIME) final long creationTime,
@@ -192,49 +235,6 @@ public class AuthorizationCode implements OmhObject {
 	}
 	
 	/**
-	 * Creates a new, valid authorization code.
-	 * 
-	 * @param thirdParty
-	 *        The third-party to which this token will apply.
-	 * 
-	 * @param scopes
-	 *        The set of scopes, e.g. schema IDs, that apply to this
-	 *        authorization token.
-	 * 
-	 * @throws OmhException
-	 *         A parameter is invalid.
-	 */
-	public AuthorizationCode(
-		final ThirdParty thirdParty,
-		final Set<String> scopes,
-		final String state) 
-		throws OmhException {
-		
-		// Validate the parameters.
-		if(thirdParty == null) {
-			throw new OmhException("The third-party is null.");
-		}
-		else if(scopes == null) {
-			throw new OmhException("The scopes is null.");
-		}
-		else if(scopes.size() == 0) {
-			throw
-				new OmhException(
-					"An authorization token cannot be created without any " +
-						"scope.");
-		}
-		
-		// Store the relevant information.
-		this.thirdParty = thirdParty.getId();
-		this.code = UUID.randomUUID().toString();
-		this.creationTime = DateTime.now().getMillis();
-		this.expirationTime =
-			this.creationTime + DEFAULT_CODE_LIFETIME_MILLIS;
-		this.scopes.addAll(scopes);
-		this.state = state;
-	}
-	
-	/**
 	 * Returns the third-party associated with this authorization code.
 	 * 
 	 * @return The third-party associated with this authorization code. 
@@ -259,6 +259,16 @@ public class AuthorizationCode implements OmhObject {
 	 */
 	public Set<String> getScopes() {
 		return Collections.unmodifiableSet(scopes);
+	}
+	
+	/**
+	 * Returns the time at which the code was created.
+	 * 
+	 * @return The time, in milliseconds since the epoch, when this code was
+	 * 		   created.
+	 */
+	public long getCreationTime() {
+		return creationTime;
 	}
 	
 	/**

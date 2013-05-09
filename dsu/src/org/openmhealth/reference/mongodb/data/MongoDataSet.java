@@ -51,18 +51,34 @@ public class MongoDataSet extends DataSet {
 			MongoDao.getInstance().getDb().getCollection(DB_NAME);
 		
 		// Ensure that there is an index on the token.
-		collection.ensureIndex(Data.JSON_KEY_OWNER);
+		collection
+			.ensureIndex(
+				new BasicDBObject(Data.JSON_KEY_OWNER, 1),
+				DB_NAME + "_" + Data.JSON_KEY_OWNER + "_index",
+				false);
 		
 		// Ensure that there is an index on the schema's ID.
-		collection.ensureIndex(Schema.JSON_KEY_ID);
+		collection
+			.ensureIndex(
+				new BasicDBObject(Schema.JSON_KEY_ID, 1),
+				DB_NAME + "_" + Schema.JSON_KEY_ID + "_index",
+				false);
 		// Ensure that there is an index on the schema's version.
-		collection.ensureIndex(Schema.JSON_KEY_VERSION);
+		collection
+			.ensureIndex(
+				new BasicDBObject(Schema.JSON_KEY_VERSION, 1),
+				DB_NAME + "_" + Schema.JSON_KEY_VERSION + "_index",
+				false);
 		
 		// Build the index for sorting.
-		collection.ensureIndex(
+		String sortingFields = 
 			Data.JSON_KEY_METADATA + 
 				ColumnList.COLUMN_SEPARATOR + 
-				MetaData.JSON_KEY_TIMESTAMP);
+				MetaData.JSON_KEY_TIMESTAMP;
+		collection.ensureIndex(
+			new BasicDBObject(sortingFields, 1),
+			DB_NAME + "_" + sortingFields + "_index",
+			false);
 	}
 	
 	/*

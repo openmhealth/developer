@@ -76,9 +76,30 @@ public class MongoRegistry extends Registry {
 			MongoDao.getInstance().getDb().getCollection(DB_NAME);
 
 		// Ensure that there is an index on the ID.
-		collection.ensureIndex(Schema.JSON_KEY_ID);
+		collection
+			.ensureIndex(
+				new BasicDBObject(Schema.JSON_KEY_ID, 1),
+				DB_NAME + "_" + Schema.JSON_KEY_ID + "_index",
+				false);
 		// Ensure that there is an index on the version.
-		collection.ensureIndex(Schema.JSON_KEY_VERSION);
+		collection
+			.ensureIndex(
+				new BasicDBObject(Schema.JSON_KEY_VERSION, 1),
+				DB_NAME + "_" + Schema.JSON_KEY_VERSION + "_index",
+				false);
+		
+		// Ensure that there is a compound, unique key on the ID and version.
+		collection
+			.ensureIndex(
+				(new BasicDBObject(Schema.JSON_KEY_ID, 1))
+					.append(Schema.JSON_KEY_VERSION, 1),
+				DB_NAME + 
+					"_" + 
+					Schema.JSON_KEY_ID + 
+					"_" + 
+					Schema.JSON_KEY_VERSION + 
+					"_unique",
+				true);
 	}
 
 	/*

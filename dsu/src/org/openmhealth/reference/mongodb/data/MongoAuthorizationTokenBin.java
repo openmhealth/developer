@@ -28,9 +28,25 @@ public class MongoAuthorizationTokenBin extends AuthorizationTokenBin {
 			MongoDao.getInstance().getDb().getCollection(DB_NAME);
 
 		// Ensure that there is an index on the access token.
-		collection.ensureIndex(AuthorizationToken.JSON_KEY_ACCESS_TOKEN);
+		collection
+			.ensureIndex(
+				new BasicDBObject(AuthorizationToken.JSON_KEY_ACCESS_TOKEN, 1),
+				DB_NAME + 
+					"_" + 
+					AuthorizationToken.JSON_KEY_ACCESS_TOKEN +
+					"_unique",
+				true);
 		// Ensure that there is an index on the refresh token.
-		collection.ensureIndex(AuthorizationToken.JSON_KEY_REFRESH_TOKEN);
+		collection
+			.ensureIndex(
+				new BasicDBObject(
+					AuthorizationToken.JSON_KEY_REFRESH_TOKEN,
+					1),
+				DB_NAME + 
+					"_" + 
+					AuthorizationToken.JSON_KEY_REFRESH_TOKEN +
+					"_unique",
+				true);
 	}
 
 	/*

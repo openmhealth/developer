@@ -22,6 +22,7 @@ import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.OmhException;
 import org.openmhealth.reference.mongodb.domain.MongoUser;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.QueryBuilder;
 
@@ -42,7 +43,11 @@ public class MongoUserBin extends UserBin {
 			MongoDao.getInstance().getDb().getCollection(DB_NAME);
 		
 		// Ensure that there is an index on the username.
-		collection.ensureIndex(User.JSON_KEY_USERNAME);
+		collection
+			.ensureIndex(
+				new BasicDBObject(User.JSON_KEY_USERNAME, 1),
+				DB_NAME + "_" + User.JSON_KEY_USERNAME + "_unique",
+				true);
 	}
 
 	/**

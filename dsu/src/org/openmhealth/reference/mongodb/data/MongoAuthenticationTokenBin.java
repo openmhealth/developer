@@ -43,9 +43,20 @@ public class MongoAuthenticationTokenBin extends AuthenticationTokenBin {
 			MongoDao.getInstance().getDb().getCollection(DB_NAME);
 
 		// Ensure that there is an index on the token.
-		collection.ensureIndex(AuthenticationToken.JSON_KEY_TOKEN);
+		collection
+			.ensureIndex(
+				new BasicDBObject(AuthenticationToken.JSON_KEY_TOKEN, 1), 
+				DB_NAME + "_" + AuthenticationToken.JSON_KEY_TOKEN + "_unique",
+				true);
 		// Ensure that there is an index on the expiration time.
-		collection.ensureIndex(AuthenticationToken.JSON_KEY_EXPIRES);
+		collection
+			.ensureIndex(
+				new BasicDBObject(AuthenticationToken.JSON_KEY_EXPIRES, 1),
+				DB_NAME + 
+					"_" +
+					AuthenticationToken.JSON_KEY_EXPIRES +
+					"_index",
+				false);
 	}
 
 	/*

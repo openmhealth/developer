@@ -28,7 +28,11 @@ public class MongoThirdPartyBin extends ThirdPartyBin {
 			MongoDao.getInstance().getDb().getCollection(DB_NAME);
 		
 		// Ensure that there is an index on the ID.
-		collection.ensureIndex(ThirdParty.JSON_KEY_ID);
+		collection
+			.ensureIndex(
+				new BasicDBObject(ThirdParty.JSON_KEY_ID, 1),
+				DB_NAME + "_" + ThirdParty.JSON_KEY_ID + "_unique",
+				true);
 	}
 
 	/*

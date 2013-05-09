@@ -93,6 +93,14 @@ public class MongoDao extends Dao {
 	}
 	
 	/**
+	 * Shuts the DAO down.
+	 */
+	@Override
+	public void shutdown() {
+		mongo.close();
+	}
+	
+	/**
 	 * Returns the instance of this DAO as a MongoDao.
 	 * 
 	 * @return The instance of this DAO as a MongoDao.
@@ -107,14 +115,6 @@ public class MongoDao extends Dao {
 		catch(ClassCastException e) {
 			throw new IllegalStateException("The DAO is not a MongoDB DAO.");
 		}
-	}
-	
-	/**
-	 * Shuts the DAO down.
-	 */
-	@Override
-	public void shutdown() {
-		mongo.close();
 	}
 
 	/*

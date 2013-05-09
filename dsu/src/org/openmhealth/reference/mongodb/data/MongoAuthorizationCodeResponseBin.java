@@ -29,10 +29,17 @@ public class MongoAuthorizationCodeResponseBin
 		DBCollection collection =
 			MongoDao.getInstance().getDb().getCollection(DB_NAME);
 		
-		// Ensure that there is an index on the code.
+		// Ensure that there is an unique index on the code.
 		collection
 			.ensureIndex(
-				AuthorizationCodeResponse.JSON_KEY_AUTHORIZATION_CODE);
+				new BasicDBObject(
+					AuthorizationCodeResponse.JSON_KEY_AUTHORIZATION_CODE,
+					1),
+				DB_NAME + 
+					"_" + 
+					AuthorizationCodeResponse.JSON_KEY_AUTHORIZATION_CODE + 
+					"_unique",
+				true);
 	}
 
 	/*

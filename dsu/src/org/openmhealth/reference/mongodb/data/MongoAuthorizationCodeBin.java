@@ -28,7 +28,11 @@ public class MongoAuthorizationCodeBin extends AuthorizationCodeBin {
 			MongoDao.getInstance().getDb().getCollection(DB_NAME);
 		
 		// Ensure that there is an index on the code.
-		collection.ensureIndex(AuthorizationCode.JSON_KEY_CODE);
+		collection
+			.ensureIndex(
+				new BasicDBObject(AuthorizationCode.JSON_KEY_CODE, 1),
+				DB_NAME + "_" + AuthorizationCode.JSON_KEY_CODE + "_unique",
+				true);
 	}
 
 	/*

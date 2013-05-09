@@ -60,9 +60,6 @@ public class DataTest {
 			new Schema(
 				SchemaTest.ID,
 				1,
-				1,
-				true,
-				true,
 				schemaRoot,
 				ValidationController.BASIC_CONTROLLER);
 	}

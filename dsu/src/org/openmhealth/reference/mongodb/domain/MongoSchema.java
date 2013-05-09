@@ -62,18 +62,6 @@ public class MongoSchema extends Schema implements MongoDbObject {
 	 * @param version
 	 *        The version of this schema.
 	 * 
-	 * @param chunkSize
-	 *        The maximum number of data points that may be returned for this
-	 *        schema in a single request.
-	 * 
-	 * @param timeAuthoritative
-	 *        Whether or not the time in the meta-data for points refers to an
-	 *        actual time or a context-specific one.
-	 * 
-	 * @param timeZoneAuthoritative
-	 *        If the time is authoritative, this indicates whether or not the
-	 *        time-zone associated with that time represents a valid time-zone.
-	 * 
 	 * @param schema
 	 *        The specific schema.
 	 * 
@@ -85,24 +73,12 @@ public class MongoSchema extends Schema implements MongoDbObject {
 		@JsonProperty(DATABASE_FIELD_ID) final String dbId,
 		@JsonProperty(JSON_KEY_ID) final String id,
 		@JsonProperty(JSON_KEY_VERSION) final long version,
-		@JsonProperty(JSON_KEY_CHUNK_SIZE) final long chunkSize,
-		@JsonProperty(JSON_KEY_TIME_AUTHORITATIVE)
-			final boolean timeAuthoritative,
-		@JsonProperty(JSON_KEY_TIME_ZONE_AUTHORITATIVE) 
-			final boolean timeZoneAuthoritative,
 		@JsonProperty(JSON_KEY_SCHEMA) final JsonNode schema,
 		@JacksonInject(JSON_KEY_VALIDATION_CONTROLLER)
 			final ValidationController controller)
 		throws OmhException {
 
-		super(
-			id,
-			version,
-			chunkSize,
-			timeAuthoritative,
-			timeZoneAuthoritative,
-			schema,
-			controller);
+		super(id, version, schema, controller);
 		
 		// Store the MongoDB ID.
 		if(dbId == null) {

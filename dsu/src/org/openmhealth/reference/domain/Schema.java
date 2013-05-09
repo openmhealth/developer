@@ -62,20 +62,6 @@ public class Schema implements OmhObject {
 	 */
 	public static final String JSON_KEY_VERSION = "schema_version";
 	/**
-	 * The JSON key for the maximum chunk size.
-	 */
-	public static final String JSON_KEY_CHUNK_SIZE = "chunk_size";
-	/**
-	 * The JSON key for authoritativeness of the time.
-	 */
-	public static final String JSON_KEY_TIME_AUTHORITATIVE =
-		"time_authoritative";
-	/**
-	 * The JSON key for the authoritativeness of the time-zone.
-	 */
-	public static final String JSON_KEY_TIME_ZONE_AUTHORITATIVE =
-		"time_zone_authoritative";
-	/**
 	 * The JSON key for the Concordia schema.
 	 */
 	public static final String JSON_KEY_SCHEMA = "schema";
@@ -99,23 +85,6 @@ public class Schema implements OmhObject {
 	@JsonProperty(JSON_KEY_VERSION)
 	private final long version;
 	/**
-	 * The largest number of records that can be read in a single request.
-	 */
-	@JsonProperty(JSON_KEY_CHUNK_SIZE)
-	private final long chunkSize;
-	/**
-	 * Whether or not the given time-stamp represents a real time or an
-	 * artificial one.
-	 */
-	@JsonProperty(JSON_KEY_TIME_AUTHORITATIVE)
-	private final boolean timeAuthoritative;
-	/**
-	 * Whether or not the given time-zone represents a real time-zone or a
-	 * generated one.
-	 */
-	@JsonProperty(JSON_KEY_TIME_ZONE_AUTHORITATIVE)
-	private final boolean timeZoneAuthoritative;
-	/**
 	 * The actual schema for this {@link Schema} object.
 	 */
 	@JsonProperty(JSON_KEY_SCHEMA)
@@ -129,18 +98,6 @@ public class Schema implements OmhObject {
 	 * 
 	 * @param version
 	 *        The version of this schema.
-	 * 
-	 * @param chunkSize
-	 *        The maximum number of data points that may be returned for this
-	 *        schema in a single request.
-	 * 
-	 * @param timeAuthoritative
-	 *        Whether or not the time in the meta-data for points refers to an
-	 *        actual time or a context-specific one.
-	 * 
-	 * @param timeZoneAuthoritative
-	 *        If the time is authoritative, this indicates whether or not the
-	 *        time-zone associated with that time represents a valid time-zone.
 	 * 
 	 * @param schema
 	 *        The specific schema.
@@ -159,11 +116,6 @@ public class Schema implements OmhObject {
 	public Schema(
 		@JsonProperty(JSON_KEY_ID) final String id,
 		@JsonProperty(JSON_KEY_VERSION) final long version,
-		@JsonProperty(JSON_KEY_CHUNK_SIZE) final long chunkSize,
-		@JsonProperty(JSON_KEY_TIME_AUTHORITATIVE)
-			final boolean timeAuthoritative,
-		@JsonProperty(JSON_KEY_TIME_ZONE_AUTHORITATIVE) 
-			final boolean timeZoneAuthoritative,
 		@JsonProperty(JSON_KEY_SCHEMA) final JsonNode schema,
 		@JacksonInject(JSON_KEY_VALIDATION_CONTROLLER)
 			final ValidationController controller)
@@ -182,12 +134,6 @@ public class Schema implements OmhObject {
 
 		// Validate the version.
 		this.version = validateVersion(version);
-
-		// Validate the chunk size.
-		this.chunkSize = validateChunkSize(chunkSize);
-
-		this.timeAuthoritative = timeAuthoritative;
-		this.timeZoneAuthoritative = timeZoneAuthoritative;
 		
 		// Make sure the schema is not null.
 		if(schema == null) {

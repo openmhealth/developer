@@ -48,18 +48,6 @@ public class SchemaTest {
 	 */
 	public static final long VERSION = 1;
 	/**
-	 * A valid chunk size to use for testing.
-	 */
-	public static final long CHUNK_SIZE = 2;
-	/**
-	 * A valid time authoritative value to use for testing.
-	 */
-	public static final boolean TIME_AUTHORITATIVE = true;
-	/**
-	 * A valid time-zone authoritative value to use for testing.
-	 */
-	public static final boolean TIME_ZONE_AUTHORITATIVE = true;
-	/**
 	 * A valid schema to use for testing.
 	 */
 	public static final JsonNode SCHEMA;
@@ -107,14 +95,7 @@ public class SchemaTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testSchemaIdNull() {
-		new Schema(
-			null,
-			VERSION,
-			CHUNK_SIZE,
-			TIME_AUTHORITATIVE,
-			TIME_ZONE_AUTHORITATIVE,
-			SCHEMA,
-			CONTROLLER);
+		new Schema(null, VERSION, SCHEMA, CONTROLLER);
 	}
 
 	/**
@@ -122,14 +103,7 @@ public class SchemaTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testSchemaIdEmpty() {
-		new Schema(
-			"",
-			VERSION,
-			CHUNK_SIZE,
-			TIME_AUTHORITATIVE,
-			TIME_ZONE_AUTHORITATIVE,
-			SCHEMA,
-			CONTROLLER);
+		new Schema("", VERSION, SCHEMA, CONTROLLER);
 	}
 
 	/**
@@ -137,14 +111,7 @@ public class SchemaTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testSchemaIdWhitespace() {
-		new Schema(
-			"\t",
-			VERSION,
-			CHUNK_SIZE,
-			TIME_AUTHORITATIVE,
-			TIME_ZONE_AUTHORITATIVE,
-			SCHEMA,
-			CONTROLLER);
+		new Schema("\t", VERSION, SCHEMA, CONTROLLER);
 	}
 
 	/**
@@ -152,14 +119,7 @@ public class SchemaTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testSchemaSchemaNull() {
-		new Schema(
-			ID,
-			VERSION,
-			CHUNK_SIZE,
-			TIME_AUTHORITATIVE,
-			TIME_ZONE_AUTHORITATIVE,
-			null,
-			CONTROLLER);
+		new Schema(ID, VERSION, null, CONTROLLER);
 	}
 
 	/**
@@ -167,14 +127,7 @@ public class SchemaTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testSchemaSchemaInvalid() {
-		new Schema(
-			ID,
-			VERSION,
-			CHUNK_SIZE,
-			TIME_AUTHORITATIVE,
-			TIME_ZONE_AUTHORITATIVE,
-			BooleanNode.TRUE,
-			CONTROLLER);
+		new Schema(ID, VERSION, BooleanNode.TRUE, CONTROLLER);
 	}
 
 	/**
@@ -182,14 +135,7 @@ public class SchemaTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testSchemaControllerNull() {
-		new Schema(
-			ID,
-			VERSION,
-			CHUNK_SIZE,
-			TIME_AUTHORITATIVE,
-			TIME_ZONE_AUTHORITATIVE,
-			SCHEMA,
-			null);
+		new Schema(ID, VERSION, SCHEMA, null);
 	}
 
 	/**
@@ -198,14 +144,7 @@ public class SchemaTest {
 	 */
 	@Test
 	public void testSchema() {
-		new Schema(
-			ID,
-			VERSION,
-			CHUNK_SIZE,
-			TIME_AUTHORITATIVE,
-			TIME_ZONE_AUTHORITATIVE,
-			SCHEMA,
-			CONTROLLER);
+		new Schema(ID, VERSION, SCHEMA, CONTROLLER);
 	}
 
 	/**
@@ -213,15 +152,7 @@ public class SchemaTest {
 	 */
 	@Test
 	public void testGetId() {
-		Schema schema =
-			new Schema(
-				ID,
-				VERSION,
-				CHUNK_SIZE,
-				TIME_AUTHORITATIVE,
-				TIME_ZONE_AUTHORITATIVE,
-				SCHEMA,
-				CONTROLLER);
+		Schema schema = new Schema(ID, VERSION, SCHEMA, CONTROLLER);
 		Assert.assertEquals(ID, schema.getId());
 	}
 
@@ -230,15 +161,7 @@ public class SchemaTest {
 	 */
 	@Test
 	public void testGetVersion() {
-		Schema schema =
-			new Schema(
-				ID,
-				VERSION,
-				CHUNK_SIZE,
-				TIME_AUTHORITATIVE,
-				TIME_ZONE_AUTHORITATIVE,
-				SCHEMA,
-				CONTROLLER);
+		Schema schema = new Schema(ID, VERSION, SCHEMA, CONTROLLER);
 		Assert.assertEquals(VERSION, schema.getVersion());
 	}
 
@@ -247,15 +170,7 @@ public class SchemaTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testValidateDataOwnerNull() {
-		Schema schema =
-			new Schema(
-				ID,
-				VERSION,
-				CHUNK_SIZE,
-				TIME_AUTHORITATIVE,
-				TIME_ZONE_AUTHORITATIVE,
-				SCHEMA,
-				CONTROLLER);
+		Schema schema = new Schema(ID, VERSION, SCHEMA, CONTROLLER);
 		schema.validateData(null, META_DATA, DATA);
 	}
 
@@ -264,15 +179,7 @@ public class SchemaTest {
 	 */
 	@Test
 	public void testValidateDataMetaDataNull() {
-		Schema schema =
-			new Schema(
-				ID,
-				VERSION,
-				CHUNK_SIZE,
-				TIME_AUTHORITATIVE,
-				TIME_ZONE_AUTHORITATIVE,
-				SCHEMA,
-				CONTROLLER);
+		Schema schema = new Schema(ID, VERSION, SCHEMA, CONTROLLER);
 		schema.validateData(OWNER, null, DATA);
 	}
 
@@ -281,15 +188,7 @@ public class SchemaTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testValidateDataDataNull() {
-		Schema schema =
-			new Schema(
-				ID,
-				VERSION,
-				CHUNK_SIZE,
-				TIME_AUTHORITATIVE,
-				TIME_ZONE_AUTHORITATIVE,
-				SCHEMA,
-				CONTROLLER);
+		Schema schema = new Schema(ID, VERSION, SCHEMA, CONTROLLER);
 		schema.validateData(OWNER, META_DATA, null);
 	}
 
@@ -298,15 +197,7 @@ public class SchemaTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testValidateDataDataInvalid() {
-		Schema schema =
-			new Schema(
-				ID,
-				VERSION,
-				CHUNK_SIZE,
-				TIME_AUTHORITATIVE,
-				TIME_ZONE_AUTHORITATIVE,
-				SCHEMA,
-				CONTROLLER);
+		Schema schema = new Schema(ID, VERSION, SCHEMA, CONTROLLER);
 		schema.validateData(OWNER, META_DATA, BooleanNode.TRUE);
 	}
 
@@ -315,15 +206,7 @@ public class SchemaTest {
 	 */
 	@Test
 	public void testValidateData() {
-		Schema schema =
-			new Schema(
-				ID,
-				VERSION,
-				CHUNK_SIZE,
-				TIME_AUTHORITATIVE,
-				TIME_ZONE_AUTHORITATIVE,
-				SCHEMA,
-				CONTROLLER);
+		Schema schema = new Schema(ID, VERSION, SCHEMA, CONTROLLER);
 		schema.validateData(OWNER, META_DATA, DATA);
 	}
 
@@ -389,37 +272,5 @@ public class SchemaTest {
 	@Test
 	public void testValidateVersion() {
 		Schema.validateVersion(VERSION);
-	}
-
-	/**
-	 * Test that a negative number is not a valid chunk size.
-	 */
-	@Test(expected = OmhException.class)
-	public void testValidateChunkSizeNegative() {
-		Schema.validateChunkSize(-1);
-	}
-
-	/**
-	 * Test that zero is not a valid chunk size.
-	 */
-	@Test(expected = OmhException.class)
-	public void testValidateChunkSizeZero() {
-		Schema.validateChunkSize(0);
-	}
-
-	/**
-	 * Test that a positive number is not a valid chunk size.
-	 */
-	@Test
-	public void testValidateChunkSizePositive() {
-		Schema.validateChunkSize(1);
-	}
-
-	/**
-	 * Test that a valid chunk size is valid.
-	 */
-	@Test
-	public void testValidateChunkSize() {
-		Schema.validateChunkSize(CHUNK_SIZE);
 	}
 }

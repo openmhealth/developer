@@ -14,6 +14,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * data.
  * </p>
  * 
+ * <p>
+ * This class is immutable.
+ * </p>
+ * 
  * @author John Jenkins
  */
 public class ThirdParty implements OmhObject {
@@ -162,9 +166,9 @@ public class ThirdParty implements OmhObject {
 	}
 	
 	/**
-	 * Creates a new third-party from an already serialized third-party object.
-	 * This should only be used by the deserializer and should not be exposed
-	 * to external users even through child classes.
+	 * Creates a new third-party presumably from an existing third-party object
+	 * since all o the fields are given. To create a new third-party, it is
+	 * recommended that {@link #ThirdParty(User, String, String, URI)} be used.
 	 * 
 	 * @param owner
 	 *        The ID for the user that created this third-party.
@@ -188,7 +192,7 @@ public class ThirdParty implements OmhObject {
 	 * @throws OmhException
 	 *         Any of the parameters is null or empty.
 	 *         
-	 * @see #ThirdParty(String, String, String, URI)
+	 * @see #ThirdParty(User, String, String, URI)
 	 */
 	@JsonCreator
 	protected ThirdParty(

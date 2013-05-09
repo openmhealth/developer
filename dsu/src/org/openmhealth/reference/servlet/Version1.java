@@ -36,13 +36,13 @@ import org.apache.amber.oauth2.common.message.types.GrantType;
 import org.apache.amber.oauth2.common.message.types.ResponseType;
 import org.apache.amber.oauth2.common.message.types.TokenType;
 import org.openmhealth.reference.data.AuthorizationCodeBin;
-import org.openmhealth.reference.data.AuthorizationCodeVerificationBin;
+import org.openmhealth.reference.data.AuthorizationCodeResponseBin;
 import org.openmhealth.reference.data.AuthorizationTokenBin;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.data.ThirdPartyBin;
 import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.AuthorizationCode;
-import org.openmhealth.reference.domain.AuthorizationCodeVerification;
+import org.openmhealth.reference.domain.AuthorizationCodeResponse;
 import org.openmhealth.reference.domain.AuthorizationToken;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MultiValueResult;
@@ -166,7 +166,17 @@ public class Version1 {
 	 * @param password
 	 *        The password of the user attempting to authenticate.
 	 * 
-	 * @return A View object that will contain the user's authentication token.
+	 * @param request
+	 *        The HTTP request object.
+	 * 
+	 * @param response
+	 *        The HTTP response object.
+	 * 
+	 * @return The authorization token.
+	 * 
+	 * @throws OmhException
+	 *         There was a problem with the request. This could be any of the
+	 *         sub-classes of {@link OmhException}.
 	 */
 	@RequestMapping(value = "auth", method = RequestMethod.POST)
 	public @ResponseBody String getAuthentication(
@@ -179,7 +189,8 @@ public class Version1 {
 			required = true)
 			final String password,
 		final HttpServletRequest request,
-		final HttpServletResponse response) {
+		final HttpServletResponse response)
+		throws OmhException {
 		
 		// Create the authentication request from parameters.
 		AuthenticationToken token =
@@ -302,7 +313,9 @@ public class Version1 {
 	 * @param response
 	 *        The HTTP response.
 	 * 
-	 * @return An response that indicates what was wrong with the request.
+	 * @return A OAuth-specified JSON response that indicates what was wrong
+	 *         with the request. If nothing was wrong with the request, a
+	 *         redirect would have been returned.
 	 * 
 	 * @throws IOException
 	 *         There was a problem responding to the client.
@@ -519,6 +532,12 @@ public class Version1 {
 	 * 
 	 * @param code
 	 *        The code that was created, but not yet validated by the user.
+	 * 
+	 * @param request
+	 *        The HTTP request object.
+	 * 
+	 * @param response
+	 *        The HTTP response object.
 	 */
 	@RequestMapping(
 		value = "auth/oauth/authorization",
@@ -575,26 +594,25 @@ public class Version1 {
 			return;
 		}
 		
-		// Get the verification if it already exists.
-		AuthorizationCodeVerification verification =
-			AuthorizationCodeVerificationBin
-				.getInstance().getVerification(code);
+		// Get the response if it already exists.
+		AuthorizationCodeResponse codeResponse =
+			AuthorizationCodeResponseBin.getInstance().getResponse(code);
 		
-		// If the verification does not exist, attempt to create a new one and
+		// If the response does not exist, attempt to create a new one and
 		// save it.
-		if(verification == null) {
+		if(codeResponse == null) {
 			// Create the new code.
-			verification =
-				new AuthorizationCodeVerification(authCode, user, granted);
+			codeResponse =
+				new AuthorizationCodeResponse(authCode, user, granted);
 			
 			// Store it.
-			AuthorizationCodeVerificationBin
-				.getInstance().storeVerification(verification);
+			AuthorizationCodeResponseBin
+				.getInstance().storeVerification(codeResponse);
 		}
 		// Make sure it is being verified by the same user.
 		else if(
 			! user
-				.getUsername().equals(verification.getOwner().getUsername())) {
+				.getUsername().equals(codeResponse.getOwner().getUsername())) {
 			
 			response
 				.sendRedirect(
@@ -611,8 +629,8 @@ public class Version1 {
 						.buildQueryMessage()
 						.getLocationUri());
 		}
-		// Make sure the same verification response is being made.
-		else if(granted == verification.getGranted()) {
+		// Make sure the same grant response is being made.
+		else if(granted == codeResponse.getGranted()) {
 			response
 				.sendRedirect(
 					OAuthASResponse
@@ -656,14 +674,25 @@ public class Version1 {
 	 * secret must be given to authenticate them. They will then be returned
 	 * either an authorization token or an error message indicating what was
 	 * wrong with the request.
-	 * </p> 
+	 * </p>
 	 * 
-	 * @throws OAuthSystemException The OAuth library encountered an error.
+	 * @param request
+	 *        The HTTP request object.
+	 * 
+	 * @param response
+	 *        The HTTP response object.
+	 * 
+	 * @return An OAuth-specified JSON error message or an OAuth-specified JSON
+	 *         response that includes the access and refresh tokens as well as
+	 *         the expiration and other information.
+	 * 
+	 * @throws OAuthSystemException
+	 *         The OAuth library encountered an error.
 	 */
 	@RequestMapping(
 		value = "auth/oauth/token",
 		method = RequestMethod.POST)
-	public @ResponseBody Object createAuthorizationToken(
+	public @ResponseBody String createAuthorizationToken(
 		final HttpServletRequest request,
 		final HttpServletResponse response)
 		throws OAuthSystemException, IOException {
@@ -847,12 +876,12 @@ public class Version1 {
 				return oauthResponse.getBody();
 			}
 			
-			// Use the code to lookup the verification information and error
-			// out if a user has not yet verified it.
-			AuthorizationCodeVerification verification =
-				AuthorizationCodeVerificationBin
-					.getInstance().getVerification(code.getCode());
-			if(verification == null) {
+			// Use the code to lookup the response information and error out if
+			// a user has not yet verified it.
+			AuthorizationCodeResponse codeResponse =
+				AuthorizationCodeResponseBin
+					.getInstance().getResponse(code.getCode());
+			if(codeResponse == null) {
 				// Create the OAuth response.
 				OAuthResponse oauthResponse =
 					OAuthASResponse
@@ -869,7 +898,7 @@ public class Version1 {
 			}
 			
 			// Determine if the user granted access and, if not, error out.
-			if(! verification.getGranted()) {
+			if(! codeResponse.getGranted()) {
 				// Create the OAuth response.
 				OAuthResponse oauthResponse =
 					OAuthASResponse
@@ -885,7 +914,7 @@ public class Version1 {
 			}
 			
 			// Create a new token.
-			token = new AuthorizationToken(verification);
+			token = new AuthorizationToken(codeResponse);
 		}
 		// Handle a third-party refreshing an existing token.
 		else if(GrantType.REFRESH_TOKEN.equals(grantType)) {
@@ -1006,8 +1035,16 @@ public class Version1 {
 	 * a map of all of the schema IDs to their high-level information, e.g.
 	 * name, description, latest version, etc.
 	 * 
-	 * @return All of the known schema ID-version pairs and their corresponding
-	 *         schema, based on paging.
+	 * @param numToSkip
+	 *        The number of data points to skip to facilitate paging.
+	 * 
+	 * @param numToReturn
+	 *        The number of data points to return to facilitate paging.
+	 * 
+	 * @param response
+	 *        The HTTP response object.
+	 * 
+	 * @return An array of all of the known schemas, limited by paging.
 	 */
 	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
 	public @ResponseBody Object getIds(
@@ -1030,12 +1067,23 @@ public class Version1 {
 	}
 	
 	/**
-	 * Creates a request to get the information about the given schema ID,
-	 * e.g. the name, description, version list, etc.
+	 * Creates a request to get the information about the given schema ID, e.g.
+	 * the name, description, version list, etc.
 	 * 
-	 * @request schemaId The schema ID from the URL.
+	 * @param schemaId
+	 *        The schema ID from the URL.
 	 * 
-	 * @return The schema for each version of the schema ID, based on paging.
+	 * @param numToSkip
+	 *        The number of data points to skip to facilitate paging.
+	 * 
+	 * @param numToReturn
+	 *        The number of data points to return to facilitate paging.
+	 * 
+	 * @param response
+	 *        The HTTP response object.
+	 * 
+	 * @return An array of schemas, one for each version of the given schema
+	 *         ID.
 	 */
 	@RequestMapping(
 		value = "{" + PARAM_SCHEMA_ID + "}",
@@ -1070,7 +1118,16 @@ public class Version1 {
 	 * @param version
 	 *        The schema version from the URL.
 	 * 
-	 * @return The definition of the schema ID-version pair.
+	 * @param numToSkip
+	 *        The number of data points to skip to facilitate paging.
+	 * 
+	 * @param numToReturn
+	 *        The number of data points to return to facilitate paging.
+	 * 
+	 * @param response
+	 *        The HTTP response object.
+	 * 
+	 * @return The schema for the given schema ID-version pair.
 	 */
 	@RequestMapping(
 		value = "{" + PARAM_SCHEMA_ID + "}/{" + PARAM_SCHEMA_VERSION + "}",
@@ -1127,6 +1184,8 @@ public class Version1 {
 	 * 
 	 * @return The data as a JSON array of JSON objects where each object
 	 *         represents a single data point.
+	 * 
+	 * @see Data
 	 */
 	@RequestMapping(
 		value = "{" + PARAM_SCHEMA_ID + "}/{" + PARAM_SCHEMA_VERSION + "}/data",
@@ -1182,12 +1241,10 @@ public class Version1 {
 	 * Writes the requested data.
 	 * 
 	 * @param schemaId
-	 *        The ID for the schema to which the data pertains. This is part of
-	 *        the request's path.
+	 *        The ID for the schema to which the data pertains.
 	 * 
 	 * @param version
-	 *        The version of the schema to which the data pertains. This is
-	 *        part of the request's path.
+	 *        The version of the schema to which the data pertains.
 	 *        
 	 * @param data
 	 *        The data to be uploaded, which should be a JSON array of JSON
@@ -1251,7 +1308,7 @@ public class Version1 {
 	 * the data to be returned to the user.
 	 * 
 	 * @param request
-	 *        The already-built request to be serviced.
+	 *        The already-built, domain-specific request to be serviced.
 	 * 
 	 * @param response
 	 *        The HTTP response to use to set the headers.

@@ -70,7 +70,7 @@ public class MongoDataSet extends DataSet {
 	 * @see org.openmhealth.reference.data.DataSet#setData(java.util.List)
 	 */
 	@Override
-	public void setData(final List<Data> data) {
+	public void storeData(final List<Data> data) {
 		// Get the connection to the database.
 		DB db = MongoDao.getInstance().getDb();
 		

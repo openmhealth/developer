@@ -5,7 +5,7 @@ import org.openmhealth.reference.exception.OmhException;
 
 /**
  * <p>
- * The interface to the database-backed authorization token repository.
+ * The collection of authorization tokens.
  * </p>
  *
  * @author John Jenkins
@@ -20,7 +20,7 @@ public abstract class AuthorizationTokenBin {
 	/**
 	 * The instance of this AuthorizationTokenBin to use.
 	 */
-	protected static AuthorizationTokenBin instance;
+	private static AuthorizationTokenBin instance;
 	
 	/**
 	 * Default constructor.
@@ -62,7 +62,7 @@ public abstract class AuthorizationTokenBin {
 	 *         has the given access token associated with it.
 	 * 
 	 * @throws OmhException
-	 *         Multiple copes of the same authorization token exist.
+	 *         Multiple authorization tokens have the same access token string.
 	 */
 	public abstract AuthorizationToken getTokenFromAccessToken(
 		final String accessToken)
@@ -73,13 +73,13 @@ public abstract class AuthorizationTokenBin {
 	 * refresh token string. It will still be returned even if it has expired.
 	 * 
 	 * @param refreshToken
-	 *        The authorization token's access token string.
+	 *        The authorization token's refresh token string.
 	 * 
 	 * @return The {@link AuthorizationToken} or null if no authorization token
 	 *         has the given refresh token associated with it.
 	 * 
 	 * @throws OmhException
-	 *         Multiple copes of the same authorization token exist.
+	 *         Multiple authorization tokens have the same access token string.
 	 */
 	public abstract AuthorizationToken getTokenFromRefreshToken(
 		final String refreshToken)

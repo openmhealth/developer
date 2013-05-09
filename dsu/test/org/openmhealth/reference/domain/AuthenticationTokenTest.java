@@ -15,6 +15,8 @@
  ******************************************************************************/
 package org.openmhealth.reference.domain;
 
+import java.util.UUID;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmhealth.reference.exception.OmhException;
@@ -30,11 +32,15 @@ public class AuthenticationTokenTest {
 	/**
 	 * A valid token to use for testing.
 	 */
-	public static final String TOKEN = "abc123";
+	public static final String TOKEN = UUID.randomUUID().toString();
 	/**
-	 * A valid username to use for testing.
+	 * A valid user-name to use for testing.
 	 */
-	public static final String USERNAME = "Test.User";
+	public static final String USERNAME = UserTest.USERNAME;
+	/**
+	 * A valid password to use for testing.
+	 */
+	public static final String PASSWORD = UserTest.PASSWORD;
 	/**
 	 * A valid granted value to use for testing.
 	 */
@@ -46,7 +52,7 @@ public class AuthenticationTokenTest {
 	/**
 	 * A {@link User} object to use for testing.
 	 */
-	public static final User USER = new User(USERNAME, "Test.Password0");
+	public static final User USER = new User(USERNAME, PASSWORD);
 
 	/**
 	 * Test that a user must be given to the constructor.
@@ -73,7 +79,7 @@ public class AuthenticationTokenTest {
 	}
 
 	/**
-	 * Test that an username must be given to the constructor.
+	 * Test that an user-name must be given to the constructor.
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthTokenStringStringLongLongUsernameNull() {
@@ -135,7 +141,7 @@ public class AuthenticationTokenTest {
 	}
 
 	/**
-	 * Test that the same username given can be retrieved.
+	 * Test that the same user-name given can be retrieved.
 	 */
 	@Test
 	public void testGetUsername() {
@@ -146,7 +152,7 @@ public class AuthenticationTokenTest {
 
 	/**
 	 * Test that, when creating an authentication token with a User object, the
-	 * user's username is the same as the one associated with the 
+	 * user's user-name is the same as the one associated with the 
 	 * authentication token.
 	 */
 	@Test

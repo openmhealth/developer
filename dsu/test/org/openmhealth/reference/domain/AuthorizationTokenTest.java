@@ -132,21 +132,21 @@ public class AuthorizationTokenTest {
 	public static final long EXPIRATION_TIME = CREATION_TIME + 1;
 
 	/**
-	 * A valid, authorized verification for these tests.
+	 * A valid, granted response for these tests.
 	 */
-	public static final AuthorizationCodeVerification VERIFICATION =
-		new AuthorizationCodeVerification(AUTHORIZATION_CODE, USER, true);
+	public static final AuthorizationCodeResponse VERIFICATION =
+		new AuthorizationCodeResponse(AUTHORIZATION_CODE, USER, true);
 
 	/**
-	 * Test that an exception is thrown when the verification is null.
+	 * Test that an exception is thrown when the response is null.
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthorizationTokenAuthorizationCodeVerificationVerificationNull() {
-		new AuthorizationToken((AuthorizationCodeVerification) null);
+		new AuthorizationToken((AuthorizationCodeResponse) null);
 	}
 
 	/**
-	 * Test that a token can be created given a valid verification.
+	 * Test that a token can be created given a valid response.
 	 */
 	@Test
 	public void testAuthorizationTokenAuthorizationCodeVerification() {
@@ -254,7 +254,7 @@ public class AuthorizationTokenTest {
 
 	/**
 	 * Test that a new authorization token built from an authorization code
-	 * verification returns a non-null access token.
+	 * response returns a non-null access token.
 	 */
 	@Test
 	public void testGetAccessTokenBrandNewToken() {
@@ -297,7 +297,7 @@ public class AuthorizationTokenTest {
 
 	/**
 	 * Test that a new authorization token built from an authorization code
-	 * verification returns a non-null refresh token.
+	 * response returns a non-null refresh token.
 	 */
 	@Test
 	public void testGetRefreshTokenBrandNewToken() {
@@ -339,8 +339,8 @@ public class AuthorizationTokenTest {
 	}
 
 	/**
-	 * Test that a new authorization token from an authorization code
-	 * verification has an expiration time sometime in the future.
+	 * Test that a new authorization token from an authorization code response
+	 * has an expiration time sometime in the future.
 	 */
 	@Test
 	public void testGetExpirationInBrandNewToken() {

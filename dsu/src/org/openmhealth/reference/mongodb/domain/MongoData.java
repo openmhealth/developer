@@ -31,6 +31,10 @@ import com.fasterxml.jackson.databind.JsonNode;
  * <p>
  * A MongoDB extension of the {@link Data} type.
  * </p>
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
  *
  * @author John Jenkins
  */

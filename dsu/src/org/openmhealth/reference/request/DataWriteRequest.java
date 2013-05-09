@@ -221,6 +221,6 @@ public class DataWriteRequest extends Request<Object> {
 		}
 		
 		// Store the data.
-		DataSet.getInstance().setData(dataPoints);
+		DataSet.getInstance().storeData(dataPoints);
 	}
 }

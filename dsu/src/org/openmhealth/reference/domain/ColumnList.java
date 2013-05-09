@@ -26,6 +26,10 @@ import org.openmhealth.reference.exception.OmhException;
  * <p>
  * A list of desired columns.
  * </p>
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
  *
  * @author John Jenkins
  */

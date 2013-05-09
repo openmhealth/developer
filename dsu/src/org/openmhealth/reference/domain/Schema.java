@@ -144,9 +144,16 @@ public class Schema implements OmhObject {
 	 * 
 	 * @param schema
 	 *        The specific schema.
+	 *        
+	 * @param controller
+	 *        The controller used to validate this schema and to validate any
+	 *        data when using the
+	 *        {@link #validateData(String, MetaData, JsonNode)} method.
 	 * 
 	 * @throws OmhException
 	 *         A parameter was invalid.
+	 *
+	 * @see #validateData(String, MetaData, JsonNode)
 	 */
 	@JsonCreator
 	public Schema(
@@ -244,7 +251,7 @@ public class Schema implements OmhObject {
 	 * @param data
 	 *        The data to be validated.
 	 * 
-	 * @return The validated data, which is the same as it was given.
+	 * @return The validated data as a {@link Data} object.
 	 * 
 	 * @throws OmhException
 	 *         The data was null or invalid.

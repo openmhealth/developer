@@ -5,7 +5,7 @@ import org.openmhealth.reference.exception.OmhException;
 
 /**
  * <p>
- * The interface to the database-backed authorization code repository.
+ * The collection of authorization codes.
  * </p>
  *
  * @author John Jenkins
@@ -58,10 +58,11 @@ public abstract class AuthorizationCodeBin {
 	 * @param code
 	 *        The authorization code string.
 	 * 
-	 * @return The {@link AuthorizationCode}.
+	 * @return The {@link AuthorizationCode} or null if not such authorization
+	 *         code exists.
 	 * 
 	 * @throws OmhException
-	 *         Multiple copes of the same authorization code exist.
+	 *         Multiple authorization codes exist with the same code.
 	 */
 	public abstract AuthorizationCode getCode(
 		final String code)

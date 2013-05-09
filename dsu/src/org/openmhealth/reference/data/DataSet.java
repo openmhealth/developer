@@ -22,8 +22,10 @@ import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MultiValueResult;
 
 /**
- * The data associated with their schema as defined by the Open mHealth.
- *
+ * <p>
+ * The collection of data.
+ * </p>
+ * 
  * @author John Jenkins
  */
 public abstract class DataSet {
@@ -33,9 +35,9 @@ public abstract class DataSet {
 	public static final String DB_NAME = "data";
 	
 	/**
-	 * The instance of this MongoDataSet to use. 
+	 * The instance of this DataSet to use. 
 	 */
-	protected static DataSet instance;
+	private static DataSet instance;
 
 	/**
 	 * Default constructor. All access to the data set is static.
@@ -52,26 +54,45 @@ public abstract class DataSet {
 	public static DataSet getInstance() {
 		return instance;
 	}
+	
+	/**
+	 * Stores some data.
+	 * 
+	 * @param data
+	 *        The data to store.
+	 */
+	public abstract void storeData(final List<Data> data);
 
 	/**
-	 * Reads the data from the system.
+	 * Retrieves some data based on the parameters. Some parameters are
+	 * required, and others are optional. Each parameter indicates its
+	 * respective requirements.
 	 * 
-	 * @param schemaId The unique identifier for the schema for the requested
-	 * 				   data. This parameter is required.
+	 * @param owner
+	 *        The unique identifier of the user whose data is requested. This
+	 *        parameter is required.
 	 * 
-	 * @param version The version of the schema for the requested data. This
-	 * 				  parameter is required.
+	 * @param schemaId
+	 *        The unique identifier for the schema for the requested data. This
+	 *        parameter is required.
 	 * 
-	 * @param owner The identifier of the user whose data is requested. This
-	 * 				parameter is required.
+	 * @param version
+	 *        The version of the schema for the requested data. This parameter
+	 *        is required.
 	 * 
-	 * @param columnList The list of columns within the data to return.
+	 * @param columnList
+	 *        The list of columns within the data to return. This can include
+	 *        both meta-data and data columns. This is optional, and null
+	 *        indicates that all data should be returned.
 	 * 
-	 * @param numToSkip The number of data points to skip.
+	 * @param numToSkip
+	 *        The number of data points to skip.
 	 * 
-	 * @param numToReturn The number of data points to return.
+	 * @param numToReturn
+	 *        The number of data points to return.
 	 * 
-	 * @return A database cursor that references the applicable data.
+	 * @return A {@link MultiValueResult} that references all of the applicable
+	 *         data.
 	 */
 	public abstract MultiValueResult<? extends Data> getData(
 		final String owner,
@@ -80,12 +101,4 @@ public abstract class DataSet {
 		final ColumnList columnList,
 		final Long numToSkip,
 		final Long numToReturn);
-	
-	/**
-	 * Stores some data.
-	 * 
-	 * @param data
-	 *        The data to store.
-	 */
-	public abstract void setData(final List<Data> data);
 }

@@ -12,6 +12,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <p>
  * The MongoDB-specific variant of an {@link AuthorizationCode} object.
  * </p>
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
  *
  * @author John Jenkins
  */
@@ -35,7 +39,7 @@ public class MongoAuthorizationCode
 	 * entity.
 	 * 
 	 * @param dbId
-	 * 		  The MongoDB ID for this entity.
+	 *        The MongoDB ID for this entity.
 	 * 
 	 * @param thirdParty
 	 *        The unique identifier for the third-party to which this token
@@ -56,8 +60,9 @@ public class MongoAuthorizationCode
 	 *        The set of scopes for this token. These are generally the schema
 	 *        IDs.
 	 * 
-	 * @param valid
-	 *        Whether or not this code is valid.
+	 * @param state
+	 *        The state given by the third-party when creating requesting this
+	 *        authorization code.
 	 * 
 	 * @throws OmhException
 	 *         A parameter is invalid.

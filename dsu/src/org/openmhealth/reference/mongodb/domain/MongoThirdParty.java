@@ -14,6 +14,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <p>
  * The MongoDB-specific variant of a {@link ThirdParty} object.
  * </p>
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
  *
  * @author John Jenkins
  */
@@ -39,7 +43,7 @@ public class MongoThirdParty extends ThirdParty implements MongoDbObject {
 	 * @param owner
 	 *        The ID for the user that created this third-party.
 	 * 
-	 * @param dbId
+	 * @param id
 	 *        The unique ID for this third-party
 	 * 
 	 * @param sharedSecret
@@ -61,11 +65,11 @@ public class MongoThirdParty extends ThirdParty implements MongoDbObject {
 	public MongoThirdParty(
 		@JsonProperty(DATABASE_FIELD_ID) final String dbId,
 		@JsonProperty(JSON_KEY_OWNER) final String owner,
-		@JsonProperty(JSON_KEY_REDIRECT_URI) final URI redirectUri,
 		@JsonProperty(JSON_KEY_ID) final String id,
 		@JsonProperty(JSON_KEY_SHARED_SECRET) final String sharedSecret,
 		@JsonProperty(JSON_KEY_NAME) final String name,
-		@JsonProperty(JSON_KEY_DESCRIPTION) final String description)
+		@JsonProperty(JSON_KEY_DESCRIPTION) final String description,
+		@JsonProperty(JSON_KEY_REDIRECT_URI) final URI redirectUri)
 		throws OmhException {
 		
 		super(owner, id, sharedSecret, name, description, redirectUri);

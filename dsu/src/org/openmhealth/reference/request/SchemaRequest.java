@@ -63,7 +63,7 @@ public class SchemaRequest extends ListRequest<Object> {
 	 * 
 	 * @param numToReturn
 	 *        The number of schemas that should be returned. This is limited by
-	 *        {@link Request#DEFAULT_NUMBER_TO_RETURN}.
+	 *        {@link ListRequest#DEFAULT_NUMBER_TO_RETURN}.
 	 */
 	public SchemaRequest(
 		final String schemaId,

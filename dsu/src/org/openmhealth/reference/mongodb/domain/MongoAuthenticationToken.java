@@ -29,6 +29,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <p>
  * A MongoDB extension of the {@link AuthenticationToken} type.
  * </p>
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
  *
  * @author John Jenkins
  */

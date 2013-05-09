@@ -14,7 +14,7 @@ import org.openmhealth.reference.exception.OmhException;
 
 /**
  * <p>
- * Test everything about the {@link AuthorizationTokenVerification} class.
+ * Test everything about the {@link AuthorizationCodeVerification} class.
  * </p>
  *
  * @author John Jenkins
@@ -115,7 +115,7 @@ public class AuthorizationCodeVerificationTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthorizationCodeVerificationAuthorizationCodeUserGrantedAuthorizationCodeNull() {
-		new AuthorizationCodeVerification(null, USER, true);
+		new AuthorizationCodeResponse(null, USER, true);
 	}
 
 	/**
@@ -123,23 +123,23 @@ public class AuthorizationCodeVerificationTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthorizationCodeVerificationAuthorizationCodeUserGrantedUserNull() {
-		new AuthorizationCodeVerification(AUTHORIZATION_CODE, null, true);
+		new AuthorizationCodeResponse(AUTHORIZATION_CODE, null, true);
 	}
 
 	/**
-	 * Test that the verification can be created when it is granted.
+	 * Test that the response can be created when it is granted.
 	 */
 	@Test
 	public void testAuthorizationCodeVerificationAuthorizationCodeUserGrantedGrantedTrue() {
-		new AuthorizationCodeVerification(AUTHORIZATION_CODE, USER, true);
+		new AuthorizationCodeResponse(AUTHORIZATION_CODE, USER, true);
 	}
 
 	/**
-	 * Test that the verification can be created when it is not granted.
+	 * Test that the response can be created when it is not granted.
 	 */
 	@Test
 	public void testAuthorizationCodeVerificationAuthorizationCodeUserGrantedGrantedFalse() {
-		new AuthorizationCodeVerification(AUTHORIZATION_CODE, USER, false);
+		new AuthorizationCodeResponse(AUTHORIZATION_CODE, USER, false);
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class AuthorizationCodeVerificationTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthorizationCodeVerificationCodeOwnerGrantedCodeNull() {
-		new AuthorizationCodeVerification(null, USERNAME, true);
+		new AuthorizationCodeResponse(null, USERNAME, true);
 	}
 
 	/**
@@ -155,88 +155,88 @@ public class AuthorizationCodeVerificationTest {
 	 */
 	@Test(expected = OmhException.class)
 	public void testAuthorizationCodeVerificationCodeOwnerGrantedOwnerNull() {
-		new AuthorizationCodeVerification(CODE, null, true);
+		new AuthorizationCodeResponse(CODE, null, true);
 	}
 
 	/**
-	 * Test that the verification can be created when it is granted.
+	 * Test that the response can be created when it is granted.
 	 */
 	@Test
 	public void testAuthorizationCodeVerificationCodeOwnerGrantedGrantedTrue() {
-		new AuthorizationCodeVerification(CODE, USERNAME, true);
+		new AuthorizationCodeResponse(CODE, USERNAME, true);
 	}
 
 	/**
-	 * Test that the verification can be created with it is not granted.
+	 * Test that the response can be created with it is not granted.
 	 */
 	@Test
 	public void testAuthorizationCodeVerificationCodeOwnerGrantedGrantedFalse() {
-		new AuthorizationCodeVerification(CODE, USERNAME, false);
+		new AuthorizationCodeResponse(CODE, USERNAME, false);
 	}
 
 	/**
-	 * Test that creating a new verification from an existing code causes the
-	 * getter to return the same code with which the verification was built.
+	 * Test that creating a new response from an existing code causes the
+	 * getter to return the same code with which the response was built.
 	 */
 	@Test
 	public void testGetAuthorizationCodeNewCode() {
-		AuthorizationCodeVerification verification =
-			new AuthorizationCodeVerification(AUTHORIZATION_CODE, USER, true);
-		Assert.assertEquals(CODE, verification.getAuthorizationCode());
+		AuthorizationCodeResponse response =
+			new AuthorizationCodeResponse(AUTHORIZATION_CODE, USER, true);
+		Assert.assertEquals(CODE, response.getAuthorizationCode());
 	}
 
 	/**
-	 * Test that reconstructing a verification from existing verification
-	 * information causes the getter to return the same code.
+	 * Test that reconstructing a response from existing response information
+	 * causes the getter to return the same code.
 	 */
 	@Test
 	public void testGetAuthorizationCodeOldCode() {
-		AuthorizationCodeVerification verification =
-			new AuthorizationCodeVerification(CODE, USERNAME, true);
-		Assert.assertEquals(CODE, verification.getAuthorizationCode());
+		AuthorizationCodeResponse response =
+			new AuthorizationCodeResponse(CODE, USERNAME, true);
+		Assert.assertEquals(CODE, response.getAuthorizationCode());
 	}
 
 	/**
-	 * Test that, when creating a new verification that was granted, that the
+	 * Test that, when creating a new response that was granted, that the
 	 * getter returns true.
 	 */
 	@Test
 	public void testGetGrantedNewCodeGrantedTrue() {
-		AuthorizationCodeVerification verification =
-			new AuthorizationCodeVerification(AUTHORIZATION_CODE, USER, true);
-		Assert.assertTrue(verification.getGranted());
+		AuthorizationCodeResponse response =
+			new AuthorizationCodeResponse(AUTHORIZATION_CODE, USER, true);
+		Assert.assertTrue(response.getGranted());
 	}
 
 	/**
-	 * Test that, when creating a new verification that was not granted, that 
-	 * the getter returns false.
+	 * Test that, when creating a new response that was not granted, that the
+	 * getter returns false.
 	 */
 	@Test
 	public void testGetGrantedNewCodeGrantedFalse() {
-		AuthorizationCodeVerification verification =
-			new AuthorizationCodeVerification(AUTHORIZATION_CODE, USER, false);
-		Assert.assertFalse(verification.getGranted());
+		AuthorizationCodeResponse response =
+			new AuthorizationCodeResponse(AUTHORIZATION_CODE, USER, false);
+		Assert.assertFalse(response.getGranted());
 	}
 
 	/**
-	 * Test that, when reconstructing an old verification that was granted,
-	 * that the getter returns true.
+	 * Test that, when reconstructing an old response that was granted, that
+	 * the getter returns true.
 	 */
 	@Test
 	public void testGetGrantedOldCodeGrantedTrue() {
-		AuthorizationCodeVerification verification =
-			new AuthorizationCodeVerification(CODE, USERNAME, true);
-		Assert.assertTrue(verification.getGranted());
+		AuthorizationCodeResponse response =
+			new AuthorizationCodeResponse(CODE, USERNAME, true);
+		Assert.assertTrue(response.getGranted());
 	}
 
 	/**
-	 * Test that, when reconstructing an old verification that was not granted,
+	 * Test that, when reconstructing an old response that was not granted,
 	 * that the getter returns false.
 	 */
 	@Test
 	public void testGetGrantedOldCodeGrantedFalse() {
-		AuthorizationCodeVerification verification =
-			new AuthorizationCodeVerification(CODE, USERNAME, false);
-		Assert.assertFalse(verification.getGranted());
+		AuthorizationCodeResponse response =
+			new AuthorizationCodeResponse(CODE, USERNAME, false);
+		Assert.assertFalse(response.getGranted());
 	}
 }

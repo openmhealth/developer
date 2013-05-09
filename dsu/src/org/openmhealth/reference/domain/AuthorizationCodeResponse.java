@@ -8,13 +8,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * <p>
- * The verification of an authorization code which an authorization code to a
- * user and dictates whether or not authorization is granted.
+ * The link between an authorization code, a user, and whether or not the
+ * authorization was granted.
+ * </p>
+ * 
+ * <p>
+ * This class is immutable.
  * </p>
  *
  * @author John Jenkins
  */
-public class AuthorizationCodeVerification implements OmhObject {
+public class AuthorizationCodeResponse implements OmhObject {
 	/**
 	 * The version of this class used for serialization purposes.
 	 */
@@ -50,14 +54,14 @@ public class AuthorizationCodeVerification implements OmhObject {
 	private final boolean granted;
 	
 	/**
-	 * Creates a new authorization code verification based on an authorization
+	 * Creates a new authorization code response based on an authorization
 	 * code, a user, and whether or not it was granted.
 	 * 
 	 * @param authorizationCode
 	 *        The authorization code.
 	 * 
 	 * @param user
-	 *        The user granting or rejecting the code.
+	 *        The user granting or rejecting the authorization.
 	 * 
 	 * @param granted
 	 *        Whether or not the authorization was granted or rejected.
@@ -65,7 +69,7 @@ public class AuthorizationCodeVerification implements OmhObject {
 	 * @throws OmhException
 	 *         A parameter was invalid.
 	 */
-	public AuthorizationCodeVerification(
+	public AuthorizationCodeResponse(
 		final AuthorizationCode authorizationCode,
 		final User user,
 		final boolean granted)
@@ -81,7 +85,7 @@ public class AuthorizationCodeVerification implements OmhObject {
 		
 		// Verify the owner.
 		if(user == null) {
-			throw new OmhException("The owner is null.");
+			throw new OmhException("The user is null.");
 		}
 		else {
 			this.owner = user.getUsername();
@@ -92,13 +96,14 @@ public class AuthorizationCodeVerification implements OmhObject {
 	}
 	
 	/**
-	 * Creates an authorization code verification object from the given values.
-	 * This should not be used except for deserialization and, instead, 
-	 * {@link #AuthorizationCodeVerification(AuthorizationCode, User, boolean)}
-	 * should be used.
+	 * Creates an authorization code response presumably from an existing one
+	 * since all of the fields are given. To create a new response, it is
+	 * recommended that
+	 * {@link #AuthorizationCodeResponse(AuthorizationCode, User, boolean)}
+	 * be used.
 	 * 
 	 * @param authorizationCode
-	 *        The authorization code to which this verification applies.
+	 *        The authorization code to which this response applies.
 	 * 
 	 * @param owner
 	 *        The ID for the user that granted or rejected this authorization
@@ -109,9 +114,11 @@ public class AuthorizationCodeVerification implements OmhObject {
 	 * 
 	 * @throws OmhException
 	 *         A parameter is invalid.
+	 *         
+	 * @see #AuthorizationCodeResponse(AuthorizationCode, User, boolean)
 	 */
 	@JsonCreator
-	protected AuthorizationCodeVerification(
+	protected AuthorizationCodeResponse(
 		@JsonProperty(JSON_KEY_AUTHORIZATION_CODE)
 			final String authorizationCode,
 		@JsonProperty(JSON_KEY_OWNER) final String owner,
@@ -139,18 +146,18 @@ public class AuthorizationCodeVerification implements OmhObject {
 	}
 	
 	/**
-	 * Returns the authorization code to which this verification applies.
+	 * Returns the authorization code to which this response applies.
 	 * 
-	 * @return The authorization code to which this verification applies.
+	 * @return The authorization code to which this response applies.
 	 */
 	public String getAuthorizationCode() {
 		return authorizationCode;
 	}
 	
 	/**
-	 * Returns the user that performed the verification.
+	 * Returns the user that generated the response.
 	 * 
-	 * @return The user that performed the verification.
+	 * @return The user that generated the response.
 	 */
 	public User getOwner() {
 		return UserBin.getInstance().getUser(owner);

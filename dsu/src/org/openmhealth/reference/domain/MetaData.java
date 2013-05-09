@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2013 Open mHealth
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.openmhealth.reference.domain;
 
@@ -25,18 +25,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * <p>
- * This class represents the meta-data for a data stream. All fields are 
- * optional. This class is immutable and, therefore, thread-safe.
+ * This class represents the meta-data for a data stream. All fields are
+ * optional.
  * </p>
- *
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
+ * 
  * @author John Jenkins
  */
 public class MetaData implements OmhObject {
 	/**
-	 * The version of this classed used for serialization. 
+	 * The version of this classed used for serialization.
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * The JSON key for the ID.
 	 */
@@ -45,11 +49,14 @@ public class MetaData implements OmhObject {
 	 * The JSON key for the timestamp.
 	 */
 	public static final String JSON_KEY_TIMESTAMP = "timestamp";
-	
+
 	/**
 	 * <p>
-	 * This class is responsible for building new MetaData objects. This
-	 * class is mutable and, therefore, not thread-safe.
+	 * This class is responsible for building new MetaData objects.
+	 * </p>
+	 * 
+	 * <p>
+	 * This class is mutable.
 	 * </p>
 	 * 
 	 * @author John Jenkins
@@ -63,14 +70,14 @@ public class MetaData implements OmhObject {
 		 * The current timestamp for this meta-data.
 		 */
 		private DateTime timestamp = null;
-		
+
 		/**
 		 * Creates an empty builder.
 		 */
 		public Builder() {
 			// Do nothing.
 		}
-		
+
 		/**
 		 * Returns the currently set ID.
 		 * 
@@ -79,7 +86,7 @@ public class MetaData implements OmhObject {
 		public String getId() {
 			return id;
 		}
-		
+
 		/**
 		 * Returns true if an ID has been set; false, otherwise.
 		 * 
@@ -88,16 +95,17 @@ public class MetaData implements OmhObject {
 		public boolean hasId() {
 			return id != null;
 		}
-		
+
 		/**
 		 * Sets the ID.
 		 * 
-		 * @param id The ID.
+		 * @param id
+		 *        The ID.
 		 */
 		public void setId(final String id) {
 			this.id = id;
 		}
-		
+
 		/**
 		 * Returns the currently set timestamp.
 		 * 
@@ -106,7 +114,7 @@ public class MetaData implements OmhObject {
 		public DateTime getTimestamp() {
 			return timestamp;
 		}
-		
+
 		/**
 		 * Returns true if a time stamp has been set; false, otherwise.
 		 * 
@@ -115,16 +123,17 @@ public class MetaData implements OmhObject {
 		public boolean hasTimestamp() {
 			return timestamp != null;
 		}
-		
+
 		/**
-		 * Sets the timestamp.
+		 * Sets the time-stamp.
 		 * 
-		 * @param timetamp The timestamp.
+		 * @param timestamp
+		 *        The time-stamp.
 		 */
 		public void setTimestamp(final DateTime timestamp) {
 			this.timestamp = timestamp;
 		}
-		
+
 		/**
 		 * Builds the MetaData object.
 		 * 
@@ -134,7 +143,7 @@ public class MetaData implements OmhObject {
 			return new MetaData(id, timestamp);
 		}
 	}
-	
+
 	/**
 	 * The unique ID for the point.
 	 */
@@ -147,33 +156,31 @@ public class MetaData implements OmhObject {
 	@JsonProperty(JSON_KEY_TIMESTAMP)
 	@JsonInclude(Include.NON_NULL)
 	private final DateTime timestamp;
-	
+
 	/**
 	 * Creates a new MetaData object.
 	 * 
-	 * @param timestamp The time stamp for this meta-data.
+	 * @param id
+	 *        The ID for this meta-data.
 	 * 
-	 * @param location The location for this meta-data.
+	 * @param timestamp
+	 *        The time stamp for this meta-data.
 	 */
 	@JsonCreator
 	public MetaData(
-		@JsonProperty(JSON_KEY_ID)
-		final String id,
-		@JsonProperty(JSON_KEY_TIMESTAMP)
-		final DateTime timestamp)
+		@JsonProperty(JSON_KEY_ID) final String id,
+		@JsonProperty(JSON_KEY_TIMESTAMP) final DateTime timestamp)
 		throws OmhException {
-		
+
 		// Timestamps cannot be in the future.
 		if((timestamp != null) && timestamp.isAfterNow()) {
-			throw
-				new OmhException(
-					"The timestamp cannot be in the future.");
+			throw new OmhException("The timestamp cannot be in the future.");
 		}
-		
+
 		this.id = id;
 		this.timestamp = timestamp;
 	}
-	
+
 	/**
 	 * Returns the ID.
 	 * 
@@ -184,9 +191,9 @@ public class MetaData implements OmhObject {
 	}
 
 	/**
-	 * Returns timestamp.
-	 *
-	 * @return The timestamp.
+	 * Returns time-stamp.
+	 * 
+	 * @return The time-stamp.
 	 */
 	public DateTime getTimestamp() {
 		return timestamp;

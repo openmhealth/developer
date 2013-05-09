@@ -35,7 +35,7 @@ import org.springframework.web.util.NestedServletException;
 /**
  * <p>
  * A filter responsible for catching exceptions thrown by the requests and
- * adjusting the response accordingly.
+ * populating the response accordingly.
  * </p>
  * 
  * <p>

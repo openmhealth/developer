@@ -62,11 +62,26 @@ public abstract class Dao {
 	private static Dao instance;
 
 	/**
+	 * <p>
 	 * Reads the configuration properties and extracts the necessary
 	 * information.
+	 * </p>
+	 * 
+	 * <p>
+	 * Database-specific implementations should sub-subclass this class to
+	 * setup their connections to the database and then instantiate their
+	 * respective subclasses of the other DAO objects.
+	 * </p>
 	 * 
 	 * @param properties
-	 *        All of the additional properties given be the user.
+	 *        The {@link Properties} object that may or may not contain the
+	 *        information about how to setup the connection to the database. If
+	 *        it isn't included, the implementation-specific details will be
+	 *        used.
+	 *        
+	 * @see #getDefaultServerAddress()
+	 * @see #getDefaultServerPort()
+	 * @see #getDefaultDatabaseName()
 	 */
 	protected Dao(final Properties properties) {
 		// Sanitize the properties parameter.
@@ -151,22 +166,20 @@ public abstract class Dao {
 	}
 
 	/**
-	 * Shut down the current instance, which man include closing database
+	 * Shut down the current instance, which should include closing database
 	 * connections among other things.
 	 */
 	public abstract void shutdown();
 	
 	/**
-	 * The default address to use for the database if one was not provided in
-	 * the configuration files.
+	 * The default address to use for the database.
 	 * 
 	 * @return The default database server address.
 	 */
 	protected abstract String getDefaultServerAddress();
 	
 	/**
-	 * The default port to use for the database if one was not provided in the
-	 * configuration files.
+	 * The default port to use for the database.
 	 *  
 	 * @return The default database server port.
 	 */

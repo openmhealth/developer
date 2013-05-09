@@ -46,6 +46,13 @@ public class EnumValidator
 	/**
 	 * Verifies that if {@link #ENUM_SCHEMA_FIELD} exists, it is an array of
 	 * strings.
+	 * 
+	 * @param schema
+	 *        The {@link StringSchema} to validate.
+	 * 
+	 * @param controller
+	 *        The controller to use in the event that a sub-schema existed and
+	 *        needed to be validated as well.
 	 */
 	@Override
 	public void validate(
@@ -91,6 +98,16 @@ public class EnumValidator
 	/**
 	 * Verifies that any data point for this schema is one of the required enum
 	 * values.
+	 * 
+	 * @param schema
+	 *        The schema to reference when validating the data.
+	 * 
+	 * @param data
+	 *        The data to validate.
+	 * 
+	 * @param controller
+	 *        The controller to use in the event that there is sub-data that
+	 *        also needed to be validated.
 	 */
 	@Override
 	public void validate(

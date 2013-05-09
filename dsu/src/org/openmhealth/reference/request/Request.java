@@ -17,7 +17,6 @@ package org.openmhealth.reference.request;
 
 import java.util.Map;
 
-import org.openmhealth.reference.domain.OmhObject;
 import org.openmhealth.reference.exception.OmhException;
 
 /**
@@ -133,16 +132,14 @@ public abstract class Request<T> {
 	/**
 	 * Services the request and returns the domain-specific result. If the
 	 * request encounters any errors, a {@link OmhException} should be
-	 * thrown; otherwise, any {@link OmhObject} may be returned or null.
-	 * 
-	 * @return A {@link OmhObject} that represents the result of servicing
-	 *         this request. If null, the request was successfully serviced,
-	 *         but no relevant information was returned.
+	 * thrown. If successful, any applicable data or meta-data should be set
+	 * using the internal setter methods.
 	 * 
 	 * @throws OmhException
-	 *         There was an error processing the request. The exception's
-	 *         "reason" will be returned to the user and an appropriate status
-	 *         code will be used.
+	 *         There was an error processing the request.
+	 *         
+	 * @see #setData(Object)
+	 * @see #setMetaData(Map)
 	 */
 	public abstract void service() throws OmhException;
 }

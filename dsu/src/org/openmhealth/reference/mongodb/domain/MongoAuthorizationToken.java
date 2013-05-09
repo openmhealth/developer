@@ -10,6 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <p>
  * The MongoDB-specific variant of an {@link AuthorizationToken} object.
  * </p>
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
  *
  * @author John Jenkins
  */
@@ -33,14 +37,16 @@ public class MongoAuthorizationToken
 	 * {@link AuthorizationToken} entity.
 	 * 
 	 * @param dbId
-	 * 		  The MongoDB ID for this entity.
+	 *        The MongoDB ID for this entity.
 	 * 
-	 * @param thirdParty
-	 *        The unique identifier for the third-party to which this token
-	 *        pertains.
+	 * @param authorizationCode
+	 *        The authorization code that backs this token.
 	 * 
-	 * @param code
-	 *        The code value for this authorization token.
+	 * @param accessToken
+	 *        The access token for this authorization token.
+	 * 
+	 * @param refreshToken
+	 *        The refresh token for this authorization token.
 	 * 
 	 * @param creationTime
 	 *        The number of milliseconds since the epoch at which time this
@@ -49,13 +55,6 @@ public class MongoAuthorizationToken
 	 * @param expirationTime
 	 *        The number of milliseconds since the epoch at which time this
 	 *        token expires.
-	 * 
-	 * @param scopes
-	 *        The set of scopes for this token. These are generally the schema
-	 *        IDs.
-	 * 
-	 * @param valid
-	 *        Whether or not this code is valid.
 	 * 
 	 * @throws OmhException
 	 *         A parameter is invalid.

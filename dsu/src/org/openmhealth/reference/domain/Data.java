@@ -40,13 +40,7 @@ public class Data implements OmhObject {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * <p>
 	 * The JSON key for the identifier of a user that owns this data.
-	 * </p>
-	 * 
-	 * <p>
-	 * This probably belongs in some sort of "User" class.
-	 * </p>
 	 */
 	public static final String JSON_KEY_OWNER = "owner";
 	
@@ -141,9 +135,9 @@ public class Data implements OmhObject {
 	}
 	
 	/**
-	 * Creates a new data object. This should only be used internally when a
-	 * class only knows the schema ID and version but doesn't have a
-	 * {@link Schema} object to use.
+	 * Creates a new data object presumably from an existing one since all of
+	 * the fields are given. If creating a new data point, it is recommended
+	 * that {@link #Data(String, Schema, MetaData, JsonNode)} be used.
 	 * 
 	 * @param owner
 	 * 		  The identifier for the user that owns the data.
@@ -165,16 +159,11 @@ public class Data implements OmhObject {
 	 */
 	@JsonCreator
 	protected Data(
-		@JsonProperty(JSON_KEY_OWNER)
-		final String owner,
-		@JsonProperty(Schema.JSON_KEY_ID)
-		final String schemaId,
-		@JsonProperty(Schema.JSON_KEY_VERSION)
-		final long schemaVersion,
-		@JsonProperty(JSON_KEY_METADATA)
-		final MetaData metaData,
-		@JsonProperty(JSON_KEY_DATA)
-		final JsonNode data)
+		@JsonProperty(JSON_KEY_OWNER) final String owner,
+		@JsonProperty(Schema.JSON_KEY_ID) final String schemaId,
+		@JsonProperty(Schema.JSON_KEY_VERSION) final long schemaVersion,
+		@JsonProperty(JSON_KEY_METADATA) final MetaData metaData,
+		@JsonProperty(JSON_KEY_DATA) final JsonNode data)
 		throws OmhException {
 		
 		if(owner == null) {

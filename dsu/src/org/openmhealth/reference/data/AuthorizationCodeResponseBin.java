@@ -1,33 +1,32 @@
 package org.openmhealth.reference.data;
 
 import org.openmhealth.reference.domain.AuthorizationCode;
-import org.openmhealth.reference.domain.AuthorizationCodeVerification;
+import org.openmhealth.reference.domain.AuthorizationCodeResponse;
 import org.openmhealth.reference.exception.OmhException;
 
 /**
  * <p>
- * The interface to the database-backed authorization code verification
- * repository.
+ * The collection of authorization code responses.
  * </p>
  *
  * @author John Jenkins
  */
-public abstract class AuthorizationCodeVerificationBin {
+public abstract class AuthorizationCodeResponseBin {
 	/**
 	 * The name of the DB document/table/whatever that contains the
-	 * authorization codes' verification.
+	 * authorization codes' response.
 	 */
-	public static final String DB_NAME = "authorization_code_verification_bin";
+	public static final String DB_NAME = "authorization_code_response_bin";
 	
 	/**
-	 * The instance of this AuthorizationCodeVerificationBin to use.
+	 * The instance of this AuthorizationCodeResponseBin to use.
 	 */
-	protected static AuthorizationCodeVerificationBin instance;
+	private static AuthorizationCodeResponseBin instance;
 	
 	/**
 	 * Default constructor.
 	 */
-	protected AuthorizationCodeVerificationBin() {
+	protected AuthorizationCodeResponseBin() {
 		instance = this;
 	}
 	
@@ -36,21 +35,21 @@ public abstract class AuthorizationCodeVerificationBin {
 	 * 
 	 * @return The singular instance of this class.
 	 */
-	public static AuthorizationCodeVerificationBin getInstance() {
+	public static AuthorizationCodeResponseBin getInstance() {
 		return instance;
 	}
 	
 	/**
-	 * Stores an existing authorization code verification.
+	 * Stores an existing authorization code response.
 	 * 
-	 * @param verification
-	 *        The verification to be saved.
+	 * @param response
+	 *        The response to be saved.
 	 * 
 	 * @throws OmhException
-	 *         The verification is null.
+	 *         The response is null.
 	 */
 	public abstract void storeVerification(
-		final AuthorizationCodeVerification verification)
+		final AuthorizationCodeResponse response)
 		throws OmhException;
 	
 	/**
@@ -64,10 +63,9 @@ public abstract class AuthorizationCodeVerificationBin {
 	 *         has not yet been verified.
 	 * 
 	 * @throws OmhException
-	 *         Multiple copes of the same authorization code verification
-	 *         exist.
+	 *         Multiple responses exist for the same authorization code.
 	 */
-	public abstract AuthorizationCodeVerification getVerification(
+	public abstract AuthorizationCodeResponse getResponse(
 		final String code)
 		throws OmhException;
 }

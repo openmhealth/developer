@@ -7,6 +7,7 @@
     <!-- Create the properties to be used throughout this build file. -->
     <property name="dist" location="dist" />
     <property name="build" location="build" />
+    <property name="doc" location="${dist}/doc"/>
     <property name="lib" location="lib" />
     <property name="src" location="src" />
     <property name="test" location="test"/>
@@ -103,6 +104,17 @@
         <delete dir="${build}" />
         <delete dir="${dist}" />
     </target>
+    
+    <!-- Target to build the JavaDoc. -->
+    <target name="javadoc" description="Creates the documentation.">
+        <mkdir dir="${doc}"/>
+        <javadoc destdir="${doc}" additionalparam="-quiet">
+            <fileset dir="${src}">
+                <include name="**/*.java"/>
+            </fileset>
+            <classpath refid="classpath.compile"/>
+        </javadoc>
+    </target>
 
     <!-- Compiles the Java files into their class objects. -->
     <target name="javac" description="Compiles Java files.">
@@ -128,10 +140,6 @@
         name="test"
         depends="javac"
         description="Executes the JUnit tests.">
-        
-        <echo message="----------------------------------------"/>
-        <echo message="- Testing the Java Module              -"/>
-        <echo message="----------------------------------------"/>
 
         <junit printsummary="yes" haltonfailure="yes">
             <classpath refid="classpath.test"/>

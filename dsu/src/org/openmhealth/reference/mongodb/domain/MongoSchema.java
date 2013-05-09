@@ -33,6 +33,10 @@ import com.fasterxml.jackson.databind.JsonNode;
  * <p>
  * The MongoDB-specific variant of a {@link Schema} object.
  * </p>
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
  *
  * @author John Jenkins
  */
@@ -54,9 +58,6 @@ public class MongoSchema extends Schema implements MongoDbObject {
 	 * 
 	 * @param dbId
 	 * 		  The MongoDB ID for this entity.
-	 * 
-	 * @param dbId
-	 *        The ID for this schema.
 	 * 
 	 * @param version
 	 *        The version of this schema.

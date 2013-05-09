@@ -22,10 +22,10 @@ import name.jenkins.paul.john.concordia.validator.ValidationController.Builder;
 
 /**
  * <p>
- * This class creates the custom {@link ValidationController} that will be used
- * throughout this web app. The idea is that the validation controller is
- * static for the system, so there is only one function which retrieves that
- * controller.
+ * This class creates and memoizes the custom {@link ValidationController} that
+ * will be used throughout this web app for schema validation. This class has
+ * no other functionality and is strictly used to directly access the custom
+ * {@link ValidationController}.
  * </p>
  *
  * @author John Jenkins

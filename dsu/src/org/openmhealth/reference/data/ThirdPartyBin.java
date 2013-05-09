@@ -12,7 +12,7 @@ import org.openmhealth.reference.exception.OmhException;
  */
 public abstract class ThirdPartyBin {
 	/**
-	 * The name of the DB document/table/whatever that contains the user
+	 * The name of the DB document/table/whatever that contains the third-party
 	 * definitions.
 	 */
 	public static final String DB_NAME = "third_party_bin";
@@ -20,7 +20,7 @@ public abstract class ThirdPartyBin {
 	/**
 	 * The instance of this ThirdPartyBin to use. 
 	 */
-	protected static ThirdPartyBin instance;
+	private static ThirdPartyBin instance;
 
 	/**
 	 * Default constructor.
@@ -39,7 +39,7 @@ public abstract class ThirdPartyBin {
 	}
 	
 	/**
-	 * Stores an existing ThirdParty object.
+	 * Stores a newly created ThirdParty object.
 	 * 
 	 * @param thirdParty
 	 *        The third-party to be saved.
@@ -61,7 +61,8 @@ public abstract class ThirdPartyBin {
 	 *         third party does not exist.
 	 * 
 	 * @throws OmhException
-	 *         The user-name is null or multiple users have the same user-name.
+	 *         The third-party ID is null or there are multiple third-parties
+	 *         with the same ID.
 	 */
 	public abstract ThirdParty getThirdParty(
 		final String thirdParty)

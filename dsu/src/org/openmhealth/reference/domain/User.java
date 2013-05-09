@@ -64,10 +64,13 @@ public class User implements OmhObject {
 	 * Creates a new user.
 	 * 
 	 * @param username
-	 *        This user's username.
+	 *        This user's user-name.
+	 * 
+	 * @param password
+	 *        This user's password.
 	 * 
 	 * @throws OmhException
-	 *         The username was invalid.
+	 *         The user-name was invalid.
 	 */
 	@JsonCreator
 	public User(

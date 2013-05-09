@@ -1,6 +1,6 @@
 package org.openmhealth.reference.mongodb.domain;
 
-import org.openmhealth.reference.domain.AuthorizationCodeVerification;
+import org.openmhealth.reference.domain.AuthorizationCodeResponse;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,14 +8,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * <p>
- * The MongoDB-specific variant of an {@link AuthorizationCodeVerification}
+ * The MongoDB-specific variant of an {@link AuthorizationCodeResponse}
  * object.
+ * </p>
+ * 
+ * <p>
+ * This class is immutable.
  * </p>
  *
  * @author John Jenkins
  */
-public class MongoAuthorizationCodeVerification
-	extends AuthorizationCodeVerification
+public class MongoAuthorizationCodeResponse
+	extends AuthorizationCodeResponse
 	implements MongoDbObject {
 
 	/**
@@ -31,13 +35,13 @@ public class MongoAuthorizationCodeVerification
 
 	/**
 	 * Used for deserializing a MongoDB-variant of an
-	 * {@link AuthorizationCodeVerification} entity.
+	 * {@link AuthorizationCodeResponse} entity.
 	 * 
 	 * @param dbId
 	 * 		  The MongoDB ID for this entity.
 	 * 
 	 * @param authorizationCode
-	 *        The authorization code to which this verification applies.
+	 *        The authorization code to which this response applies.
 	 * 
 	 * @param owner
 	 *        The ID for the user that granted or rejected this authorization
@@ -49,7 +53,7 @@ public class MongoAuthorizationCodeVerification
 	 * @throws OmhException
 	 *         A parameter is invalid.
 	 */
-	public MongoAuthorizationCodeVerification(
+	public MongoAuthorizationCodeResponse(
 		@JsonProperty(DATABASE_FIELD_ID) final String dbId,
 		@JsonProperty(JSON_KEY_AUTHORIZATION_CODE)
 			final String authorizationCode,

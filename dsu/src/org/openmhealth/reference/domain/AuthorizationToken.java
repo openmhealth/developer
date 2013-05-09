@@ -1,11 +1,10 @@
 package org.openmhealth.reference.domain;
 
-import java.util.Set;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.openmhealth.reference.data.AuthorizationCodeBin;
-import org.openmhealth.reference.data.AuthorizationCodeVerificationBin;
+import org.openmhealth.reference.data.AuthorizationCodeResponseBin;
 import org.openmhealth.reference.exception.OmhException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -15,6 +14,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <p>
  * The authorization token for a user to grant access to some scope (e.g. 
  * schema IDs) to some third-party.
+ * </p>
+ * 
+ * <p>
+ * This class is immutable.
  * </p>
  *
  * @author John Jenkins
@@ -57,8 +60,8 @@ public class AuthorizationToken implements OmhObject {
 	/**
 	 * The authorization code that backs this authorization token. When
 	 * referencing or refreshing this token, this code and its corresponding
-	 * verification should be consulted to determine the scope and whether or
-	 * not this authorization has been revoked.
+	 * response should be consulted to determine the scope and whether or not
+	 * this authorization has been revoked.
 	 */
 	@JsonProperty(JSON_KEY_AUTHORIZATION_CODE)
 	private final String authorizationCode;
@@ -88,30 +91,30 @@ public class AuthorizationToken implements OmhObject {
 	/**
 	 * Creates a new authorization token.
 	 * 
-	 * @param verification
-	 *        The authorization code verification that will be associated with
-	 *        this token and all subsequent tokens that are created by
-	 *        refreshing this and those tokens.
+	 * @param response
+	 *        The authorization code response that will be associated with this
+	 *        token and all subsequent tokens that are created by refreshing
+	 *        this and those tokens.
 	 * 
 	 * @throws OmhException
 	 *         A parameter is invalid.
 	 */
 	public AuthorizationToken(
-		final AuthorizationCodeVerification verification) 
+		final AuthorizationCodeResponse response) 
 		throws OmhException {
 		
 		// Validate the parameters.
-		if(verification == null) {
-			throw new OmhException("The verification is null.");
+		if(response == null) {
+			throw new OmhException("The response is null.");
 		}
-		else if(! verification.getGranted()) {
+		else if(! response.getGranted()) {
 			throw new OmhException(
 				"An authorization token cannot be created for an " +
 					"authorization code that was denied.");
 		}
 		
 		// Store the relevant information.
-		this.authorizationCode = verification.getAuthorizationCode();
+		this.authorizationCode = response.getAuthorizationCode();
 		this.accessToken = UUID.randomUUID().toString();
 		this.refreshToken = UUID.randomUUID().toString();
 		this.creationTime = DateTime.now().getMillis();
@@ -151,14 +154,8 @@ public class AuthorizationToken implements OmhObject {
 	/**
 	 * Creates an authorization token presumably from an existing one since all
 	 * of the fields are given. To create a new token, it is recommended that
-	 * {@link #AuthorizationToken(User, ThirdParty, Set)} be used.
-	 * 
-	 * @param owner
-	 *        The unique identifier for the user to whom this token pertains.
-	 * 
-	 * @param thirdParty
-	 *        The unique identifier for the third-party to which this token
-	 *        pertains.
+	 * {@link #AuthorizationToken(AuthorizationCodeResponse)} or
+	 * {@link #AuthorizationToken(AuthorizationToken)} be used.
 	 * 
 	 * @param authorizationCode
 	 *        The unique identifier for the authorization code that backs this
@@ -181,7 +178,8 @@ public class AuthorizationToken implements OmhObject {
 	 * @throws OmhException
 	 *         A parameter is invalid.
 	 * 
-	 * @see #AuthorizationToken(User, ThirdParty, Set)
+	 * @see #AuthorizationToken(AuthorizationCodeResponse)
+	 * @see #AuthorizationToken(AuthorizationToken)
 	 */
 	@JsonCreator
 	protected AuthorizationToken(
@@ -241,16 +239,16 @@ public class AuthorizationToken implements OmhObject {
 	}
 	
 	/**
-	 * Returns the authorization code verification that backs this
-	 * authorization token.
+	 * Returns the authorization code response that backs this authorization
+	 * token.
 	 * 
-	 * @return The authorization code verification that backs this
-	 *         authorization token.
+	 * @return The authorization code response that backs this authorization
+	 *         token.
 	 */
-	public AuthorizationCodeVerification getAuthorizationCodeVerification() {
+	public AuthorizationCodeResponse getAuthorizationCodeVerification() {
 		return
-			AuthorizationCodeVerificationBin
-				.getInstance().getVerification(authorizationCode);
+			AuthorizationCodeResponseBin
+				.getInstance().getResponse(authorizationCode);
 	}
 	
 	/**

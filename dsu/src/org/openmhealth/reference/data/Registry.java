@@ -20,8 +20,7 @@ import org.openmhealth.reference.domain.Schema;
 
 /**
  * <p>
- * The collection of known schemas as defined by the Open mHealth
- * specification.
+ * The collection of schemas.
  * </p>
  * 
  * @author John Jenkins
@@ -35,7 +34,7 @@ public abstract class Registry {
 	/**
 	 * The instance of this Registry to use. 
 	 */
-	protected static Registry instance;
+	private static Registry instance;
 	
 	/**
 	 * Default constructor.
@@ -54,17 +53,23 @@ public abstract class Registry {
 	}
 
 	/**
-	 * Gets all schemas that are part of the registry. All of the parameters
-	 * are optional and limit results.
+	 * Retrieves all of the schemas that are part of the registry. All of the
+	 * parameters are optional and limit the results.
 	 * 
-	 * @param schemaId Limits the results to only those with the given schema
-	 * 				   ID.
+	 * @param schemaId
+	 *        Limits the results to only those with the given schema ID.
 	 * 
-	 * @param schemaVersion Limits the results to only those with the given
-	 * 						schema version.
+	 * @param schemaVersion
+	 *        Limits the results to only those with the given schema version.
 	 * 
-	 * @return A cursor for the list of schemas, which is more efficient than
-	 * 		   creating a new list here.
+	 * @param numToSkip
+	 *        The number of schemas to skip.
+	 * 
+	 * @param numToReturn
+	 *        The number of schemas to return.
+	 * 
+	 * @return A {@link MultiValueResult} that references all of the schemas
+	 *         that matched the parameters.
 	 */
 	public abstract MultiValueResult<? extends Schema> getSchemas(
 		final String schemaId, 

@@ -17,6 +17,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * The authorization code generated for a third-party to give to a user when
  * attempting to gain authorization to some set of data.
  * </p>
+ * 
+ * <p>
+ * This class is immutable.
+ * </p>
  *
  * @author John Jenkins
  */
@@ -43,11 +47,11 @@ public class AuthorizationCode implements OmhObject {
 	public static final String JSON_KEY_CODE = "code";
 	
 	/**
-	 * The time the token was created.
+	 * The JSON key for the time the token was created.
 	 */
 	public static final String JSON_KEY_CREATION_TIME = "creation_time";
 	/**
-	 * The time the token expires.
+	 * The JSON key for the time the token expires.
 	 */
 	public static final String JSON_KEY_EXPIRATION_TIME = "expiration_time";
 	/**
@@ -83,7 +87,7 @@ public class AuthorizationCode implements OmhObject {
 	@JsonProperty(JSON_KEY_EXPIRATION_TIME)
 	private final long expirationTime;
 	/**
-	 * The set of scopes, e.g. schema IDs, to which this token applies.
+	 * The set of scopes to which this token applies.
 	 */
 	@JsonProperty(JSON_KEY_SCOPES)
 	private final Set<String> scopes = new HashSet<String>();
@@ -157,16 +161,15 @@ public class AuthorizationCode implements OmhObject {
 	 *        token expires.
 	 * 
 	 * @param scopes
-	 *        The set of scopes for this token. These are generally the schema
-	 *        IDs.
+	 *        The set of scopes for this token.
 	 * 
-	 * @param valid
-	 *        Whether or not this code is valid.
+	 * @param state
+	 *        The state given by the third-party when this code was created.
 	 * 
 	 * @throws OmhException
 	 *         A parameter is invalid.
 	 * 
-	 * @see #AuthorizationCode(ThirdParty, Set)
+	 * @see #AuthorizationCode(ThirdParty, Set, String)
 	 */
 	@JsonCreator
 	protected AuthorizationCode(

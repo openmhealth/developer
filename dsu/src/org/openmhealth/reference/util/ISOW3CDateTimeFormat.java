@@ -65,7 +65,9 @@ public class ISOW3CDateTimeFormat {
 	 * <p>
 	 * A DateTimeParser that implements the W3C profile of the ISO 8601
 	 * representation of dates and times
-	 * ({@link http://www.w3.org/TR/NOTE-datetime}).
+	 * (<a href="http://www.w3.org/TR/NOTE-datetime">
+	 * http://www.w3.org/TR/NOTE-datetime
+	 * </a>).
 	 * </p>
 	 * 
 	 * <p>

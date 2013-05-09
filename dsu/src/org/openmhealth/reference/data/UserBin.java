@@ -35,7 +35,7 @@ public abstract class UserBin {
 	/**
 	 * The instance of this UserBin to use. 
 	 */
-	protected static UserBin instance;
+	private static UserBin instance;
 
 	/**
 	 * Default constructor.

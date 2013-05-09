@@ -84,7 +84,7 @@ public class AuthenticationToken implements OmhObject {
 	 * Creates a new authentication token for a user.
 	 * 
 	 * @param user
-	 *        The authentication token for a user.
+	 *        The user about whom the authentication token should apply.
 	 * 
 	 * @throws OmhException
 	 *         The user is null.
@@ -121,6 +121,8 @@ public class AuthenticationToken implements OmhObject {
 	 *         The token and/or user-name are null, the token is being granted
 	 *         in the future, or the token is being granted after it has
 	 *         expired.
+	 *         
+	 * @see #AuthenticationToken(User)
 	 */
 	@JsonCreator
 	protected AuthenticationToken(
@@ -155,7 +157,7 @@ public class AuthenticationToken implements OmhObject {
 	}
 	
 	/**
-	 * Retrieves the authentication token.
+	 * Returns the authentication token.
 	 * 
 	 * @return The authentication token.
 	 */

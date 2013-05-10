@@ -94,7 +94,7 @@ public abstract class DataSet {
 	 * @return A {@link MultiValueResult} that references all of the applicable
 	 *         data.
 	 */
-	public abstract MultiValueResult<? extends Data> getData(
+	public abstract MultiValueResult<Data> getData(
 		final String owner,
 		final String schemaId,
 		final long version,

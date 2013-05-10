@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.openmhealth.reference.mongodb.data;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,7 +28,8 @@ import org.openmhealth.reference.concordia.OmhValidationController;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.domain.Schema;
-import org.openmhealth.reference.mongodb.domain.MongoMultiValueResult;
+import org.openmhealth.reference.mongodb.domain.MongoMultiValueResultCursor;
+import org.openmhealth.reference.mongodb.domain.MongoMultiValueResultList;
 import org.openmhealth.reference.mongodb.domain.MongoSchema;
 
 import com.fasterxml.jackson.databind.InjectableValues;
@@ -36,6 +38,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.QueryBuilder;
 
 /**
  * <p>
@@ -101,6 +104,139 @@ public class MongoRegistry extends Registry {
 					"_unique",
 				true);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openmhealth.reference.data.Registry#getSchemaIds()
+	 */
+	public MultiValueResult<String> getSchemaIds(
+		final long numToSkip,
+		final long numToReturn) {
+		
+		// Get the connection to the database.
+		DB db = MongoDao.getInstance().getDb();
+		
+		// Get the connection to the registry with the Jackson wrapper.
+		JacksonDBCollection<MongoSchema, Object> collection =
+			JacksonDBCollection
+				.wrap(db.getCollection(DB_NAME), MongoSchema.class);
+		
+		// Get the list of results.
+		@SuppressWarnings("unchecked")
+		List<String> results = collection.distinct(Schema.JSON_KEY_ID);
+		
+		// Remember the total number of results.
+		int numResults = results.size();
+		
+		// Sort the results.
+		Collections.sort(results);
+		
+		// Get the lower index.
+		int lowerIndex =
+			(new Long(Math.min(numToSkip, results.size()))).intValue();
+		// Get the upper index.
+		int upperIndex =
+			(new Long(Math.min(numToSkip + numToReturn, results.size())))
+				.intValue();
+		
+		// Get the results based on the upper and lower bounds.
+		results = results.subList(lowerIndex, upperIndex);
+		
+		// Create a MultiValueResult.
+		MultiValueResult<String> result =
+			new MongoMultiValueResultList<String>(results, numResults);
+		
+		// Return the list.
+		return result;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openmhealth.reference.data.Registry#getSchemaVersions(java.lang.String)
+	 */
+	public MultiValueResult<Long> getSchemaVersions(
+		final String schemaId,
+		final long numToSkip,
+		final long numToReturn) {
+		
+		// Get the connection to the database.
+		DB db = MongoDao.getInstance().getDb();
+		
+		// Get the connection to the registry with the Jackson wrapper.
+		JacksonDBCollection<MongoSchema, Object> collection =
+			JacksonDBCollection
+				.wrap(db.getCollection(DB_NAME), MongoSchema.class);
+		
+		// Get the list of results.
+		@SuppressWarnings("unchecked")
+		List<Long> results = 
+			collection
+				.distinct(
+					Schema.JSON_KEY_VERSION,
+					new BasicDBObject(Schema.JSON_KEY_ID, schemaId));
+		
+		// Remember the total number of results.
+		int numResults = results.size();
+		
+		// Sort the results.
+		Collections.sort(results);
+		
+		// Get the lower index.
+		int lowerIndex =
+			(new Long(Math.min(numToSkip, results.size()))).intValue();
+		// Get the upper index.
+		int upperIndex =
+			(new Long(Math.min(numToSkip + numToReturn, results.size())))
+				.intValue();
+		
+		// Get the results based on the upper and lower bounds.
+		results = results.subList(lowerIndex, upperIndex);
+		
+		// Create a MultiValueResult.
+		MultiValueResult<Long> result =
+			new MongoMultiValueResultList<Long>(results, numResults);
+		
+		// Return the list.
+		return result;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openmhealth.reference.data.Registry#getSchema(java.lang.String, long)
+	 */
+	public Schema getSchema(final String schemaId, final long schemaVersion) {
+		// Get the connection to the database.
+		DB db = MongoDao.getInstance().getDb();
+		
+		// Get the connection to the registry with the Jackson wrapper.
+		JacksonDBCollection<MongoSchema, Object> collection =
+			JacksonDBCollection
+				.wrap(
+					db.getCollection(DB_NAME),
+					MongoSchema.class,
+					Object.class,
+					JSON_MAPPER);
+		
+		// Build the query
+		QueryBuilder queryBuilder = QueryBuilder.start();
+		
+		// Add the schema ID.
+		queryBuilder.and(MongoSchema.JSON_KEY_ID).is(schemaId);
+		
+		// Add the schema version.
+		queryBuilder.and(MongoSchema.JSON_KEY_VERSION).is(schemaVersion);
+		
+		// Execute query.
+		DBCursor<MongoSchema> result = collection.find(queryBuilder.get());
+		
+		// Return null or the schema based on what the query returned.
+		if(result.count() == 0) {
+			return null;
+		}
+		else {
+			return result.next();
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -155,7 +291,7 @@ public class MongoRegistry extends Registry {
 		sort.put(MongoSchema.JSON_KEY_VERSION, -1);
 		
 		return
-			new MongoMultiValueResult<MongoSchema>(
+			new MongoMultiValueResultCursor<MongoSchema>(
 				result
 					.sort(sort)
 					.skip((new Long(numToSkip)).intValue())

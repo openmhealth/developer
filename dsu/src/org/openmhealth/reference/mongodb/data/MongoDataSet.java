@@ -26,7 +26,7 @@ import org.openmhealth.reference.domain.MetaData;
 import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.domain.Schema;
 import org.openmhealth.reference.mongodb.domain.MongoData;
-import org.openmhealth.reference.mongodb.domain.MongoMultiValueResult;
+import org.openmhealth.reference.mongodb.domain.MongoMultiValueResultCursor;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -104,7 +104,7 @@ public class MongoDataSet extends DataSet {
 	 * @see org.openmhealth.reference.data.DataSet#getData(java.lang.String, java.lang.String, long, org.openmhealth.reference.domain.ColumnList, java.lang.Long, java.lang.Long)
 	 */
 	@Override
-	public MultiValueResult<? extends Data> getData(
+	public MultiValueResult<Data> getData(
 		final String owner,
 		final String schemaId,
 		final long version,
@@ -160,7 +160,7 @@ public class MongoDataSet extends DataSet {
 		}
 		
 		// Build the query.
-		DBCursor<MongoData> result =
+		DBCursor<MongoData> dbResult =
 			collection.find(queryBuilder.get(), projection);
 		
 		// Build the sort field by sorting in reverse chronological order.
@@ -170,11 +170,12 @@ public class MongoDataSet extends DataSet {
 				ColumnList.COLUMN_SEPARATOR + 
 				MetaData.JSON_KEY_TIMESTAMP,
 			-1);
-		result.sort(sort);
+		dbResult.sort(sort);
 		
-		return 
-			new MongoMultiValueResult<MongoData>(
-				result
+		// Page the results and return the multi-value result.
+		return
+			new MongoMultiValueResultCursor<Data>(
+				dbResult
 					.skip((new Long(numToSkip)).intValue())
 					.limit((new Long(numToReturn)).intValue()));
 	}

@@ -56,7 +56,9 @@ import org.openmhealth.reference.request.DataWriteRequest;
 import org.openmhealth.reference.request.ListRequest;
 import org.openmhealth.reference.request.OauthRegistrationRequest;
 import org.openmhealth.reference.request.Request;
+import org.openmhealth.reference.request.SchemaIdsRequest;
 import org.openmhealth.reference.request.SchemaRequest;
+import org.openmhealth.reference.request.SchemaVersionsRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -1047,7 +1049,7 @@ public class Version1 {
 	 * @return An array of all of the known schemas, limited by paging.
 	 */
 	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
-	public @ResponseBody Object getIds(
+	public @ResponseBody MultiValueResult<String> getSchemaIds(
 		@RequestParam(
 			value = PARAM_PAGING_NUM_TO_SKIP,
 			required = false,
@@ -1062,7 +1064,7 @@ public class Version1 {
 		
 		return
 			handleRequest(
-				new SchemaRequest(null, null, numToSkip, numToReturn),
+				new SchemaIdsRequest(numToSkip, numToReturn),
 				response);
 	}
 	
@@ -1088,7 +1090,7 @@ public class Version1 {
 	@RequestMapping(
 		value = "{" + PARAM_SCHEMA_ID + "}",
 		method = RequestMethod.GET)
-	public @ResponseBody Object getVersions(
+	public @ResponseBody MultiValueResult<Long> getSchemaVersions(
 		@PathVariable(PARAM_SCHEMA_ID) final String schemaId,
 		@RequestParam(
 			value = PARAM_PAGING_NUM_TO_SKIP,
@@ -1104,7 +1106,7 @@ public class Version1 {
 		
 		return 
 			handleRequest(
-				new SchemaRequest(schemaId, null, numToSkip, numToReturn),
+				new SchemaVersionsRequest(schemaId, numToSkip, numToReturn),
 				response);
 	}
 	
@@ -1118,12 +1120,6 @@ public class Version1 {
 	 * @param version
 	 *        The schema version from the URL.
 	 * 
-	 * @param numToSkip
-	 *        The number of data points to skip to facilitate paging.
-	 * 
-	 * @param numToReturn
-	 *        The number of data points to return to facilitate paging.
-	 * 
 	 * @param response
 	 *        The HTTP response object.
 	 * 
@@ -1135,22 +1131,9 @@ public class Version1 {
 	public @ResponseBody Object getDefinition(
 		@PathVariable(PARAM_SCHEMA_ID) final String schemaId,
 		@PathVariable(PARAM_SCHEMA_VERSION) final Long version,
-		@RequestParam(
-			value = PARAM_PAGING_NUM_TO_SKIP,
-			required = false,
-			defaultValue = ListRequest.DEFAULT_NUMBER_TO_SKIP_STRING)
-			final long numToSkip,
-		@RequestParam(
-			value = PARAM_PAGING_NUM_TO_RETURN,
-			required = false,
-			defaultValue = ListRequest.DEFAULT_NUMBER_TO_RETURN_STRING)
-			final long numToReturn,
 		final HttpServletResponse response) {
 		
-		return 
-			handleRequest(
-				new SchemaRequest(schemaId, version, numToSkip, numToReturn),
-				response);
+		return handleRequest(new SchemaRequest(schemaId, version), response);
 	}
 	
 	/**
@@ -1190,7 +1173,7 @@ public class Version1 {
 	@RequestMapping(
 		value = "{" + PARAM_SCHEMA_ID + "}/{" + PARAM_SCHEMA_VERSION + "}/data",
 		method = RequestMethod.GET)
-	public @ResponseBody MultiValueResult<? extends Data> getData(
+	public @ResponseBody MultiValueResult<Data> getData(
 		@PathVariable(PARAM_SCHEMA_ID) final String schemaId,
 		@PathVariable(PARAM_SCHEMA_VERSION) final Long version,
 		@RequestParam(

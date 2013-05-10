@@ -22,16 +22,16 @@ import org.openmhealth.reference.domain.MultiValueResult;
 
 /**
  * <p>
- * The {@link MultiValueResult} for MongoDB.
+ * The {@link MultiValueResult} for MongoDB based on a {@link DBCursor}.
  * </p>
  *
  * @author John Jenkins
  */
-public class MongoMultiValueResult<T> implements MultiValueResult<T> {
+public class MongoMultiValueResultCursor<T> implements MultiValueResult<T> {
 	/**
 	 * The cursor that was used to make the query and contains the results.
 	 */
-	private final DBCursor<T> cursor;
+	private final DBCursor<? extends T> cursor;
 	
 	/**
 	 * Creates a new MongoDB multi-value result from a cursor.
@@ -39,7 +39,7 @@ public class MongoMultiValueResult<T> implements MultiValueResult<T> {
 	 * @param cursor
 	 *        The cursor used to make the query and that contains the results.
 	 */
-	public MongoMultiValueResult(final DBCursor<T> cursor) {
+	public MongoMultiValueResultCursor(final DBCursor<? extends T> cursor) {
 		this.cursor = cursor;
 	}
 
@@ -65,8 +65,9 @@ public class MongoMultiValueResult<T> implements MultiValueResult<T> {
 	 * (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<T> iterator() {
-		return cursor.iterator();
+		return (Iterator<T>) cursor.iterator();
 	}
 }

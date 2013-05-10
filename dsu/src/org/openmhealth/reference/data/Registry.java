@@ -51,6 +51,58 @@ public abstract class Registry {
 	public static Registry getInstance() {
 		return instance;
 	}
+	
+	/**
+	 * Retrieves all of the schema IDs in the system.
+	 * 
+	 * @param numToSkip
+	 *        The number of schemas to skip.
+	 * 
+	 * @param numToReturn
+	 *        The number of schemas to return.
+	 * 
+	 * @return All of the schema IDs in the system. If no schemas exist, the
+	 *         result will be empty, but never null.
+	 */
+	public abstract MultiValueResult<String> getSchemaIds(
+		final long numToSkip,
+		final long numToReturn);
+	
+	/**
+	 * Retrieves all of the versions for a given schema ID.
+	 * 
+	 * @param schemaId
+	 *        The schema ID.
+	 * 
+	 * @param numToSkip
+	 *        The number of schemas to skip.
+	 * 
+	 * @param numToReturn
+	 *        The number of schemas to return.
+	 * 
+	 * @return All of the versions of a given schema. If the schema is unknown,
+	 *         the result will be empty, but never null.
+	 */
+	public abstract MultiValueResult<Long> getSchemaVersions(
+		final String schemaId,
+		final long numToSkip,
+		final long numToReturn);
+	
+	/**
+	 * Retrieves the schema for a specific schema ID-version pair.
+	 * 
+	 * @param schemaId
+	 *        The schema ID.
+	 * 
+	 * @param schemaVersion
+	 *        The schema version.
+	 * 
+	 * @return The Schema that corresponds to the given ID-version pair or null
+	 *         if no such ID-version pair exists.
+	 */
+	public abstract Schema getSchema(
+		final String schemaId,
+		final long schemaVersion);
 
 	/**
 	 * Retrieves all of the schemas that are part of the registry. All of the

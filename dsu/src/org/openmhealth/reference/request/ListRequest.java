@@ -1,5 +1,6 @@
 package org.openmhealth.reference.request;
 
+import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.exception.OmhException;
 
 /**
@@ -9,7 +10,7 @@ import org.openmhealth.reference.exception.OmhException;
  * 
  * @author John Jenkins
  */
-public abstract class ListRequest<T> extends Request<T> {
+public abstract class ListRequest<T> extends Request<MultiValueResult<T>> {
 	/**
 	 * The number must be a String to be used in the annotations. When
 	 * referencing this value, always use its decoded form
@@ -33,6 +34,12 @@ public abstract class ListRequest<T> extends Request<T> {
 	 */
 	public static final long DEFAULT_NUMBER_TO_RETURN =
 		Long.decode(DEFAULT_NUMBER_TO_RETURN_STRING);
+	
+	/**
+	 * The meta-data key that indicates the total number of data points that
+	 * matched the query before paging was applied.
+	 */
+	public static final String METADATA_KEY_COUNT = "Count";
 
 	/**
 	 * The number of elements to skip.

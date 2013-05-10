@@ -38,15 +38,7 @@ import org.openmhealth.reference.exception.OmhException;
  *
  * @author John Jenkins
  */
-public class DataReadRequest
-	extends ListRequest<MultiValueResult<? extends Data>> {
-	
-	/**
-	 * The meta-data key that indicates the total number of data points that
-	 * matched the query before paging was applied.
-	 */
-	public static final String METADATA_KEY_COUNT = "Count";
-	
+public class DataReadRequest extends ListRequest<Data> {
 	/**
 	 * The authentication token for the requesting user.
 	 */
@@ -195,7 +187,7 @@ public class DataReadRequest
 		}
 		
 		// Get the data.
-		MultiValueResult<? extends Data> result =
+		MultiValueResult<Data> result =
 			DataSet
 				.getInstance()
 				.getData(

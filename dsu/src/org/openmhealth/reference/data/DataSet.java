@@ -99,6 +99,6 @@ public abstract class DataSet {
 		final String schemaId,
 		final long version,
 		final ColumnList columnList,
-		final Long numToSkip,
-		final Long numToReturn);
+		final long numToSkip,
+		final long numToReturn);
 }

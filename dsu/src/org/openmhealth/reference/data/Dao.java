@@ -40,21 +40,43 @@ public abstract class Dao {
 	 * The property key for the name of the database.
 	 */
 	public static final String PROPERTY_KEY_DATABASE_NAME = "db.name";
+
+	/**
+	 * The property key for the database username.
+	 */
+	public static final String PROPERTY_KEY_DATABASE_USERNAME = "db.username";
+	
+	/**
+	 * The property key for the database password.
+	 */
+	public static final String PROPERTY_KEY_DATABASE_PASSWORD = "db.password";
 	
 	/**
 	 * The address of the database server.
 	 */
-	private final String dbAddress;
+	private final String address;
 	
 	/**
 	 * The port for the database server.
 	 */
-	private final int dbPort;
+	private final int port;
 	
 	/**
 	 * The name of the database to use.
 	 */
-	private final String dbName;
+	private final String name;
+	
+	/**
+	 * The username of the user to use to connect to the database. This may be
+	 * null if none was supplied.
+	 */
+	private final String username;
+	
+	/**
+	 * The password of the user to use to connect to the database. This may be
+	 * null if none was supplied.
+	 */
+	private final String password;
 	
 	/**
 	 * The singular instance of this DAO.
@@ -91,23 +113,23 @@ public abstract class Dao {
 		}
 		
 		// Get the server address.
-		String tServerAddress =
+		String address =
 			tProperties.getProperty(PROPERTY_KEY_SERVER_ADDRESS);
-		if(tServerAddress == null) {
-			tServerAddress = getDefaultServerAddress();
+		if(address == null) {
+			address = getDefaultServerAddress();
 		}
-		dbAddress = tServerAddress;
+		this.address = address;
 		
 		// Get the server port.
-		int tServerPort;
+		int port;
 		String serverPortString = 
 			tProperties.getProperty(PROPERTY_KEY_SERVER_PORT);
 		if(serverPortString == null) {
-			tServerPort = getDefaultServerPort();
+			port = getDefaultServerPort();
 		}
 		else {
 			try {
-				tServerPort = Integer.decode(serverPortString);
+				port = Integer.decode(serverPortString);
 			}
 			catch(NumberFormatException e) {
 				throw
@@ -116,14 +138,20 @@ public abstract class Dao {
 						e);
 			}
 		}
-		dbPort = tServerPort;
+		this.port = port;
 		
 		// Get the database name.
-		String tDbName = tProperties.getProperty(PROPERTY_KEY_DATABASE_NAME);
-		if(tDbName == null) {
-			tDbName = getDefaultDatabaseName();
+		String name = tProperties.getProperty(PROPERTY_KEY_DATABASE_NAME);
+		if(name == null) {
+			name = getDefaultDatabaseName();
 		}
-		dbName = tDbName;
+		this.name = name;
+		
+		// Get the username.
+		username = tProperties.getProperty(PROPERTY_KEY_DATABASE_USERNAME);
+		
+		// Get the password.
+		password = tProperties.getProperty(PROPERTY_KEY_DATABASE_PASSWORD);
 		
 		// Set the instance of the DAO.
 		instance = this;
@@ -135,7 +163,7 @@ public abstract class Dao {
 	 * @return The database address.
 	 */
 	public String getDatabaseAddress() {
-		return dbAddress;
+		return address;
 	}
 	
 	/**
@@ -144,7 +172,7 @@ public abstract class Dao {
 	 * @return The database port.
 	 */
 	public int getDatabasePort() {
-		return dbPort;
+		return port;
 	}
 	
 	/**
@@ -153,7 +181,27 @@ public abstract class Dao {
 	 * @return The database name.
 	 */
 	public String getDatabaseName() {
-		return dbName;
+		return name;
+	}
+	
+	/**
+	 * Returns the username to use to connect to the database.
+	 * 
+	 * @return The username to use to connect to the database. This may be
+	 *         null.
+	 */
+	public String getDatabaseUsername() {
+		return username;
+	}
+	
+	/**
+	 * Returns the password to use to connect to the database.
+	 * 
+	 * @return The password to use to connect to the database. This may be
+	 *         null.
+	 */
+	public String getDatabasePassword() {
+		return password;
 	}
 	
 	/**

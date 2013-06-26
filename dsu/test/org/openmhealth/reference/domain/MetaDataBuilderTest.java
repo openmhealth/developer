@@ -17,7 +17,6 @@ package org.openmhealth.reference.domain;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openmhealth.reference.exception.OmhException;
 
 /**
  * <p>
@@ -219,14 +218,46 @@ public class MetaDataBuilderTest {
 	}
 	
 	/**
-	 * Test that an invalid timestamp results in an exception being thrown on
-	 * creation.
+	 * Test that the builder reports not null when no field is null.
 	 */
-	@Test(expected = OmhException.class)
-	public void testBuildValidTimestampFuture() {
+	@Test
+	public void testIsNullValid() {
 		MetaData.Builder builder = new MetaData.Builder();
 		builder.setId(MetaDataTest.ID_TEST);
-		builder.setTimestamp(MetaDataTest.TIMESTAMP_FUTURE);
-		builder.build();
+		builder.setTimestamp(MetaDataTest.TIMESTAMP_TEST);
+		Assert.assertFalse(builder.isNull());
+	}
+	
+	/**
+	 * Test that the builder reports not null when the ID is null.
+	 */
+	@Test
+	public void testIsNullIdNull() {
+		MetaData.Builder builder = new MetaData.Builder();
+		builder.setId(null);
+		builder.setTimestamp(MetaDataTest.TIMESTAMP_TEST);
+		Assert.assertFalse(builder.isNull());
+	}
+	
+	/**
+	 * Test that the builder reports not null when the timestamp is null.
+	 */
+	@Test
+	public void testIsNullTimestampNull() {
+		MetaData.Builder builder = new MetaData.Builder();
+		builder.setId(MetaDataTest.ID_TEST);
+		builder.setTimestamp(null);
+		Assert.assertFalse(builder.isNull());
+	}
+
+	/**
+	 * Test that the builder reports null when all fields are null.
+	 */
+	@Test
+	public void testIsNullAllNull() {
+		MetaData.Builder builder = new MetaData.Builder();
+		builder.setId(null);
+		builder.setTimestamp(null);
+		Assert.assertTrue(builder.isNull());
 	}
 }

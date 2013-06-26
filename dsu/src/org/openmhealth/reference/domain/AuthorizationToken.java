@@ -182,7 +182,7 @@ public class AuthorizationToken implements OmhObject {
 	 * @see #AuthorizationToken(AuthorizationToken)
 	 */
 	@JsonCreator
-	protected AuthorizationToken(
+	public AuthorizationToken(
 		@JsonProperty(JSON_KEY_AUTHORIZATION_CODE)
 			final String authorizationCode,
 		@JsonProperty(JSON_KEY_ACCESS_TOKEN) final String accessToken,
@@ -239,6 +239,25 @@ public class AuthorizationToken implements OmhObject {
 	}
 	
 	/**
+	 * Returns the authorization code that backs this authorization token.
+	 * 
+	 * @return The authorization code that backs this authorization token as a
+	 *         string.
+	 */
+	public String getAuthorizationCodeString() {
+		return authorizationCode;
+	}
+	
+	/**
+	 * Returns the authorization code that backs this authorization token.
+	 * 
+	 * @return The authorization code that backs this authorization token.
+	 */
+	public AuthorizationCode getAuthorizationCode() {
+		return AuthorizationCodeBin.getInstance().getCode(authorizationCode);
+	}
+	
+	/**
 	 * Returns the authorization code response that backs this authorization
 	 * token.
 	 * 
@@ -278,6 +297,24 @@ public class AuthorizationToken implements OmhObject {
 	 */
 	public String getRefreshToken() {
 		return refreshToken;
+	}
+	
+	/**
+	 * Returns the time that the token was created.
+	 * 
+	 * @return The time that the token was created.
+	 */
+	public long getCreationTime() {
+		return creationTime;
+	}
+	
+	/**
+	 * Returns the time that the token was/will expire.
+	 * 
+	 * @return The time that the token was/will expire.
+	 */
+	public long getExpirationTime() {
+		return expirationTime;
 	}
 	
 	/**

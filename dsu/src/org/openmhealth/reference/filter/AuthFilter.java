@@ -2,8 +2,6 @@ package org.openmhealth.reference.filter;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,7 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.openmhealth.reference.data.AuthenticationTokenBin;
 import org.openmhealth.reference.data.AuthorizationTokenBin;
 import org.openmhealth.reference.domain.AuthenticationToken;
+import org.openmhealth.reference.domain.AuthorizationToken;
 import org.openmhealth.reference.exception.InvalidAuthenticationException;
+import org.openmhealth.reference.exception.InvalidAuthorizationException;
 import org.openmhealth.reference.servlet.Version1;
 
 /**
@@ -37,8 +37,7 @@ public class AuthFilter implements Filter {
 	/**
 	 * The OAuth Authorization type.
 	 */
-	public static final String HEADER_AUTHORIZATION_BEARER_UPPER =
-		"Bearer".toUpperCase();
+	public static final String HEADER_AUTHORIZATION_BEARER = "Bearer";
 	
 	/**
 	 * The attribute for an authenticated authentication token from the
@@ -78,8 +77,9 @@ public class AuthFilter implements Filter {
 		final FilterChain chain)
 		throws IOException, ServletException {
 		
-		// Get the set of authentication tokens and make sure they match.
-		Set<String> authTokens = new HashSet<String>();
+		// Create a holder for the authentication token. There is no concern
+		// how many times it is sent as long as they are all the same.
+		String authToken = null;
 		
 		// Get the authentication tokens from the cookies.
 		if(request instanceof HttpServletRequest) {
@@ -97,9 +97,18 @@ public class AuthFilter implements Filter {
 						.PARAM_AUTHENTICATION_AUTH_TOKEN
 						.equals(cookie.getName())) {
 						
-						// Add the token now. We will validate the case where
-						// there are multiple, different tokens later.
-						authTokens.add(cookie.getValue());
+						// If we have not yet found a token, save this one.
+						if(authToken == null) {
+							authToken = cookie.getValue();
+						}
+						// If we have a token, make sure that this token is
+						// identical to it. 
+						else if(! authToken.equals(cookie.getValue())) {
+							throw
+								new InvalidAuthenticationException(
+									"Multiple, different authentication " +
+										"token cookies were given.");
+						}
 					}
 				}
 			}
@@ -113,41 +122,43 @@ public class AuthFilter implements Filter {
 		// If any authentication token parameters exist, validate that there is
 		// only one and then remember it.
 		if(authTokenParameters != null) {
-			// If multiple authentication tokens were given, throw an
-			// exception.
-			if(authTokenParameters.length > 1) {
-				throw 
-					new InvalidAuthenticationException(
-						"Multiple authentication tokens were given.");
-			}
-			// If exactly one was given, save it to compare it to the
-			if(authTokenParameters.length == 1) {
-				authTokens.add(authTokenParameters[0]);
+			// Cycle through the array and check all of the authentication
+			// tokens.
+			for(int i = 0; i < authTokenParameters.length; i++) {
+				// As long as their is one element in the array, this can be
+				// set. If there is a problem with the input, this being set
+				// will be irrelevant.
 				authTokenIsFromParameters = true;
+				
+				// If we have not yet found a token, save this one.
+				if(authToken == null) {
+					authToken = authTokenParameters[i];
+				}
+				// If we have a token, make sure that this token is
+				// identical to it. 
+				else if(! authToken.equals(authTokenParameters[i])) {
+					throw
+						new InvalidAuthenticationException(
+							"Multiple, different authentication token " +
+								"parameters were given.");
+				}
 			}
 		}
 		
-		// Validate that if a token was given, only one token was given.
-		if(authTokens.size() == 1) {
+		// If we found a token, store it.
+		if(authToken != null) {
 			// Attempt to get the authentication token.
 			AuthenticationToken authTokenObject =
-				AuthenticationTokenBin
-					.getInstance().getToken(authTokens.iterator().next());
+				AuthenticationTokenBin.getInstance().getToken(authToken);
 			if(authTokenObject == null) {
 				throw
 					new InvalidAuthenticationException(
 						"The authentication token is unknown or has expired.");
 			}
-			
+				
 			// Associate the authentication token with the request.
 			request
 				.setAttribute(ATTRIBUTE_AUTHENTICATION_TOKEN, authTokenObject);
-		}
-		// Make sure multiple, different authentication token were not given.
-		else if(authTokens.size() > 1) {
-			throw
-				new InvalidAuthenticationException(
-					"Multiple, different authentication tokens were given.");
 		}
 
 		// Indicate if the token used to find this user was a parameter or not.
@@ -160,61 +171,72 @@ public class AuthFilter implements Filter {
 		if(request instanceof HttpServletRequest) {
 			// Cast the request.
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
+				
+			// Get a placeholder for the authorization token.
+			String authorizationTokenString = null;
 			
-			// The OAuth Authorization header uses the "Bearer" token type. If
-			// some other Authorization type is given, ignore it.
-			if(HEADER_AUTHORIZATION_BEARER_UPPER
-				.equals(httpRequest.getAuthType())) {
+			// Get the authorization headers, of which there may be multiple.
+			Enumeration<String> authorizations =
+				httpRequest.getHeaders(HEADER_AUTHORIZATION);
+			
+			// Cycle through each element and process the "Bearer" type.
+			String currElement;
+			while(authorizations.hasMoreElements()) {
+				// Get the next element.
+				currElement = authorizations.nextElement();
 				
-				// Get a placeholder for the third-party token.
-				String thirdPartyToken = null;
+				// Split it to find the type and value.
+				String[] currElementParts = currElement.split(" ");
 				
-				// Get the authorization headers, of which there may be
-				// multiple.
-				Enumeration<String> authorizations =
-					httpRequest.getHeaders(HEADER_AUTHORIZATION);
-				
-				// Cycle through each element and process the "Bearer" type.
-				String currElement;
-				while((currElement = authorizations.nextElement()) != null) {
-					// Split it to find the type and value.
-					String[] currElementParts = currElement.split(" ");
-					
-					// If there aren't exactly two parts, then we cannot
-					// process it.
-					if(currElementParts.length != 2) {
-						continue;
-					}
-					
-					// Get the current element part.
-					String typeUpper = currElementParts[0].toUpperCase();
-					
-					// If the type is the Bearer, then process it.
-					if(HEADER_AUTHORIZATION_BEARER_UPPER.equals(typeUpper)) {
-						if(thirdPartyToken == null) {
-							thirdPartyToken = currElementParts[1];
-						}
-						else {
-							throw
-								new InvalidAuthenticationException(
-									"Multiple third-party credentials were " +
-										"provided as '" + 
-										HEADER_AUTHORIZATION_BEARER_UPPER +
-										"' Authorization headers.");
-						}
-					}
+				// If there aren't exactly two parts, then we cannot
+				// process it.
+				if(currElementParts.length != 2) {
+					continue;
 				}
 				
-				// If the third-party token was given, attempt to add the
-				// third-party to the request.
-				if(thirdPartyToken != null) {
-					request
-						.setAttribute(
-							ATTRIBUTE_AUTHORIZATION_TOKEN, 
-							AuthorizationTokenBin
-								.getInstance()
-								.getTokenFromAccessToken(thirdPartyToken));
+				// If the type is the Bearer, then process it.
+				if(HEADER_AUTHORIZATION_BEARER.equals(currElementParts[0])) {
+					if(authorizationTokenString == null) {
+						authorizationTokenString = currElementParts[1];
+					}
+					else if(
+						! authorizationTokenString
+							.equals(currElementParts[1])) {
+						
+						throw
+							new InvalidAuthorizationException(
+								"Multiple, different third-party " +
+									"credentials were provided as '" + 
+									HEADER_AUTHORIZATION_BEARER +
+									"' " +
+									HEADER_AUTHORIZATION +
+									" headers.");
+					}
 				}
+			}
+			
+			// If the authorization token was given, attempt to add the
+			// third-party to the request.
+			if(authorizationTokenString != null) {
+				// Attempt to get the authorization token.
+				AuthorizationToken authorizationToken =
+					AuthorizationTokenBin
+						.getInstance()
+						.getTokenFromAccessToken(authorizationTokenString);
+				
+				// If the token is null, it does not exist or is expired.
+				if(authorizationToken == null) {
+					throw
+						new InvalidAuthorizationException(
+							"The authorization token is unknown or " +
+								"expired.");
+				}
+				
+				// Add the token to the request as an attribute.
+				request
+					.setAttribute(
+						ATTRIBUTE_AUTHORIZATION_TOKEN, 
+						authorizationToken);
 			}
 		}
 		

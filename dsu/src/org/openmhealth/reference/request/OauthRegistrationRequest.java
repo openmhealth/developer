@@ -15,7 +15,7 @@ import org.openmhealth.reference.exception.OmhException;
  *
  * @author John Jenkins
  */
-public class OauthRegistrationRequest extends Request<Object> {
+public class OauthRegistrationRequest extends Request<ThirdParty> {
 	/**
 	 * The requesting user's authentication token.
 	 */
@@ -114,14 +114,19 @@ public class OauthRegistrationRequest extends Request<Object> {
 		else {
 			setServiced();
 		}
-		// Create the ThirdParty object and store them.
-		ThirdPartyBin
-			.getInstance()
-			.storeThirdParty(
-				new ThirdParty(
-					authToken.getUser(), 
-					name, 
-					description, 
-					redirectUri));
+		
+		// Create the ThirdParty object.
+		ThirdParty result =
+			new ThirdParty(
+				authToken.getUser(), 
+				name, 
+				description, 
+				redirectUri);
+		
+		// Store it.
+		ThirdPartyBin.getInstance().storeThirdParty(result);
+		
+		// Return it.
+		setData(result);
 	}
 }

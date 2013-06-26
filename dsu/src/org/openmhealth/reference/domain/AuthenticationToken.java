@@ -125,7 +125,7 @@ public class AuthenticationToken implements OmhObject {
 	 * @see #AuthenticationToken(User)
 	 */
 	@JsonCreator
-	protected AuthenticationToken(
+	public AuthenticationToken(
 		@JsonProperty(JSON_KEY_TOKEN) final String token,
 		@JsonProperty(User.JSON_KEY_USERNAME) final String username,
 		@JsonProperty(JSON_KEY_GRANTED) final long granted,

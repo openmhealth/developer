@@ -18,7 +18,6 @@ package org.openmhealth.reference.domain;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openmhealth.reference.exception.OmhException;
 
 /**
  * <p>
@@ -64,14 +63,6 @@ public class MetaDataTest {
 	@Test
 	public void testMetaDataTimestampNull() {
 		new MetaData(ID_TEST, null);
-	}
-	
-	/**
-	 * Test that the timestamp cannot be in the future.
-	 */
-	@Test(expected = OmhException.class)
-	public void testMetaDataTimestampFuture() {
-		new MetaData(ID_TEST, TIMESTAMP_FUTURE);
 	}
 
 	/**

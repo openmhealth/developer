@@ -158,7 +158,7 @@ public class Data implements OmhObject {
 	 *         Any of the parameters is null.
 	 */
 	@JsonCreator
-	protected Data(
+	public Data(
 		@JsonProperty(JSON_KEY_OWNER) final String owner,
 		@JsonProperty(Schema.JSON_KEY_ID) final String schemaId,
 		@JsonProperty(Schema.JSON_KEY_VERSION) final long schemaVersion,
@@ -182,5 +182,51 @@ public class Data implements OmhObject {
 		this.schemaVersion = schemaVersion;
 		this.metaData = metaData;
 		this.data = data;
+	}
+	
+	/**
+	 * Returns the username of the owner of this data point.
+	 * 
+	 * @return The username of the owner of this data point.
+	 */
+	public String getOwner() {
+		return owner;
+	}
+	
+	/**
+	 * Returns the ID of the schema to which this point is associated.
+	 * 
+	 * @return The ID of the schema to which this point is associated.
+	 */
+	public String getSchemaId() {
+		return schemaId;
+	}
+
+	/**
+	 * Returns the version of the schema to which this point is associated.
+	 * 
+	 * @return The version of the schema to which this point is associated.
+	 */
+	public long getSchemaVersion() {
+		return schemaVersion;
+	}
+
+	/**
+	 * Returns the meta-data associated with this point.
+	 * 
+	 * @return The meta-data associated with this point or null if there is no
+	 *         meta-data.
+	 */
+	public MetaData getMetaData() {
+		return metaData;
+	}
+	
+	/**
+	 * Returns the data associated with this point.
+	 * 
+	 * @return The data associated with this point.
+	 */
+	public JsonNode getData() {
+		return data;
 	}
 }

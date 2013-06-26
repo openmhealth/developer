@@ -24,17 +24,17 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.amber.oauth2.as.request.OAuthAuthzRequest;
-import org.apache.amber.oauth2.as.request.OAuthTokenRequest;
-import org.apache.amber.oauth2.as.response.OAuthASResponse;
-import org.apache.amber.oauth2.common.error.OAuthError.CodeResponse;
-import org.apache.amber.oauth2.common.error.OAuthError.TokenResponse;
-import org.apache.amber.oauth2.common.exception.OAuthProblemException;
-import org.apache.amber.oauth2.common.exception.OAuthSystemException;
-import org.apache.amber.oauth2.common.message.OAuthResponse;
-import org.apache.amber.oauth2.common.message.types.GrantType;
-import org.apache.amber.oauth2.common.message.types.ResponseType;
-import org.apache.amber.oauth2.common.message.types.TokenType;
+import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
+import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
+import org.apache.oltu.oauth2.as.response.OAuthASResponse;
+import org.apache.oltu.oauth2.common.error.OAuthError.CodeResponse;
+import org.apache.oltu.oauth2.common.error.OAuthError.TokenResponse;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.OAuthResponse;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.apache.oltu.oauth2.common.message.types.ResponseType;
+import org.apache.oltu.oauth2.common.message.types.TokenType;
 import org.openmhealth.reference.data.AuthorizationCodeBin;
 import org.openmhealth.reference.data.AuthorizationCodeResponseBin;
 import org.openmhealth.reference.data.AuthorizationTokenBin;
@@ -244,7 +244,7 @@ public class Version1 {
 	@RequestMapping(
 		value = "auth/oauth/registration",
 		method = RequestMethod.POST)
-	public void thirdPartyRegistration(
+	public @ResponseBody ThirdParty thirdPartyRegistration(
 		@RequestParam(
 			value = ThirdParty.JSON_KEY_NAME,
 			required = true)
@@ -276,17 +276,18 @@ public class Version1 {
 						"required as a parameter.");
 		}
 		
-		handleRequest(
-			new OauthRegistrationRequest(
-				(AuthenticationToken)
-					request
-						.getAttribute(
-							AuthFilter
-								.ATTRIBUTE_AUTHENTICATION_TOKEN), 
-				name, 
-				description, 
-				redirectUri),
-			response);
+		return
+			handleRequest(
+				new OauthRegistrationRequest(
+					(AuthenticationToken)
+						request
+							.getAttribute(
+								AuthFilter
+									.ATTRIBUTE_AUTHENTICATION_TOKEN), 
+					name, 
+					description, 
+					redirectUri),
+				response);
 	}
 	
 	/**

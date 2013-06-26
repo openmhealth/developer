@@ -195,7 +195,7 @@ public class ThirdParty implements OmhObject {
 	 * @see #ThirdParty(User, String, String, URI)
 	 */
 	@JsonCreator
-	protected ThirdParty(
+	public ThirdParty(
 		@JsonProperty(JSON_KEY_OWNER) final String owner,
 		@JsonProperty(JSON_KEY_ID) final String id,
 		@JsonProperty(JSON_KEY_SHARED_SECRET) final String sharedSecret,
@@ -279,6 +279,15 @@ public class ThirdParty implements OmhObject {
 				this.description = descriptionTrimmed;
 			}
 		}
+	}
+	
+	/**
+	 * Returns the username of the user that created/owns this third-party.
+	 * 
+	 * @return The username of the user that created/owns this third-party.
+	 */
+	public String getOwner() {
+		return owner;
 	}
 	
 	/**

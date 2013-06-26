@@ -142,6 +142,17 @@ public class MetaData implements OmhObject {
 		public MetaData build() throws OmhException {
 			return new MetaData(id, timestamp);
 		}
+		
+		/**
+		 * Returns true if all of the fields are null.
+		 *  
+		 * @return True if all fields are null; false, otherwise.
+		 */
+		public boolean isNull() {
+			return
+				(id == null) &&
+				(timestamp == null);
+		}
 	}
 
 	/**
@@ -171,11 +182,6 @@ public class MetaData implements OmhObject {
 		@JsonProperty(JSON_KEY_ID) final String id,
 		@JsonProperty(JSON_KEY_TIMESTAMP) final DateTime timestamp)
 		throws OmhException {
-
-		// Timestamps cannot be in the future.
-		if((timestamp != null) && timestamp.isAfterNow()) {
-			throw new OmhException("The timestamp cannot be in the future.");
-		}
 
 		this.id = id;
 		this.timestamp = timestamp;

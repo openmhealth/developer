@@ -118,7 +118,7 @@ public class AuthorizationCodeResponse implements OmhObject {
 	 * @see #AuthorizationCodeResponse(AuthorizationCode, User, boolean)
 	 */
 	@JsonCreator
-	protected AuthorizationCodeResponse(
+	public AuthorizationCodeResponse(
 		@JsonProperty(JSON_KEY_AUTHORIZATION_CODE)
 			final String authorizationCode,
 		@JsonProperty(JSON_KEY_OWNER) final String owner,
@@ -146,12 +146,12 @@ public class AuthorizationCodeResponse implements OmhObject {
 	}
 	
 	/**
-	 * Returns the authorization code to which this response applies.
+	 * Returns the username of the owner of this response.
 	 * 
-	 * @return The authorization code to which this response applies.
+	 * @return The username of the owner of this response.
 	 */
-	public String getAuthorizationCode() {
-		return authorizationCode;
+	public String getOwnerUsername() {
+		return owner;
 	}
 	
 	/**
@@ -161,6 +161,15 @@ public class AuthorizationCodeResponse implements OmhObject {
 	 */
 	public User getOwner() {
 		return UserBin.getInstance().getUser(owner);
+	}
+	
+	/**
+	 * Returns the authorization code to which this response applies.
+	 * 
+	 * @return The authorization code to which this response applies.
+	 */
+	public String getAuthorizationCode() {
+		return authorizationCode;
 	}
 	
 	/**

@@ -28,6 +28,7 @@ import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.domain.Schema;
 import org.openmhealth.reference.exception.InvalidAuthenticationException;
+import org.openmhealth.reference.exception.InvalidAuthorizationException;
 import org.openmhealth.reference.exception.NoSuchSchemaException;
 import org.openmhealth.reference.exception.OmhException;
 
@@ -99,16 +100,10 @@ public class DataReadRequest extends ListRequest<Data> {
 		
 		super(numToSkip, numToReturn);
 		
-		if((authenticationToken == null) && (authorizationToken == null)) {
+		if(authenticationToken == null) {
 			throw
 				new InvalidAuthenticationException(
-					"No authentication credentials were provided.");
-		}
-		if((authenticationToken != null) && (authorizationToken != null)) {
-			throw
-				new InvalidAuthenticationException(
-					"Both an authentication token and an authorization " +
-						"token were given, but only one should be.");
+					"No authentication token was provided.");
 		}
 		if(schemaId == null) {
 			throw new OmhException("The schema ID is missing.");
@@ -118,8 +113,14 @@ public class DataReadRequest extends ListRequest<Data> {
 		this.authorizationToken = authorizationToken;
 		this.schemaId = schemaId;
 		this.version = version;
-		this.owner = owner;
 		this.columnList = new ColumnList(columnList);
+		
+		if(owner == null) {
+			this.owner = authenticationToken.getUsername();
+		}
+		else {
+			this.owner = owner;
+		}
 	}
 
 	/**
@@ -151,39 +152,38 @@ public class DataReadRequest extends ListRequest<Data> {
 						"', pair is unknown.");
 		}
 		
-		// Validate the 'owner' parameter by ensuring that the requesting user
-		// is the same as the owner or that the authorization token gives it
-		// permission to do so.
-		String validatedOwner;
-		// Because we only allow one of authentication or validation tokens and
-		// each token only represents one user, the user's data who is being
-		// read must be the user associated with the given token.
-		if(authenticationToken != null) {
-			validatedOwner = authenticationToken.getUsername();
-		}
-		else if(authorizationToken != null) {
-			validatedOwner =
-				authorizationToken
+		// If the owner value is not the same as the requesting user, validate
+		// that the authorization token grants them access.
+		if(! authenticationToken.getUsername().equals(owner)) {
+			// Ensure that the given authorization token grants access to the
+			// given schema.
+			if(
+				! authorizationToken
+					.getAuthorizationCode()
+					.getScopes()
+					.contains(schemaId)) {
+				
+				throw
+					new InvalidAuthorizationException(
+						"The authorization token does not grant access to " +
+							"the given schema: " +
+							schemaId);
+			}
+			
+			// Ensure that the given authorization token grants access to the
+			// user in question.
+			if(
+				! authorizationToken
 					.getAuthorizationCodeVerification()
-					.getOwner()
-					.getUsername();
-		}
-		else {
-			throw
-				new OmhException(
-					"No authentication credentials were provided.");
-		}
-		
-		// If the owner is given, it must be the same as the one based on the
-		// authentication or authorization token. For other systems, this may
-		// be extended to other ACLs, but, for this reference implementation,
-		// it must be exactly that same user.
-		if((owner != null) && (! owner.equals(validatedOwner))) {
-			throw
-				new OmhException(
-					"For the given authentication/authorization token, only " +
-						"information about the user associated with that " +
-						"token can be read.");
+					.getOwnerUsername()
+					.equals(owner)) {
+				
+				throw
+					new InvalidAuthorizationException(
+						"The authorization token does not grant access to " +
+							"the given user's data: " +
+							owner);
+			}
 		}
 		
 		// Get the data.
@@ -191,7 +191,7 @@ public class DataReadRequest extends ListRequest<Data> {
 			DataSet
 				.getInstance()
 				.getData(
-					validatedOwner, 
+					owner, 
 					schemaId, 
 					version, 
 					columnList, 

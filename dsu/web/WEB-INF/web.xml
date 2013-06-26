@@ -204,8 +204,7 @@
 <!--                               Servlets                                 -->
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
     <!--
-        An example Servlet. A Servlet is the "business logic" for an URI
-        endpoint.
+        An example Servlet.
      -->
     <!-- 
     <servlet>

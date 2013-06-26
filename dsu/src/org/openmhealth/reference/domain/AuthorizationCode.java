@@ -172,7 +172,7 @@ public class AuthorizationCode implements OmhObject {
 	 * @see #AuthorizationCode(ThirdParty, Set, String)
 	 */
 	@JsonCreator
-	protected AuthorizationCode(
+	public AuthorizationCode(
 		@JsonProperty(JSON_KEY_THIRD_PARTY) final String thirdParty,
 		@JsonProperty(JSON_KEY_CODE) final String code,
 		@JsonProperty(JSON_KEY_CREATION_TIME) final long creationTime,
@@ -238,6 +238,15 @@ public class AuthorizationCode implements OmhObject {
 	}
 	
 	/**
+	 * Returns the unique identifier for the third-party entity.
+	 * 
+	 * @return The unique identifier for the third-party entity.
+	 */
+	public String getThirdPartyId() {
+		return thirdParty;
+	}
+	
+	/**
 	 * Returns the third-party associated with this authorization code.
 	 * 
 	 * @return The third-party associated with this authorization code. 
@@ -253,15 +262,6 @@ public class AuthorizationCode implements OmhObject {
 	 */
 	public String getCode() {
 		return code;
-	}
-	
-	/**
-	 * Returns the set of scopes.
-	 * 
-	 * @return The, unmodifiable, set of scopes.
-	 */
-	public Set<String> getScopes() {
-		return Collections.unmodifiableSet(scopes);
 	}
 	
 	/**
@@ -282,6 +282,15 @@ public class AuthorizationCode implements OmhObject {
 	 */
 	public long getExpirationTime() {
 		return expirationTime;
+	}
+	
+	/**
+	 * Returns the set of scopes.
+	 * 
+	 * @return The, unmodifiable, set of scopes.
+	 */
+	public Set<String> getScopes() {
+		return Collections.unmodifiableSet(scopes);
 	}
 	
 	/**

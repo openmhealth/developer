@@ -28,6 +28,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openmhealth.reference.exception.InvalidAuthenticationException;
+import org.openmhealth.reference.exception.InvalidAuthorizationException;
 import org.openmhealth.reference.exception.NoSuchSchemaException;
 import org.openmhealth.reference.exception.OmhException;
 import org.springframework.web.util.NestedServletException;
@@ -142,6 +143,25 @@ public class ExceptionFilter implements Filter {
 				LOGGER.log(
 					Level.INFO,
 					"A user's authentication information was invalid.",
+					exception);
+
+				// If it's a HTTP response, set the status code and set the
+				// exception's message as the body of the response.
+				if(response instanceof HttpServletResponse) {
+					((HttpServletResponse) response).sendError(
+						HttpServletResponse.SC_UNAUTHORIZED,
+						exception.getMessage());
+				}
+				// Otherwise, simply set the request's body to the exception's
+				// message.
+				else {
+					response.getWriter().write(exception.getMessage());
+				}
+			}
+			else if(exception instanceof InvalidAuthorizationException) {
+				LOGGER.log(
+					Level.INFO,
+					"A user's authorization information was invalid.",
 					exception);
 
 				// If it's a HTTP response, set the status code and set the

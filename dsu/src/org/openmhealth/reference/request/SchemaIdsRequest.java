@@ -1,5 +1,6 @@
 package org.openmhealth.reference.request;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,5 +58,14 @@ public class SchemaIdsRequest extends ListRequest<String> {
 		
 		// Set the data.
 		setData(result);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openmhealth.reference.request.ListRequest#getPreviousNextParameters()
+	 */
+	@Override
+	public Map<String, String> getPreviousNextParameters() {
+		return Collections.emptyMap();
 	}
 }

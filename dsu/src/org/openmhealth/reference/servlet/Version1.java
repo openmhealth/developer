@@ -16,9 +16,13 @@
 package org.openmhealth.reference.servlet;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -80,6 +84,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/v1")
 public class Version1 {
+	/**
+	 * The logger for this class.
+	 */
+	private static final Logger LOGGER =
+		Logger.getLogger(Version1.class.getCanonicalName());
+	
+	/**
+	 * The encoding for the previous and next URLs.
+	 */
+	private static final String URL_ENCODING_UTF_8 = "UTF-8";
+	
 	/**
 	 * The username parameter for the authenticate requests.
 	 */
@@ -157,6 +172,15 @@ public class Version1 {
 	 * The parameter for the data when it is being uploaded.
 	 */
 	public static final String PARAM_DATA = "data";
+
+	/**
+	 * The header for the URL to the previous set of data for list requests.
+	 */
+	public static final String HEADER_PREVIOUS = "Previous";
+	/**
+	 * The header for the URL to the next set of data for list requests.
+	 */
+	public static final String HEADER_NEXT = "Next";
 	
 	/**
 	 * Creates an authentication request, authenticates the user and, if
@@ -197,8 +221,9 @@ public class Version1 {
 		// Create the authentication request from parameters.
 		AuthenticationToken token =
 			handleRequest(
-				new AuthenticationRequest(username, password),
-				response);
+				request,
+				response,
+				new AuthenticationRequest(username, password));
 		
 		// Add a cookie for the authentication token.
 		Cookie cookie =
@@ -278,6 +303,8 @@ public class Version1 {
 		
 		return
 			handleRequest(
+				request,
+				response,
 				new OauthRegistrationRequest(
 					(AuthenticationToken)
 						request
@@ -286,8 +313,7 @@ public class Version1 {
 									.ATTRIBUTE_AUTHENTICATION_TOKEN), 
 					name, 
 					description, 
-					redirectUri),
-				response);
+					redirectUri));
 	}
 	
 	/**
@@ -1061,12 +1087,14 @@ public class Version1 {
 			required = false,
 			defaultValue = ListRequest.DEFAULT_NUMBER_TO_RETURN_STRING)
 			final long numToReturn,
+		final HttpServletRequest request,
 		final HttpServletResponse response) {
 		
 		return
 			handleRequest(
-				new SchemaIdsRequest(numToSkip, numToReturn),
-				response);
+				request,
+				response,
+				new SchemaIdsRequest(numToSkip, numToReturn));
 	}
 	
 	/**
@@ -1103,12 +1131,14 @@ public class Version1 {
 			required = false,
 			defaultValue = ListRequest.DEFAULT_NUMBER_TO_RETURN_STRING)
 			final long numToReturn,
+		final HttpServletRequest request,
 		final HttpServletResponse response) {
 		
 		return 
 			handleRequest(
-				new SchemaVersionsRequest(schemaId, numToSkip, numToReturn),
-				response);
+				request,
+				response,
+				new SchemaVersionsRequest(schemaId, numToSkip, numToReturn));
 	}
 	
 	/**
@@ -1132,9 +1162,14 @@ public class Version1 {
 	public @ResponseBody Object getDefinition(
 		@PathVariable(PARAM_SCHEMA_ID) final String schemaId,
 		@PathVariable(PARAM_SCHEMA_VERSION) final Long version,
+		final HttpServletRequest request,
 		final HttpServletResponse response) {
 		
-		return handleRequest(new SchemaRequest(schemaId, version), response);
+		return
+			handleRequest(
+				request,
+				response,
+				new SchemaRequest(schemaId, version));
 	}
 	
 	/**
@@ -1201,6 +1236,8 @@ public class Version1 {
 		// Handle the request.
 		return 
 			handleRequest(
+				request,
+				response,
 				new DataReadRequest(
 					(AuthenticationToken)
 						request
@@ -1217,8 +1254,7 @@ public class Version1 {
 					owner,
 					columnList,
 					numToSkip,
-					numToReturn),
-				response);
+					numToReturn));
 	}
 	
 	/**
@@ -1279,29 +1315,34 @@ public class Version1 {
 		
 		// Handle the request.
 		handleRequest(
+			request,
+			response,
 			new DataWriteRequest(
 				authToken,
 				schemaId,
 				version,
-				data),
-			response);
+				data));
 	}
 	
 	/**
 	 * Handles a request then sets the meta-data as HTTP headers and returns
 	 * the data to be returned to the user.
 	 * 
+	 * @param httpRequest
+	 *        The HTTP request.
+	 * 
+	 * @param httpResponse
+	 *        The HTTP response.
+	 * 
 	 * @param request
 	 *        The already-built, domain-specific request to be serviced.
-	 * 
-	 * @param response
-	 *        The HTTP response to use to set the headers.
 	 * 
 	 * @return The object to be returned to the user.
 	 */
 	private <T> T handleRequest(
-		final Request<? extends T> request,
-		final HttpServletResponse response) {
+		final HttpServletRequest httpRequest,
+		final HttpServletResponse httpResponse,
+		final Request<? extends T> request) {
 		
 		// Service the request.
 		request.service();
@@ -1310,14 +1351,269 @@ public class Version1 {
 		Map<String, Object> metaData = request.getMetaData();
 		if(metaData != null) {
 			for(String metaDataKey : metaData.keySet()) {
-				response
+				httpResponse
 					.setHeader(
 						metaDataKey,
 						metaData.get(metaDataKey).toString());
 			}
 		}
 		
+		// If this is a list request, add the next and previous parameters.
+		if(request instanceof ListRequest) {
+			// Create the previous and next headers, if appropriate.
+			addNextPreviousHeaders(
+				httpRequest,
+				httpResponse,
+				(ListRequest<?>) request);
+		}
+		
 		// Return the data.
 		return request.getData();
+	}
+	
+	/**
+	 * Builds the root URL used to make this request based on the request.
+	 * 
+	 * @param httpRequest
+	 *        The original HTTP request.
+	 * 
+	 * @return The base URL used to make the request that is calling this
+	 *         function.
+	 */
+	private String buildRootUrl(final HttpServletRequest httpRequest) {
+		// It must be a HTTP request.
+		StringBuilder builder = new StringBuilder("http");
+		
+		// If security was used add the "s" to make it "https".
+		if(httpRequest.isSecure()) {
+			builder.append('s');
+		}
+		
+		// Add the protocol separator.
+		builder.append("://");
+		
+		// Add the local name, e.g. localhost.
+		builder.append(httpRequest.getLocalName());
+		
+		// Add the port separator and the port.
+		builder.append(':').append(httpRequest.getLocalPort());
+		
+		// Add the path, which comes in two parts.
+		builder.append(httpRequest.getContextPath());
+		builder.append(httpRequest.getPathInfo());
+
+		// Return the base URL, which should only need to have the parameters
+		// added to it.
+		return builder.toString();
+	}
+	
+	/**
+	 * Creates and adds the Previous and Next headers.
+	 * 
+	 * @param httpRequest
+	 *        The HTTP request.
+	 * 
+	 * @param httpResponse
+	 *        The HTTP response.
+	 * 
+	 * @param listRequest
+	 *        The ListRequest used to get the paging headers.
+	 */
+	private void addNextPreviousHeaders(
+		final HttpServletRequest httpRequest,
+		final HttpServletResponse httpResponse,
+		final ListRequest<?> listRequest) {
+		
+		// Get the new set of parameters.
+		Map<String, String> parameters =
+			listRequest.getPreviousNextParameters();
+		
+		// If we skipped any data, create a Previous header.
+		if(listRequest.getNumToSkip() > 0) {
+			// Build the base URL.
+			StringBuilder previousBuilder =
+				new StringBuilder(buildRootUrl(httpRequest));
+			
+			// Add the query separator.
+			previousBuilder.append('?');
+			
+			// Use a try-catch in case our encoding, which is the same for
+			// each parameter, is unknown.
+			try {
+				// Add each of the custom parameters.
+				boolean firstPass = true;
+				for(String parameterKey : parameters.keySet()) {
+					// Add the parameter separator.
+					if(firstPass) {
+						firstPass = false;
+					}
+					else {
+						previousBuilder.append('&');
+					}
+					
+					// Add the parameter.
+					previousBuilder
+						.append(
+							URLEncoder
+								.encode(parameterKey, URL_ENCODING_UTF_8))
+						.append('=')
+						.append(
+							URLEncoder
+								.encode(
+									parameters.get(parameterKey),
+									URL_ENCODING_UTF_8));
+				}
+				
+				// Add the paging parameters.
+				if(parameters.size() > 0) {
+					previousBuilder.append('&');
+				}
+				
+				// Calculate the previous number to skip.
+				long previousNumToSkip =
+					listRequest.getNumToSkip() -
+						listRequest.getNumToReturn();
+				// If the previous number to skip is greater than zero, add
+				// the number to skip.
+				if(previousNumToSkip > 0) {
+					previousBuilder
+						.append(
+							URLEncoder
+								.encode(
+									PARAM_PAGING_NUM_TO_SKIP,
+									URL_ENCODING_UTF_8))
+						.append('=')
+						.append(
+							URLEncoder
+							.encode(
+								Long.toString(previousNumToSkip),
+								URL_ENCODING_UTF_8));
+					previousBuilder.append('&');
+				}
+
+				// Always add the number to return.
+				previousBuilder
+					.append(
+						URLEncoder
+							.encode(
+								PARAM_PAGING_NUM_TO_RETURN,
+								URL_ENCODING_UTF_8))
+					.append('=')
+					.append(
+						URLEncoder
+						.encode(
+							Long.toString(
+								Math.min(
+									listRequest.getNumToSkip(),
+									listRequest.getNumToReturn())),
+							URL_ENCODING_UTF_8));
+			}
+			catch(UnsupportedEncodingException e) {
+				LOGGER
+					.log(
+						Level.SEVERE,
+						"The encoding is unknown so the " + 
+							HEADER_PREVIOUS + 
+							" header could not be built.");
+			}
+			
+			// Add the previous header.
+			httpResponse
+				.setHeader(HEADER_PREVIOUS, previousBuilder.toString());
+		}
+		
+		// If the total data-set size is greater than the number of points
+		// skipped plus the number of points requested, then there must be more
+		// data, and a Next header should be added.
+		if(listRequest.getData().count() >
+			(listRequest.getNumToSkip() + listRequest.getNumToReturn())) {
+
+			// Build the base URL.
+			StringBuilder nextBuilder =
+				new StringBuilder(buildRootUrl(httpRequest));
+			
+			// Add the query separator.
+			nextBuilder.append('?');
+			
+			// Use a try-catch in case our encoding, which is the same for
+			// each parameter, is unknown.
+			try {
+				// Add each of the custom parameters.
+				boolean firstPass = true;
+				for(String parameterKey : parameters.keySet()) {
+					// Add the parameter separator.
+					if(firstPass) {
+						firstPass = false;
+					}
+					else {
+						nextBuilder.append('&');
+					}
+					
+					// Add the parameter.
+					nextBuilder
+						.append(
+							URLEncoder
+								.encode(parameterKey, URL_ENCODING_UTF_8))
+						.append('=')
+						.append(
+							URLEncoder
+								.encode(
+									parameters.get(parameterKey),
+									URL_ENCODING_UTF_8));
+				}
+				
+				// Add the paging parameters.
+				if(parameters.size() > 0) {
+					nextBuilder.append('&');
+				}
+				
+				// Calculate the previous number to skip.
+				long nextNumToSkip =
+					listRequest.getNumToSkip() +
+						listRequest.getNumToReturn();
+				// Always add the number to skip.
+				nextBuilder
+					.append(
+						URLEncoder
+							.encode(
+								PARAM_PAGING_NUM_TO_SKIP,
+								URL_ENCODING_UTF_8))
+					.append('=')
+					.append(
+						URLEncoder
+						.encode(
+							Long.toString(nextNumToSkip),
+							URL_ENCODING_UTF_8));
+				
+				// Add the parameter separator.
+				nextBuilder.append('&');
+
+				// Always add the number to return.
+				nextBuilder
+					.append(
+						URLEncoder
+							.encode(
+								PARAM_PAGING_NUM_TO_RETURN,
+								URL_ENCODING_UTF_8))
+					.append('=')
+					.append(
+						URLEncoder
+						.encode(
+							Long.toString(listRequest.getNumToReturn()),
+							URL_ENCODING_UTF_8));
+			}
+			catch(UnsupportedEncodingException e) {
+				LOGGER
+					.log(
+						Level.SEVERE,
+						"The encoding is unknown so the " + 
+							HEADER_NEXT + 
+							" header could not be built.");
+			}
+			
+			// Add the previous header.
+			httpResponse
+				.setHeader(HEADER_NEXT, nextBuilder.toString());
+		}
 	}
 }

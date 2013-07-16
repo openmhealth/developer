@@ -1,5 +1,6 @@
 package org.openmhealth.reference.request;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,9 @@ import org.openmhealth.reference.exception.OmhException;
  * @author John Jenkins
  */
 public class SchemaVersionsRequest extends ListRequest<Long> {
+	/**
+	 * The unique identifier for the schema whose versions are being requested.
+	 */
 	private final String schemaId;
 
 	/**
@@ -75,5 +79,14 @@ public class SchemaVersionsRequest extends ListRequest<Long> {
 		
 		// Set the data.
 		setData(result);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openmhealth.reference.request.ListRequest#getPreviousNextParameters()
+	 */
+	@Override
+	public Map<String, String> getPreviousNextParameters() {
+		return Collections.emptyMap();
 	}
 }

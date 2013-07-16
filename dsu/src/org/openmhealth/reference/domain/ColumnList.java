@@ -110,6 +110,29 @@ public class ColumnList {
 	}
 	
 	/**
+	 * Creates a comma-separated string of the children.
+	 */
+	public String toString() {
+		// Create the builder.
+		StringBuilder builder = new StringBuilder();
+		
+		// For each element, add it to the string that is being built.
+		boolean firstPass = true;
+		for(String element : toList()) {
+			if(firstPass) {
+				firstPass = false;
+			}
+			else {
+				builder.append(',');
+			}
+			builder.append(element);
+		}
+		
+		// Return the compiled string.
+		return builder.toString();
+	}
+	
+	/**
 	 * Adds a new child to the current list of children.
 	 * 
 	 * @param column The string representing the child which may be composed of

@@ -1,5 +1,7 @@
 package org.openmhealth.reference.request;
 
+import java.util.Map;
+
 import org.openmhealth.reference.domain.MultiValueResult;
 import org.openmhealth.reference.exception.OmhException;
 
@@ -120,4 +122,13 @@ public abstract class ListRequest<T> extends Request<MultiValueResult<T>> {
 	public long getNumToReturn() {
 		return numToReturn;
 	}
+	
+	/**
+	 * Returns the parameters used to build a previous or next URLs. The
+	 * resulting map must not include the paging parameters.
+	 * 
+	 * @return A map of parameter keys to their value for previous or next URLs
+	 *         excluding the paging parameters.
+	 */
+	public abstract Map<String, String> getPreviousNextParameters();
 }

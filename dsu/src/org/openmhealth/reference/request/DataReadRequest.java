@@ -26,11 +26,11 @@ import org.openmhealth.reference.domain.AuthorizationToken;
 import org.openmhealth.reference.domain.ColumnList;
 import org.openmhealth.reference.domain.Data;
 import org.openmhealth.reference.domain.MultiValueResult;
-import org.openmhealth.reference.domain.Schema;
 import org.openmhealth.reference.exception.InvalidAuthenticationException;
 import org.openmhealth.reference.exception.InvalidAuthorizationException;
 import org.openmhealth.reference.exception.NoSuchSchemaException;
 import org.openmhealth.reference.exception.OmhException;
+import org.openmhealth.reference.servlet.Version1;
 
 /**
  * <p>
@@ -200,12 +200,33 @@ public class DataReadRequest extends ListRequest<Data> {
 		
 		// Set the meta-data.
 		Map<String, Object> metaData = new HashMap<String, Object>();
-		metaData.put(Schema.JSON_KEY_ID, schemaId);
-		metaData.put(Schema.JSON_KEY_VERSION, version);
 		metaData.put(METADATA_KEY_COUNT, result.count());
 		setMetaData(metaData);
 		
 		// Set the data.
 		setData(result);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openmhealth.reference.request.ListRequest#getPreviousNextParameters()
+	 */
+	@Override
+	public Map<String, String> getPreviousNextParameters() {
+		// Create the result map.
+		Map<String, String> result = new HashMap<String, String>();
+		
+		// Add the owner if it's not the requesting user.
+		if(! authenticationToken.getUsername().equals(owner)) {
+			result.put(Version1.PARAM_OWNER, owner);
+		}
+		
+		// Add the columns if they were given.
+		if((columnList != null) && (columnList.size() > 0)) {
+			result.put(Version1.PARAM_COLUMN_LIST, columnList.toString());
+		}
+		
+		// Return the map.
+		return result;
 	}
 }

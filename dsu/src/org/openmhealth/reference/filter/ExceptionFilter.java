@@ -125,76 +125,48 @@ public class ExceptionFilter implements Filter {
 					Level.INFO,
 					"An unknown schema was requested.",
 					exception);
-
-				// If it's a HTTP response, set the status code and set the
-				// exception's message as the body of the response.
-				if(response instanceof HttpServletResponse) {
-					((HttpServletResponse) response).sendError(
-						HttpServletResponse.SC_NOT_FOUND,
-						exception.getMessage());
-				}
-				// Otherwise, simply set the request's body to the exception's
-				// message.
-				else {
-					response.getWriter().write(exception.getMessage());
-				}
+				
+				// Respond to the user.
+				sendResponse(
+					response,
+					HttpServletResponse.SC_NOT_FOUND,
+					exception.getMessage());
 			}
 			else if(exception instanceof InvalidAuthenticationException) {
 				LOGGER.log(
 					Level.INFO,
 					"A user's authentication information was invalid.",
 					exception);
-
-				// If it's a HTTP response, set the status code and set the
-				// exception's message as the body of the response.
-				if(response instanceof HttpServletResponse) {
-					((HttpServletResponse) response).sendError(
-						HttpServletResponse.SC_UNAUTHORIZED,
-						exception.getMessage());
-				}
-				// Otherwise, simply set the request's body to the exception's
-				// message.
-				else {
-					response.getWriter().write(exception.getMessage());
-				}
+				
+				// Respond to the user.
+				sendResponse(
+					response,
+					HttpServletResponse.SC_UNAUTHORIZED,
+					exception.getMessage());
 			}
 			else if(exception instanceof InvalidAuthorizationException) {
 				LOGGER.log(
 					Level.INFO,
 					"A user's authorization information was invalid.",
 					exception);
-
-				// If it's a HTTP response, set the status code and set the
-				// exception's message as the body of the response.
-				if(response instanceof HttpServletResponse) {
-					((HttpServletResponse) response).sendError(
-						HttpServletResponse.SC_UNAUTHORIZED,
-						exception.getMessage());
-				}
-				// Otherwise, simply set the request's body to the exception's
-				// message.
-				else {
-					response.getWriter().write(exception.getMessage());
-				}
+				
+				// Respond to the user.
+				sendResponse(
+					response,
+					HttpServletResponse.SC_UNAUTHORIZED,
+					exception.getMessage());
 			}
 			else if(exception instanceof OmhException) {
 				LOGGER.log(
 					Level.INFO,
 					"An invalid request was made.",
 					exception);
-
-				// If it's a HTTP response, set the status code and set the
-				// exception's message as the body of the response.
-				if(response instanceof HttpServletResponse) {
-					((HttpServletResponse) response).sendError(
-						HttpServletResponse.SC_BAD_REQUEST,
-						exception.getMessage());
-				}
-				// Otherwise, simply set the request's body to the exception's
-				// message.
-				else {
-					response.getWriter().write(exception.getMessage());
-				}
+				
+				// Respond to the user.
+				sendResponse(
+					response,
+					HttpServletResponse.SC_BAD_REQUEST,
+					exception.getMessage());
 			}
 			// If the exception was not one of ours, the server must have
 			// crashed.
@@ -203,19 +175,12 @@ public class ExceptionFilter implements Filter {
 					Level.SEVERE,
 					"The server threw an unexpected exception.",
 					exception);
-
-				// If it's a HTTP response, set the status code and set the
-				// exception's message as the body of the response.
-				if(response instanceof HttpServletResponse) {
-					((HttpServletResponse) response).sendError(
-						HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"");
-				}
-				// Otherwise, simply set the request's body to the exception's
-				// message.
-				else {
-					response.getWriter().write("");
-				}
+				
+				// Respond to the user.
+				sendResponse(
+					response,
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					null);
 			}
 		}
 	}
@@ -226,5 +191,39 @@ public class ExceptionFilter implements Filter {
 	@Override
 	public void destroy() {
 		// Do nothing.
+	}
+	
+	/**
+	 * Sends the response to the user.
+	 * 
+	 * @param response
+	 *        The response object to use to send the response.
+	 * 
+	 * @param statusCode
+	 *        The status code to send if the response is an HttpServletResponse
+	 *        object.
+	 * 
+	 * @param message
+	 *        The message to send to the user or null if no message should be
+	 *        sent.
+	 * 
+	 * @throws IOException
+	 *         There was an error sending the response.
+	 */
+	private void sendResponse(
+		final ServletResponse response,
+		final int statusCode,
+		final String message)
+		throws IOException {
+		
+		// If it's a HTTP response, set the status code.
+		if(response instanceof HttpServletResponse) {
+			((HttpServletResponse) response).setStatus(statusCode);
+		}
+		
+		// Write the message.
+		if(message != null) {
+			response.getWriter().write(message);
+		}
 	}
 }

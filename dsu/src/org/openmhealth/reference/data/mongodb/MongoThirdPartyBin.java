@@ -9,6 +9,7 @@ import org.openmhealth.reference.exception.OmhException;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.MongoException;
 import com.mongodb.QueryBuilder;
 
 /**
@@ -58,21 +59,16 @@ public class MongoThirdPartyBin extends ThirdPartyBin {
 						.getDb()
 						.getCollection(DB_NAME),
 					ThirdParty.class);
-
-		// Make sure a third-party with the same ID doesn't already exist.
-		if(collection
-			.count(
-				new BasicDBObject(
-					ThirdParty.JSON_KEY_ID,
-					thirdParty.getId())) > 0) {
-			
+		
+		// Save it.
+		try {
+			collection.insert(thirdParty);
+		}
+		catch(MongoException.DuplicateKey e) {
 			throw
 				new OmhException(
 					"A third-party with the given ID already exists.");
 		}
-		
-		// Save it.
-		collection.insert(thirdParty);
 	}
 
 	/*

@@ -44,6 +44,7 @@ import org.openmhealth.reference.data.AuthorizationCodeResponseBin;
 import org.openmhealth.reference.data.AuthorizationTokenBin;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.data.ThirdPartyBin;
+import org.openmhealth.reference.data.UserBin;
 import org.openmhealth.reference.domain.AuthenticationToken;
 import org.openmhealth.reference.domain.AuthorizationCode;
 import org.openmhealth.reference.domain.AuthorizationCodeResponse;
@@ -63,6 +64,8 @@ import org.openmhealth.reference.request.Request;
 import org.openmhealth.reference.request.SchemaIdsRequest;
 import org.openmhealth.reference.request.SchemaRequest;
 import org.openmhealth.reference.request.SchemaVersionsRequest;
+import org.openmhealth.reference.request.UserActivationRequest;
+import org.openmhealth.reference.request.UserRegistrationRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,6 +97,15 @@ public class Version1 {
 	 * The encoding for the previous and next URLs.
 	 */
 	private static final String URL_ENCODING_UTF_8 = "UTF-8";
+
+	/**
+	 * The path to the user registration end-point.
+	 */
+	public static final String PATH_REGISTRATION = "/users/registration";
+	/**
+	 * The path to the user activation end-point.
+	 */
+	public static final String PATH_ACTIVATION = "/users/activation";
 	
 	/**
 	 * The username parameter for the authenticate requests.
@@ -1060,6 +1072,103 @@ public class Version1 {
 	}
 	
 	/**
+	 * <p>
+	 * Creates a new user in the database and sends an activation email.
+	 * </p>
+	 * 
+	 * <p>
+	 * For systems that already have their own user activation/management
+	 * system in place, either remove this function or simply remove the
+	 * RequestMapping annotation.
+	 * </p>
+	 * 
+	 * @param username
+	 *        The new user's username.
+	 *        
+	 * @param password
+	 *        The new user's password
+	 *        
+	 * @param email The new user's email address.
+	 * 
+	 * @param request
+	 *        The HTTP request object.
+	 * 
+	 * @param response
+	 *        The HTTP response object.
+	 */
+	@RequestMapping(
+		value = UserRegistrationRequest.PATH,
+		method = RequestMethod.POST)
+	public @ResponseBody void registerUser(
+		@RequestParam(
+			value = User.JSON_KEY_USERNAME,
+			required = true)
+			final String username,
+		@RequestParam(
+			value = User.JSON_KEY_PASSWORD, 
+			required = true) 
+			final String password,
+		@RequestParam(
+			value = User.JSON_KEY_EMAIL, 
+			required = true) 
+			final String email,
+		final HttpServletRequest request,
+		final HttpServletResponse response) {
+		
+		handleRequest(
+			request,
+			response,
+			new UserRegistrationRequest(username, password, email));
+	}
+	
+	/**
+	 * <p>
+	 * Creates a new user in the database and sends an activation email.
+	 * </p>
+	 * 
+	 * <p>
+	 * For systems that already have their own user activation/management
+	 * system in place, either remove this function or simply remove the
+	 * RequestMapping annotation.
+	 * </p>
+	 * 
+	 * @param username
+	 *        The new user's username.
+	 *        
+	 * @param password
+	 *        The new user's password
+	 *        
+	 * @param email The new user's email address.
+	 * 
+	 * @param request
+	 *        The HTTP request object.
+	 * 
+	 * @param response
+	 *        The HTTP response object.
+	 */
+	@RequestMapping(
+		value = UserActivationRequest.PATH,
+		method = RequestMethod.POST)
+	public @ResponseBody void activateUser(
+		@RequestParam(
+			value = User.JSON_KEY_REGISTRATION_KEY,
+			required = true)
+			final String registrationId,
+		final HttpServletRequest request,
+		final HttpServletResponse response) {
+		
+		handleRequest(
+			request,
+			response,
+			new UserActivationRequest(registrationId));
+	}
+	
+	@RequestMapping(value = "testing", method = RequestMethod.GET)
+	public @ResponseBody User testing() {
+		return UserBin.getInstance().getUser("sink.thaw");
+	}
+	
+	/**
 	 * If the root of the hierarchy is requested, return the registry, which is
 	 * a map of all of the schema IDs to their high-level information, e.g.
 	 * name, description, latest version, etc.
@@ -1069,6 +1178,9 @@ public class Version1 {
 	 * 
 	 * @param numToReturn
 	 *        The number of data points to return to facilitate paging.
+	 * 
+	 * @param request
+	 *        The HTTP request object.
 	 * 
 	 * @param response
 	 *        The HTTP response object.
@@ -1157,7 +1269,9 @@ public class Version1 {
 	 * @return The schema for the given schema ID-version pair.
 	 */
 	@RequestMapping(
-		value = "{" + PARAM_SCHEMA_ID + "}/{" + PARAM_SCHEMA_VERSION + "}",
+		value =
+			"{" + PARAM_SCHEMA_ID + "}/" +
+			"{" + PARAM_SCHEMA_VERSION + ":[\\d]" + "}",
 		method = RequestMethod.GET)
 	public @ResponseBody Object getDefinition(
 		@PathVariable(PARAM_SCHEMA_ID) final String schemaId,
@@ -1372,7 +1486,15 @@ public class Version1 {
 	}
 	
 	/**
+	 * <p>
 	 * Builds the root URL used to make this request based on the request.
+	 * </p>
+	 * 
+	 * <p>
+	 * The URL is built from all of the information Java provides about the
+	 * system including the hostname. However, in a distributed environment,
+	 * this may not be adequate or correct. 
+	 * </p>
 	 * 
 	 * @param httpRequest
 	 *        The original HTTP request.
@@ -1392,11 +1514,11 @@ public class Version1 {
 		// Add the protocol separator.
 		builder.append("://");
 		
-		// Add the local name, e.g. localhost.
-		builder.append(httpRequest.getLocalName());
+		// Add the name of the server where the request was sent.
+		builder.append(httpRequest.getServerName());
 		
 		// Add the port separator and the port.
-		builder.append(':').append(httpRequest.getLocalPort());
+		builder.append(':').append(httpRequest.getServerPort());
 		
 		// Add the path, which comes in two parts.
 		builder.append(httpRequest.getContextPath());

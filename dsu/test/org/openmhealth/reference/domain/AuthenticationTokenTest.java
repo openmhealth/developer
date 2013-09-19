@@ -30,17 +30,27 @@ import org.openmhealth.reference.exception.OmhException;
  */
 public class AuthenticationTokenTest {
 	/**
-	 * A valid token to use for testing.
-	 */
-	public static final String TOKEN = UUID.randomUUID().toString();
-	/**
-	 * A valid user-name to use for testing.
+	 * The username for these tests.
 	 */
 	public static final String USERNAME = UserTest.USERNAME;
 	/**
-	 * A valid password to use for testing.
+	 * The password for these tests.
 	 */
 	public static final String PASSWORD = UserTest.PASSWORD;
+	/**
+	 * The email address for these tests.
+	 */
+	public static final String EMAIL = UserTest.EMAIL_STRING;
+	/**
+	 * A valid user for these tests.
+	 */
+	public static final User USER =
+		new User(USERNAME, PASSWORD, EMAIL, null, null, null);
+	
+	/**
+	 * A valid token to use for testing.
+	 */
+	public static final String TOKEN = UUID.randomUUID().toString();
 	/**
 	 * A valid granted value to use for testing.
 	 */
@@ -49,10 +59,6 @@ public class AuthenticationTokenTest {
 	 * A valid expiration value to use for testing.
 	 */
 	public static final long EXPIRES = GRANTED + 1;
-	/**
-	 * A {@link User} object to use for testing.
-	 */
-	public static final User USER = new User(USERNAME, PASSWORD);
 
 	/**
 	 * Test that a user must be given to the constructor.

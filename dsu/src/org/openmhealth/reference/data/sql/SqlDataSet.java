@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmhealth.reference.data.AuthenticationTokenBin;
 import org.openmhealth.reference.data.DataSet;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.data.UserBin;
@@ -426,13 +425,13 @@ public class SqlDataSet extends DataSet implements SqlDaoInterface {
 					// Link to the user table.
 					"CONSTRAINT " +
 						"`" +
-							AuthenticationTokenBin.DB_NAME + 
+							DataSet.DB_NAME + 
 								"_fk_" +
 								UserBin.DB_NAME + "_id" +
 						"` " +
 						"FOREIGN KEY " +
 						"`" +
-							AuthenticationTokenBin.DB_NAME + 
+							DataSet.DB_NAME + 
 								"_index_" +
 								UserBin.DB_NAME + "_id" +
 						"` " +

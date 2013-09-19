@@ -29,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 @JsonAutoDetect(
 	fieldVisibility = Visibility.DEFAULT,
 	getterVisibility = Visibility.NONE,
+	isGetterVisibility = Visibility.NONE,
 	setterVisibility = Visibility.NONE,
 	creatorVisibility = Visibility.DEFAULT)
 public interface MongoDbObject {

@@ -23,7 +23,7 @@ import org.mongojack.DBCursor;
 import org.mongojack.DBQuery;
 import org.mongojack.DBQuery.Query;
 import org.mongojack.JacksonDBCollection;
-import org.mongojack.internal.MongoJacksonMapperModule;
+import org.mongojack.internal.MongoJackModule;
 import org.openmhealth.reference.concordia.OmhValidationController;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.domain.MultiValueResult;
@@ -67,7 +67,7 @@ public class MongoRegistry extends Registry {
 		
 		// Finally, we must configure the mapper to work with the MongoJack
 		// configuration.
-		JSON_MAPPER = MongoJacksonMapperModule.configure(mapper);
+		JSON_MAPPER = MongoJackModule.configure(mapper);
 	}
 	
 	/**

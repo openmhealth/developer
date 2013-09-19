@@ -95,6 +95,11 @@ public class AuthenticationRequest extends Request<AuthenticationToken> {
 		// Get the user.
 		User user = getUser(username, password);
 		
+		// Verify that the account is active.
+		if(! user.isActivated()) {
+			throw new OmhException("The account has not been activated.");
+		}
+		
 		// Create the user's authentication token.
 		AuthenticationToken token = new AuthenticationToken(user);
 		

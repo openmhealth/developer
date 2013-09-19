@@ -27,9 +27,14 @@ public class ThirdPartyTest {
 	 */
 	public static final String PASSWORD = UserTest.PASSWORD;
 	/**
+	 * The email address for these tests.
+	 */
+	public static final String EMAIL = UserTest.EMAIL_STRING;
+	/**
 	 * A valid user for these tests.
 	 */
-	public static final User USER = new User(USERNAME, PASSWORD);
+	public static final User USER =
+		new User(USERNAME, PASSWORD, EMAIL, null, null, null);
 
 	/**
 	 * A valid ID for these tests.

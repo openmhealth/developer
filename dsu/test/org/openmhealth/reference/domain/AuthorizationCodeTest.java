@@ -19,10 +19,22 @@ import org.openmhealth.reference.exception.OmhException;
  */
 public class AuthorizationCodeTest {
 	/**
+	 * The username for these tests.
+	 */
+	public static final String USERNAME = UserTest.USERNAME;
+	/**
+	 * The password for these tests.
+	 */
+	public static final String PASSWORD = UserTest.PASSWORD;
+	/**
+	 * The email address for these tests.
+	 */
+	public static final String EMAIL = UserTest.EMAIL_STRING;
+	/**
 	 * A valid user for these tests.
 	 */
 	public static final User USER =
-		new User(UserTest.USERNAME, UserTest.PASSWORD);
+		new User(USERNAME, PASSWORD, EMAIL, null, null, null);
 	
 	/**
 	 * A valid third-party ID for these tests.

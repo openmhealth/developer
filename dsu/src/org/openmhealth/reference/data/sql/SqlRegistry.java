@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mongojack.internal.MongoJacksonMapperModule;
+import org.mongojack.internal.MongoJackModule;
 import org.openmhealth.reference.concordia.OmhValidationController;
 import org.openmhealth.reference.data.Registry;
 import org.openmhealth.reference.domain.MultiValueResult;
@@ -53,7 +53,7 @@ public class SqlRegistry
 		
 		// Finally, we must configure the mapper to work with the MongoJack
 		// configuration.
-		JSON_MAPPER = MongoJacksonMapperModule.configure(mapper);
+		JSON_MAPPER = MongoJackModule.configure(mapper);
 	}
 	
 	/*

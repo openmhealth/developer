@@ -59,10 +59,20 @@ public class MongoUser extends User implements MongoDbObject {
 	public MongoUser(
 		@JsonProperty(DATABASE_FIELD_ID) final String dbId,
 		@JsonProperty(JSON_KEY_USERNAME) final String username,
-		@JsonProperty(JSON_KEY_PASSWORD) final String password)
+		@JsonProperty(JSON_KEY_PASSWORD) final String password,
+		@JsonProperty(JSON_KEY_EMAIL) final String email,
+		@JsonProperty(JSON_KEY_REGISTRATION_KEY) final String registrationKey,
+		@JsonProperty(JSON_KEY_DATE_REGISTERED) final Long dateRegistered,
+		@JsonProperty(JSON_KEY_DATE_ACTIVATED) final Long dateActivated)
 		throws OmhException {
 		
-		super(username, password);
+		super(
+			username,
+			password,
+			email,
+			registrationKey,
+			dateRegistered,
+			dateActivated);
 		
 		// Store the MongoDB ID.
 		if(dbId == null) {

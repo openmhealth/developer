@@ -54,16 +54,16 @@ public class UserRegistrationRequest extends Request<Object> {
 	/**
 	 * The mail property key for SSL.
 	 */
-	private static final String MAIL_PROPERTY_SSL_ENABLED =
-			"mail." + MAIL_PROTOCOL + ".ssl.enable";
+//	private static final String MAIL_PROPERTY_SSL_ENABLED =
+//			"mail." + MAIL_PROTOCOL + ".ssl.enable";
 	/**
 	 * The mail session properties to use for every session.
 	 */
 	private static final Properties MAIL_SESSION_PROPERTIES = new Properties();
-	static {
-		// Always use SSL.
-		MAIL_SESSION_PROPERTIES.put(MAIL_PROPERTY_SSL_ENABLED, true);
-	}
+//	static {
+//		// Always use SSL.
+//		MAIL_SESSION_PROPERTIES.put(MAIL_PROPERTY_SSL_ENABLED, true);
+//	}
 	
 	/**
 	 * The email address of the sender of the registration emails.

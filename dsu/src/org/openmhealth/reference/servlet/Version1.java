@@ -85,18 +85,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author John Jenkins
  */
 @Controller
-@RequestMapping("/v1")
+@RequestMapping(Version1.PATH)
 public class Version1 {
 	/**
-	 * The logger for this class.
+	 * The root path for queries to this version of the API.
 	 */
-	private static final Logger LOGGER =
-		Logger.getLogger(Version1.class.getCanonicalName());
-	
-	/**
-	 * The encoding for the previous and next URLs.
-	 */
-	private static final String URL_ENCODING_UTF_8 = "UTF-8";
+	public static final String PATH = "/v1";
 
 	/**
 	 * The path to the user registration end-point.
@@ -193,6 +187,17 @@ public class Version1 {
 	 * The header for the URL to the next set of data for list requests.
 	 */
 	public static final String HEADER_NEXT = "Next";
+	
+	/**
+	 * The encoding for the previous and next URLs.
+	 */
+	private static final String URL_ENCODING_UTF_8 = "UTF-8";
+	
+	/**
+	 * The logger for this class.
+	 */
+	private static final Logger LOGGER =
+		Logger.getLogger(Version1.class.getCanonicalName());
 	
 	/**
 	 * Creates an authentication request, authenticates the user and, if
@@ -1118,7 +1123,11 @@ public class Version1 {
 		handleRequest(
 			request,
 			response,
-			new UserRegistrationRequest(username, password, email));
+			new UserRegistrationRequest(
+				username,
+				password,
+				email,
+				buildRootUrl(request)));
 	}
 	
 	/**
@@ -1486,21 +1495,13 @@ public class Version1 {
 	}
 	
 	/**
-	 * <p>
-	 * Builds the root URL used to make this request based on the request.
-	 * </p>
-	 * 
-	 * <p>
-	 * The URL is built from all of the information Java provides about the
-	 * system including the hostname. However, in a distributed environment,
-	 * this may not be adequate or correct. 
-	 * </p>
+	 * Builds the base URL for the request that came in. This is everything up
+	 * to our web applications base, e.g. "http://localhost:8080/omh".
 	 * 
 	 * @param httpRequest
 	 *        The original HTTP request.
 	 * 
-	 * @return The base URL used to make the request that is calling this
-	 *         function.
+	 * @return The base URL for the request.
 	 */
 	private String buildRootUrl(final HttpServletRequest httpRequest) {
 		// It must be a HTTP request.
@@ -1520,8 +1521,35 @@ public class Version1 {
 		// Add the port separator and the port.
 		builder.append(':').append(httpRequest.getServerPort());
 		
-		// Add the path, which comes in two parts.
+		// Add the context path, e.g. "/omh".
 		builder.append(httpRequest.getContextPath());
+		
+		// Return the root URL.
+		return builder.toString();
+	}
+	
+	/**
+	 * <p>
+	 * Builds the URL used to make this request based on the request.
+	 * </p>
+	 * 
+	 * <p>
+	 * The URL is built from all of the information Java provides about the
+	 * system including the hostname. However, in a distributed environment,
+	 * this may not be adequate or correct. 
+	 * </p>
+	 * 
+	 * @param httpRequest
+	 *        The original HTTP request.
+	 * 
+	 * @return The base URL used to make the request that is calling this
+	 *         function.
+	 */
+	private String buildRequestUrl(final HttpServletRequest httpRequest) {
+		// Start with the root URL.
+		StringBuilder builder = new StringBuilder(buildRootUrl(httpRequest));
+		
+		// Add the specific path in the request.
 		builder.append(httpRequest.getPathInfo());
 
 		// Return the base URL, which should only need to have the parameters
@@ -1554,7 +1582,7 @@ public class Version1 {
 		if(listRequest.getNumToSkip() > 0) {
 			// Build the base URL.
 			StringBuilder previousBuilder =
-				new StringBuilder(buildRootUrl(httpRequest));
+				new StringBuilder(buildRequestUrl(httpRequest));
 			
 			// Add the query separator.
 			previousBuilder.append('?');
@@ -1652,7 +1680,7 @@ public class Version1 {
 
 			// Build the base URL.
 			StringBuilder nextBuilder =
-				new StringBuilder(buildRootUrl(httpRequest));
+				new StringBuilder(buildRequestUrl(httpRequest));
 			
 			// Add the query separator.
 			nextBuilder.append('?');

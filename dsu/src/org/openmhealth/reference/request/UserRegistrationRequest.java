@@ -19,6 +19,7 @@ import javax.mail.internet.MimeMessage;
 import org.openmhealth.reference.data.UserBin;
 import org.openmhealth.reference.domain.User;
 import org.openmhealth.reference.exception.OmhException;
+import org.openmhealth.reference.servlet.Version1;
 
 import com.sun.mail.smtp.SMTPTransport;
 
@@ -110,16 +111,17 @@ public class UserRegistrationRequest extends Request<Object> {
 		"<br/>" +
 		"<h6>If you are not attempting to create an account, please " +
 			"disregard this email.</h6>";
-	/**
-	 * The URL to the activation end-point of our system.
-	 */
-	private static final String ACTIVATION_URL =
-		"http://localhost:8080/omh/v1" + UserActivationRequest.ACTIVATION_PAGE;
 	
 	/**
 	 * The new user.
 	 */
 	private final User user;
+	
+	/**
+	 * The base URL to use when building the link in the activation email,
+	 * e.g. http://localhost:8080/omh/v1
+	 */
+	private final String activationUrl;
 	
 	/**
 	 * Creates a registration request.
@@ -132,12 +134,23 @@ public class UserRegistrationRequest extends Request<Object> {
 	 * 
 	 * @param email
 	 *        The new user's email address.
+	 * 
+	 * @param rootUrl
+	 *        The root URL for our domain, e.g. http://localhost:8080/omh.
+	 * 
+	 * @throws OmhException
+	 *         A parameter was invalid.
 	 */
 	public UserRegistrationRequest(
 		final String username,
 		final String password,
-		final String email)
+		final String email,
+		final String rootUrl)
 		throws OmhException {
+		
+		if(rootUrl == null) {
+			throw new OmhException("The root URL is null.");
+		}
 		
 		// Create the new user from the parameters and a random registration
 		// ID.
@@ -149,6 +162,12 @@ public class UserRegistrationRequest extends Request<Object> {
 				createRegistrationId(username, email),
 				System.currentTimeMillis(),
 				null);
+		
+		// Build the rest of the base URL for these requests.
+		this.activationUrl =
+			rootUrl +
+			Version1.PATH +
+			UserActivationRequest.ACTIVATION_PAGE;
 	}
 	
 	/*
@@ -294,7 +313,7 @@ public class UserRegistrationRequest extends Request<Object> {
 				.replace(
 					ACTIVATION_LINK_PLACEHOLDER,
 					"<a href=\"" +
-						ACTIVATION_URL +
+						activationUrl +
 						"?" +
 						User.JSON_KEY_REGISTRATION_KEY +
 						"=" +

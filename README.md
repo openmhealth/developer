@@ -1,10 +1,7 @@
 ## Open mHealth Reference Implementation and Documentation Repository
 
-### Source code
+Please see the [Getting Started Guide](https://github.com/openmhealth/developer/wiki/DSU-Reference-Implementation:-Getting-Started) for information on how to use this software.
 
-* DSU (Data Storage Unit) RI - this repository
-* DPU (Data Processing Unit) RI - forthcoming 
-* DVU (Data Visualization Unit) RI - forthcoming
 
 ### Documentation
 
